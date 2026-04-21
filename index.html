@@ -177,29 +177,22 @@ function downloadVCard(e) {
   URL.revokeObjectURL(url);
 }
 function submitForm() {
-  const name = document.getElementById('prospectName').value.trim();
+ const name = document.getElementById('prospectName').value.trim();
   const phone = document.getElementById('prospectPhone').value.trim();
   const email = document.getElementById('prospectEmail').value.trim();
   if (!name && !phone && !email) { document.getElementById('prospectName').focus(); return; }
   
- fetch('https://script.google.com/macros/s/AKfycbybrJw89_2EF1zntYCNTIEk7tZJuvgI499Gt7jG04zcusHhCZ9BLXLtWBcRdEIrO8Kupw/exec', {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      nom: name,
-      telephone: phone,
-      email: email,
-      commercial: 'Lilian Giteau'
-    })
-  });
+  const url = 'https://script.google.com/macros/s/AKfycbyYTLSjztQNKr25lHK7r2zZstUH5aD28UmzHQPzOv87aSqipxdoZhLuDibPxi4iFbfaIQ/exec'
+    + '?nom=' + encodeURIComponent(name)
+    + '&telephone=' + encodeURIComponent(phone)
+    + '&email=' + encodeURIComponent(email)
+    + '&commercial=Lilian%20Giteau';
+
+  var img = new Image();
+  img.src = url;
 
   document.getElementById('prospectForm').style.display = 'none';
   document.getElementById('successMsg').classList.add('show');
-}
-}
 </script>
 </body>
 </html>
