@@ -95,6 +95,27 @@
 var CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSk5Y0hWzSV_xUTink8-3OCzoK5fgpGjih-a1eNavt3KvCJ4mR4AXEt5evvPJ6FKxlTD5SWsJ3vp4dF/pub?gid=0&single=true&output=csv';
 var allProspects = [];
 
+function formatDate(raw) {
+  if (!raw) return '—';
+  raw = raw.replace(/"/g, '').trim();
+  // Try DD/MM/YYYY HH:MM:SS
+  var m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return m[1].padStart(2,'0') + '/' + m[2].padStart(2,'0') + '/' + m[3];
+  // Try standard date
+  var d = new Date(raw);
+  if (!isNaN(d.getTime())) return d.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'});
+  return raw;
+}
+
+function parseDate(raw) {
+  if (!raw) return null;
+  raw = raw.replace(/"/g, '').trim();
+  var m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return new Date(m[3], parseInt(m[2])-1, parseInt(m[1]));
+  var d = new Date(raw);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 function parseCSV(text) {
   var lines = text.trim().split('\n');
   var prospects = [];
@@ -102,11 +123,11 @@ function parseCSV(text) {
     var cols = lines[i].split(',');
     if (cols.length >= 4) {
       prospects.push({
-        date: cols[0] ? cols[0].trim() : '',
-        nom: cols[1] ? cols[1].trim() : '',
-        telephone: cols[2] ? cols[2].trim() : '',
-        email: cols[3] ? cols[3].trim() : '',
-        commercial: cols[4] ? cols[4].trim() : ''
+        dateRaw: cols[0] ? cols[0].trim().replace(/"/g, '') : '',
+        nom: cols[1] ? cols[1].trim().replace(/"/g, '') : '',
+        telephone: cols[2] ? cols[2].trim().replace(/"/g, '') : '',
+        email: cols[3] ? cols[3].trim().replace(/"/g, '') : '',
+        commercial: cols[4] ? cols[4].trim().replace(/"/g, '') : ''
       });
     }
   }
@@ -125,7 +146,7 @@ function loadData() {
       renderTable(allProspects);
     })
     .catch(function() {
-      document.getElementById('tableWrap').innerHTML = '<div class="empty"><p>Impossible de charger les donnees.<br>Verifiez votre connexion.</p></div>';
+      document.getElementById('tableWrap').innerHTML = '<div class="empty"><p>Impossible de charger les donnees.</p></div>';
       document.getElementById('chartWrap').innerHTML = '';
     });
 }
@@ -134,14 +155,14 @@ function updateStats(prospects) {
   var now = new Date();
   var weekAgo = new Date(now - 7*24*60*60*1000);
   var monthAgo = new Date(now - 30*24*60*60*1000);
-  var thisWeek = prospects.filter(function(p){return new Date(p.date)>weekAgo;}).length;
-  var thisMonth = prospects.filter(function(p){return new Date(p.date)>monthAgo;}).length;
-  var withEmail = prospects.filter(function(p){return p.email&&p.email.trim()!=='';}).length;
-  var withPhone = prospects.filter(function(p){return p.telephone&&p.telephone.trim()!=='';}).length;
+  var thisWeek = prospects.filter(function(p){ var d=parseDate(p.dateRaw); return d&&d>weekAgo; }).length;
+  var thisMonth = prospects.filter(function(p){ var d=parseDate(p.dateRaw); return d&&d>monthAgo; }).length;
+  var withEmail = prospects.filter(function(p){return p.email&&p.email!=='';}).length;
+  var withPhone = prospects.filter(function(p){return p.telephone&&p.telephone!=='';}).length;
   var emailRate = prospects.length>0?Math.round((withEmail/prospects.length)*100)+'%':'0%';
   var phoneRate = prospects.length>0?Math.round((withPhone/prospects.length)*100)+'%':'0%';
   var lastDate = '—';
-  if (prospects.length>0) { var d=new Date(prospects[0].date); lastDate=d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+  if (prospects.length>0) lastDate = formatDate(prospects[0].dateRaw);
   document.getElementById('statTotal').textContent = prospects.length;
   document.getElementById('statWeek').textContent = thisWeek;
   document.getElementById('statMonth').textContent = thisMonth;
@@ -154,7 +175,7 @@ function renderChart(prospects) {
   var now = new Date();
   var months = [];
   for (var i=5;i>=0;i--) { var d=new Date(now.getFullYear(),now.getMonth()-i,1); months.push({label:d.toLocaleDateString('fr-FR',{month:'short'}),year:d.getFullYear(),month:d.getMonth(),count:0}); }
-  prospects.forEach(function(p){ var d=new Date(p.date); months.forEach(function(m){if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.count++;}); });
+  prospects.forEach(function(p){ var d=parseDate(p.dateRaw); if(d) months.forEach(function(m){if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.count++;}); });
   var max=Math.max.apply(null,months.map(function(m){return m.count;}))||1;
   var currentMonth=now.getMonth();
   var html=months.map(function(m){ var height=Math.max(3,Math.round((m.count/max)*70)); var isActive=m.month===currentMonth; return '<div class="chart-bar-wrap"><div class="chart-bar-value">'+(m.count>0?m.count:'')+'</div><div class="chart-bar '+(isActive?'active':'')+'" style="height:'+height+'px"></div><div class="chart-bar-label">'+m.label+'</div></div>'; }).join('');
@@ -164,7 +185,12 @@ function renderChart(prospects) {
 function renderTable(prospects) {
   if (prospects.length===0) { document.getElementById('tableWrap').innerHTML='<div class="empty"><p>Aucun prospect pour l\'instant.<br>Partagez votre carte NFC !</p></div>'; return; }
   var now=new Date(); var weekAgo=new Date(now-7*24*60*60*1000);
-  var rows=prospects.map(function(p){ var date=new Date(p.date); var dateStr=date.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}); var isNew=date>weekAgo; return '<tr><td>'+(p.nom||'—')+(isNew?'<span class="badge-new">Nouveau</span>':'')+'</td><td>'+(p.telephone||'—')+'</td><td>'+(p.email||'—')+'</td><td>'+dateStr+'</td></tr>'; }).join('');
+  var rows=prospects.map(function(p){
+    var d=parseDate(p.dateRaw);
+    var dateStr=formatDate(p.dateRaw);
+    var isNew=d&&d>weekAgo;
+    return '<tr><td>'+(p.nom||'—')+(isNew?'<span class="badge-new">Nouveau</span>':'')+'</td><td>'+(p.telephone||'—')+'</td><td>'+(p.email||'—')+'</td><td>'+dateStr+'</td></tr>';
+  }).join('');
   document.getElementById('tableWrap').innerHTML='<table class="table"><thead><tr><th>Nom</th><th>Telephone</th><th>Email</th><th>Date</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
 
