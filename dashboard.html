@@ -92,26 +92,39 @@
   <div class="table-wrap" id="tableWrap"><div class="loading">Chargement des donnees...</div></div>
 </div>
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2J1gRYKb23wpT2bMPhpm_vHssU8qzHIgOpft6lPor-Ou9uSo4B3InUv40PYXM_bWF-w/exec';
+var CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSk5Y0hWzSV_xUTink8-3OCzoK5fgpGjih-a1eNavt3KvCJ4mR4AXEt5evvPJ6FKxlTD5SWsJ3vp4dF/pub?gid=0&single=true&output=csv';
 var allProspects = [];
+
+function parseCSV(text) {
+  var lines = text.trim().split('\n');
+  var prospects = [];
+  for (var i = 1; i < lines.length; i++) {
+    var cols = lines[i].split(',');
+    if (cols.length >= 4) {
+      prospects.push({
+        date: cols[0] ? cols[0].trim() : '',
+        nom: cols[1] ? cols[1].trim() : '',
+        telephone: cols[2] ? cols[2].trim() : '',
+        email: cols[3] ? cols[3].trim() : '',
+        commercial: cols[4] ? cols[4].trim() : ''
+      });
+    }
+  }
+  return prospects;
+}
 
 function loadData() {
   document.getElementById('tableWrap').innerHTML = '<div class="loading">Chargement...</div>';
   document.getElementById('chartWrap').innerHTML = '<div class="loading">Chargement...</div>';
-  var targetUrl = SCRIPT_URL + '?action=get&t=' + Date.now();
-  var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(targetUrl);
-  fetch(proxyUrl)
-    .then(function(r) { return r.json(); })
-    .then(function(proxy) {
-      var data = JSON.parse(proxy.contents);
-      if (data.status === 'success') {
-        allProspects = data.data.reverse();
-        updateStats(allProspects);
-        renderChart(allProspects);
-        renderTable(allProspects);
-      }
+  fetch(CSV_URL + '&t=' + Date.now())
+    .then(function(r) { return r.text(); })
+    .then(function(text) {
+      allProspects = parseCSV(text).reverse();
+      updateStats(allProspects);
+      renderChart(allProspects);
+      renderTable(allProspects);
     })
-    .catch(function(err) {
+    .catch(function() {
       document.getElementById('tableWrap').innerHTML = '<div class="empty"><p>Impossible de charger les donnees.<br>Verifiez votre connexion.</p></div>';
       document.getElementById('chartWrap').innerHTML = '';
     });
