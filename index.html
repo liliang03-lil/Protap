@@ -182,8 +182,12 @@ function submitForm() {
   const email = document.getElementById('prospectEmail').value.trim();
   if (!name && !phone && !email) { document.getElementById('prospectName').focus(); return; }
   
-  fetch('https://script.google.com/macros/s/AKfycbybrJw89_2EF1zntYCNTIEk7tZJuvgI499Gt7jG04zcusHhCZ9BLXLtWBcRdEIrO8Kupw/exec', {
+ fetch('https://script.google.com/macros/s/AKfycbybrJw89_2EF1zntYCNTIEk7tZJuvgI499Gt7jG04zcusHhCZ9BLXLtWBcRdEIrO8Kupw/exec', {
     method: 'POST',
+    mode: 'no-cors',
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({
       nom: name,
       telephone: phone,
