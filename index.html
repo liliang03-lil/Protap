@@ -181,8 +181,20 @@ function submitForm() {
   const phone = document.getElementById('prospectPhone').value.trim();
   const email = document.getElementById('prospectEmail').value.trim();
   if (!name && !phone && !email) { document.getElementById('prospectName').focus(); return; }
+  
+  fetch('https://script.google.com/macros/s/AKfycbz6LnapUWKkaMUnk5mshYOPemNB8H2zZp8lBXdrfS3Rt89Y_Y4v96eA9vMu2oBZb-vanA/exec', {
+    method: 'POST',
+    body: JSON.stringify({
+      nom: name,
+      telephone: phone,
+      email: email,
+      commercial: 'Lilian Giteau'
+    })
+  });
+
   document.getElementById('prospectForm').style.display = 'none';
   document.getElementById('successMsg').classList.add('show');
+}
 }
 </script>
 </body>
