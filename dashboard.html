@@ -12,7 +12,6 @@
       --gold-light: #E8C97A;
       --dark: #0d1621;
       --dark2: #15202e;
-      --dark3: #1c2b3a;
       --text: #F0EDE6;
       --text-muted: #8A8478;
       --border: rgba(201,168,76,0.18);
@@ -20,7 +19,6 @@
     }
     html, body { min-height: 100vh; background: var(--dark); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; -webkit-font-smoothing: antialiased; }
     body { background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.08) 0%, transparent 70%), var(--dark); }
-
     .header { padding: 32px 24px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
     .logo-wrap { display: flex; align-items: center; gap: 8px; }
     .logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; color: var(--text); }
@@ -29,9 +27,7 @@
     .header-right { text-align: right; }
     .header-name { font-size: 13px; color: var(--text); }
     .header-role { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-top: 2px; }
-
     .main { max-width: 1000px; margin: 0 auto; padding: 24px; }
-
     .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px; }
     .stats-grid-2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
     .stat-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
@@ -39,7 +35,6 @@
     .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: var(--gold); line-height: 1; }
     .stat-value.small { font-size: 18px; padding-top: 6px; }
     .stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
-
     .chart-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 28px; }
     .chart-title { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; opacity: 0.8; }
     .chart-wrap { display: flex; align-items: flex-end; gap: 8px; height: 80px; }
@@ -48,16 +43,13 @@
     .chart-bar.active { background: linear-gradient(180deg, var(--gold-light), var(--gold)); }
     .chart-bar-label { font-size: 9px; color: var(--text-muted); }
     .chart-bar-value { font-size: 10px; color: var(--gold); font-weight: 400; }
-
     .section-title { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; opacity: 0.8; }
-
     .table-actions { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
     .search-input { flex: 1; padding: 12px 16px; background: var(--dark2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 300; outline: none; transition: border-color 0.2s; }
     .search-input::placeholder { color: var(--text-muted); opacity: 0.6; }
     .search-input:focus { border-color: rgba(201,168,76,0.4); }
     .refresh-btn { display: flex; align-items: center; gap: 6px; padding: 12px 16px; background: transparent; border: 1px solid var(--border); border-radius: 12px; color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
     .refresh-btn:hover { background: rgba(201,168,76,0.06); }
-
     .table-wrap { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
     .table { width: 100%; border-collapse: collapse; }
     .table th { padding: 14px 16px; text-align: left; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 400; }
@@ -65,12 +57,9 @@
     .table tr:last-child td { border-bottom: none; }
     .table tr:hover td { background: rgba(255,255,255,0.02); }
     .badge-new { display: inline-block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.2); padding: 2px 8px; border-radius: 100px; margin-left: 6px; }
-
     .empty { text-align: center; padding: 48px 24px; color: var(--text-muted); }
-    .empty-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.4; }
     .empty p { font-size: 13px; }
     .loading { text-align: center; padding: 48px; color: var(--text-muted); font-size: 13px; }
-
     @media (max-width: 600px) {
       .stats-grid, .stats-grid-2 { grid-template-columns: repeat(2, 1fr); }
       .table th:nth-child(3), .table td:nth-child(3) { display: none; }
@@ -79,7 +68,6 @@
   </style>
 </head>
 <body>
-
 <div class="header">
   <div class="logo-wrap">
     <span class="logo-text"><span>Fidele</span>MC</span>
@@ -90,107 +78,71 @@
     <div class="header-role">Fondateur</div>
   </div>
 </div>
-
 <div class="main">
-
   <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">Total Prospects</div>
-      <div class="stat-value" id="statTotal">—</div>
-      <div class="stat-sub">depuis le debut</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Cette semaine</div>
-      <div class="stat-value" id="statWeek">—</div>
-      <div class="stat-sub">7 derniers jours</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Ce mois</div>
-      <div class="stat-value" id="statMonth">—</div>
-      <div class="stat-sub">30 derniers jours</div>
-    </div>
+    <div class="stat-card"><div class="stat-label">Total Prospects</div><div class="stat-value" id="statTotal">—</div><div class="stat-sub">depuis le debut</div></div>
+    <div class="stat-card"><div class="stat-label">Cette semaine</div><div class="stat-value" id="statWeek">—</div><div class="stat-sub">7 derniers jours</div></div>
+    <div class="stat-card"><div class="stat-label">Ce mois</div><div class="stat-value" id="statMonth">—</div><div class="stat-sub">30 derniers jours</div></div>
   </div>
-
   <div class="stats-grid-2">
-    <div class="stat-card">
-      <div class="stat-label">Dernier prospect</div>
-      <div class="stat-value small" id="statLast">—</div>
-      <div class="stat-sub">date du dernier contact</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Taux email</div>
-      <div class="stat-value" id="statEmail">—</div>
-      <div class="stat-sub">prospects avec email</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Taux telephone</div>
-      <div class="stat-value" id="statPhone">—</div>
-      <div class="stat-sub">prospects avec telephone</div>
-    </div>
+    <div class="stat-card"><div class="stat-label">Dernier prospect</div><div class="stat-value small" id="statLast">—</div><div class="stat-sub">date du dernier contact</div></div>
+    <div class="stat-card"><div class="stat-label">Taux email</div><div class="stat-value" id="statEmail">—</div><div class="stat-sub">prospects avec email</div></div>
+    <div class="stat-card"><div class="stat-label">Taux telephone</div><div class="stat-value" id="statPhone">—</div><div class="stat-sub">prospects avec telephone</div></div>
   </div>
-
   <div class="chart-card">
     <div class="chart-title">Activite des 6 derniers mois</div>
-    <div class="chart-wrap" id="chartWrap">
-      <div class="loading">Chargement...</div>
-    </div>
+    <div class="chart-wrap" id="chartWrap"><div class="loading">Chargement...</div></div>
   </div>
-
   <div class="section-title">Prospects</div>
   <div class="table-actions">
     <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un prospect..." oninput="filterProspects()">
     <button class="refresh-btn" onclick="loadData()">Actualiser</button>
   </div>
-
-  <div class="table-wrap" id="tableWrap">
-    <div class="loading">Chargement des donnees...</div>
-  </div>
-
+  <div class="table-wrap" id="tableWrap"><div class="loading">Chargement des donnees...</div></div>
 </div>
-
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3sDPNETa1UDybHNx-WyVZ2zxb-7arKpJhCKpIns1tfUdeeFT2SHqc2WpHQ4qQvu2i2w/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2J1gRYKb23wpT2bMPhpm_vHssU8qzHIgOpft6lPor-Ou9uSo4B3InUv40PYXM_bWF-w/exec';
 var allProspects = [];
 
 function loadData() {
-  document.getElementById('tableWrap').innerHTML = '<div class="loading">Chargement des donnees...</div>';
+  document.getElementById('tableWrap').innerHTML = '<div class="loading">Chargement...</div>';
   document.getElementById('chartWrap').innerHTML = '<div class="loading">Chargement...</div>';
-
-  fetch(SCRIPT_URL + '?action=get&t=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (data.status === 'success') {
-        allProspects = data.data.reverse();
-        updateStats(allProspects);
-        renderChart(allProspects);
-        renderTable(allProspects);
-      }
-    })
-    .catch(function() {
-      document.getElementById('tableWrap').innerHTML = '<div class="empty"><div class="empty-icon">!</div><p>Impossible de charger les donnees.</p></div>';
-      document.getElementById('chartWrap').innerHTML = '';
-    });
+  var cbName = 'cb_' + Date.now();
+  window[cbName] = function(data) {
+    if (data.status === 'success') {
+      allProspects = data.data.reverse();
+      updateStats(allProspects);
+      renderChart(allProspects);
+      renderTable(allProspects);
+    }
+    delete window[cbName];
+    document.getElementById('jsonpScript').remove();
+  };
+  var script = document.createElement('script');
+  script.id = 'jsonpScript';
+  script.src = SCRIPT_URL + '?action=get&callback=' + cbName + '&t=' + Date.now();
+  script.onerror = function() {
+    document.getElementById('tableWrap').innerHTML = '<div class="empty"><p>Impossible de charger les donnees.</p></div>';
+    document.getElementById('chartWrap').innerHTML = '';
+  };
+  document.body.appendChild(script);
 }
 
 function updateStats(prospects) {
   var now = new Date();
-  var weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
-  var monthAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
-
-  var thisWeek = prospects.filter(function(p) { return new Date(p.date) > weekAgo; }).length;
-  var thisMonth = prospects.filter(function(p) { return new Date(p.date) > monthAgo; }).length;
-  var withEmail = prospects.filter(function(p) { return p.email && p.email.trim() !== ''; }).length;
-  var withPhone = prospects.filter(function(p) { return p.telephone && p.telephone.trim() !== ''; }).length;
-
-  var emailRate = prospects.length > 0 ? Math.round((withEmail / prospects.length) * 100) + '%' : '0%';
-  var phoneRate = prospects.length > 0 ? Math.round((withPhone / prospects.length) * 100) + '%' : '0%';
-
+  var weekAgo = new Date(now - 7*24*60*60*1000);
+  var monthAgo = new Date(now - 30*24*60*60*1000);
+  var thisWeek = prospects.filter(function(p){return new Date(p.date)>weekAgo;}).length;
+  var thisMonth = prospects.filter(function(p){return new Date(p.date)>monthAgo;}).length;
+  var withEmail = prospects.filter(function(p){return p.email&&p.email.trim()!=='';}).length;
+  var withPhone = prospects.filter(function(p){return p.telephone&&p.telephone.trim()!=='';}).length;
+  var emailRate = prospects.length>0?Math.round((withEmail/prospects.length)*100)+'%':'0%';
+  var phoneRate = prospects.length>0?Math.round((withPhone/prospects.length)*100)+'%':'0%';
   var lastDate = '—';
-  if (prospects.length > 0) {
+  if (prospects.length>0) {
     var d = new Date(prospects[0].date);
-    lastDate = d.toLocaleDateString('fr-FR', {day: '2-digit', month: '2-digit', year: 'numeric'});
+    lastDate = d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});
   }
-
   document.getElementById('statTotal').textContent = prospects.length;
   document.getElementById('statWeek').textContent = thisWeek;
   document.getElementById('statMonth').textContent = thisMonth;
@@ -202,57 +154,44 @@ function updateStats(prospects) {
 function renderChart(prospects) {
   var now = new Date();
   var months = [];
-  for (var i = 5; i >= 0; i--) {
-    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    months.push({ label: d.toLocaleDateString('fr-FR', {month: 'short'}), year: d.getFullYear(), month: d.getMonth(), count: 0 });
+  for (var i=5;i>=0;i--) {
+    var d = new Date(now.getFullYear(),now.getMonth()-i,1);
+    months.push({label:d.toLocaleDateString('fr-FR',{month:'short'}),year:d.getFullYear(),month:d.getMonth(),count:0});
   }
-  prospects.forEach(function(p) {
+  prospects.forEach(function(p){
     var d = new Date(p.date);
-    months.forEach(function(m) {
-      if (d.getFullYear() === m.year && d.getMonth() === m.month) m.count++;
-    });
+    months.forEach(function(m){if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.count++;});
   });
-  var max = Math.max.apply(null, months.map(function(m) { return m.count; })) || 1;
+  var max = Math.max.apply(null,months.map(function(m){return m.count;}))||1;
   var currentMonth = now.getMonth();
-  var html = months.map(function(m) {
-    var height = Math.max(3, Math.round((m.count / max) * 70));
-    var isActive = m.month === currentMonth;
-    return '<div class="chart-bar-wrap">'
-      + '<div class="chart-bar-value">' + (m.count > 0 ? m.count : '') + '</div>'
-      + '<div class="chart-bar ' + (isActive ? 'active' : '') + '" style="height:' + height + 'px"></div>'
-      + '<div class="chart-bar-label">' + m.label + '</div>'
-      + '</div>';
+  var html = months.map(function(m){
+    var height = Math.max(3,Math.round((m.count/max)*70));
+    var isActive = m.month===currentMonth;
+    return '<div class="chart-bar-wrap"><div class="chart-bar-value">'+(m.count>0?m.count:'')+'</div><div class="chart-bar '+(isActive?'active':'')+'" style="height:'+height+'px"></div><div class="chart-bar-label">'+m.label+'</div></div>';
   }).join('');
   document.getElementById('chartWrap').innerHTML = html;
 }
 
 function renderTable(prospects) {
-  if (prospects.length === 0) {
-    document.getElementById('tableWrap').innerHTML = '<div class="empty"><div class="empty-icon">o</div><p>Aucun prospect pour l\'instant.<br>Partagez votre carte NFC !</p></div>';
+  if (prospects.length===0) {
+    document.getElementById('tableWrap').innerHTML='<div class="empty"><p>Aucun prospect pour l\'instant.<br>Partagez votre carte NFC !</p></div>';
     return;
   }
   var now = new Date();
-  var weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
-  var rows = prospects.map(function(p) {
+  var weekAgo = new Date(now-7*24*60*60*1000);
+  var rows = prospects.map(function(p){
     var date = new Date(p.date);
-    var dateStr = date.toLocaleDateString('fr-FR', {day: '2-digit', month: '2-digit', year: 'numeric'});
-    var isNew = date > weekAgo;
-    return '<tr>'
-      + '<td>' + (p.nom || '—') + (isNew ? '<span class="badge-new">Nouveau</span>' : '') + '</td>'
-      + '<td>' + (p.telephone || '—') + '</td>'
-      + '<td>' + (p.email || '—') + '</td>'
-      + '<td>' + dateStr + '</td>'
-      + '</tr>';
+    var dateStr = date.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});
+    var isNew = date>weekAgo;
+    return '<tr><td>'+(p.nom||'—')+(isNew?'<span class="badge-new">Nouveau</span>':'')+'</td><td>'+(p.telephone||'—')+'</td><td>'+(p.email||'—')+'</td><td>'+dateStr+'</td></tr>';
   }).join('');
-  document.getElementById('tableWrap').innerHTML = '<table class="table"><thead><tr><th>Nom</th><th>Telephone</th><th>Email</th><th>Date</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  document.getElementById('tableWrap').innerHTML='<table class="table"><thead><tr><th>Nom</th><th>Telephone</th><th>Email</th><th>Date</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
 
 function filterProspects() {
   var search = document.getElementById('searchInput').value.toLowerCase();
-  var filtered = allProspects.filter(function(p) {
-    return (p.nom || '').toLowerCase().includes(search)
-      || (p.email || '').toLowerCase().includes(search)
-      || (p.telephone || '').includes(search);
+  var filtered = allProspects.filter(function(p){
+    return (p.nom||'').toLowerCase().includes(search)||(p.email||'').toLowerCase().includes(search)||(p.telephone||'').includes(search);
   });
   renderTable(filtered);
 }
