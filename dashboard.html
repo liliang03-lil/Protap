@@ -133,19 +133,16 @@
 </div>
 
 <script>
-var CSV_PROSPECTS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSk5Y0hWzSV_xUTink8-3OCzoK5fgpGjih-a1eNavt3KvCJ4mR4AXEt5evvPJ6FKxlTD5SWsJ3vp4dF/pub?gid=0CSV_PROSPECTS_PLACEHOLDERsingle=trueCSV_PROSPECTS_PLACEHOLDERoutput=csv';
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjbYlK7pVL73HSx2gLQcJpBBO03gBxHnCMT1poHg4MHlYrPlkfMu3MZm6jPXqsVwk9sQ/exec';
 var allProspects = [];
 var allScans = [];
-
-function cleanCell(v) {
-  if (v === null || v === undefined) return '';
-  return String(v).replace(/"/g,'').replace(/<[^>]*>/g,'').trim();
-}
+var prospectsLoaded = false;
+var scansLoaded = false;
 
 function parseDate(raw) {
   if (!raw) return null;
-  raw = cleanCell(raw);
+  raw = String(raw).trim();
+  // DD/MM/YYYY HH:MM:SS or DD/MM/YYYY
   var m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
   if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
   var d = new Date(raw);
@@ -158,59 +155,53 @@ function formatDate(raw) {
   return d.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'});
 }
 
-function parseCSV(text) {
-  text = text.replace(/^\uFEFF/, '').replace(/<[^>]*>/g, '');
-  var lines = text.trim().split('\n');
-  var rows = [];
-  for (var i = 1; i < lines.length; i++) {
-    var line = lines[i].trim();
-    if (!line) continue;
-    var cols = []; var cur = ''; var inQ = false;
-    for (var c = 0; c < line.length; c++) {
-      if (line[c] === '"') { inQ = !inQ; }
-      else if (line[c] === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
-      else { cur += line[c]; }
-    }
-    cols.push(cur.trim());
-    rows.push(cols.map(cleanCell));
-  }
-  return rows;
-}
-
-function loadAll() {
-  document.getElementById('tableWrap').innerHTML = '<div class="loading">Chargement...</div>';
-  document.getElementById('chartWrap').innerHTML = '<div class="loading">Chargement...</div>';
-
-  // Load prospects via CSV
-  fetch(CSV_PROSPECTS + '&t=' + Date.now())
-    .then(function(r){ return r.text(); })
-    .then(function(text){
-      var rows = parseCSV(text);
-      allProspects = rows.map(function(r){
-        return { dateRaw: r[0]||'', nom: r[1]||'', telephone: r[2]||'', email: r[3]||'', commercial: r[4]||'' };
-      }).filter(function(p){ return p.nom || p.email || p.telephone; }).reverse();
-      updateProspectStats(allProspects);
-      renderTable(allProspects);
-      renderChart(allScans, allProspects);
-    });
-
-  // Load scans via JSONP
-  var cbName = 'scanCb_' + Date.now();
+function jsonp(url, cbName, callback) {
   window[cbName] = function(data) {
-    if (data.status === 'success') {
-      allScans = data.data || [];
-      updateScanStats(allScans);
-      updateConversion(allScans, allProspects);
-      renderChart(allScans, allProspects);
-    }
+    callback(data);
     delete window[cbName];
-    var s = document.getElementById('scanScript');
+    var s = document.getElementById(cbName);
     if (s) s.remove();
   };
   var script = document.createElement('script');
-  script.id = 'scanScript';
-  script.src = SCRIPT_URL + '?action=getScans&callback=' + cbName + '&t=' + Date.now();
+  script.id = cbName;
+  script.src = url + '&callback=' + cbName + '&t=' + Date.now();
   document.body.appendChild(script);
+}
+
+function loadAll() {
+  prospectsLoaded = false;
+  scansLoaded = false;
+  allProspects = [];
+  allScans = [];
+  document.getElementById('tableWrap').innerHTML = '<div class="loading">Chargement...</div>';
+  document.getElementById('chartWrap').innerHTML = '<div class="loading">Chargement...</div>';
+
+  jsonp(SCRIPT_URL + '?action=get', 'prospectCb', function(data) {
+    if (data.status === 'success') {
+      allProspects = (data.data || []).reverse().map(function(p) {
+        return {
+          dateRaw: p.date ? String(p.date) : '',
+          nom: p.nom || '',
+          telephone: p.telephone || '',
+          email: p.email || '',
+          commercial: p.commercial || ''
+        };
+      }).filter(function(p){ return p.nom || p.email || p.telephone; });
+    }
+    prospectsLoaded = true;
+    updateProspectStats(allProspects);
+    renderTable(allProspects);
+    if (scansLoaded) { renderChart(allScans, allProspects); updateConversion(allScans, allProspects); }
+  });
+
+  jsonp(SCRIPT_URL + '?action=getScans', 'scansCb', function(data) {
+    if (data.status === 'success') {
+      allScans = data.data || [];
+    }
+    scansLoaded = true;
+    updateScanStats(allScans);
+    if (prospectsLoaded) { renderChart(allScans, allProspects); updateConversion(allScans, allProspects); }
+  });
 }
 
 function updateScanStats(scans) {
@@ -218,30 +209,14 @@ function updateScanStats(scans) {
   var todayStart = new Date(now); todayStart.setHours(0,0,0,0);
   var weekAgo = new Date(now - 7*24*60*60*1000);
   var monthAgo = new Date(now - 30*24*60*60*1000);
-
-  // Parse scan dates — format is DD/MM/YYYY from Apps Script
-  function parseScanDate(raw) {
-    if (!raw) return null;
-    raw = String(raw).trim();
-    var m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-    if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
-    var d = new Date(raw);
-    return isNaN(d.getTime()) ? null : d;
-  }
-
-  var today = scans.filter(function(s){ var d=parseScanDate(s.date); return d&&d>=todayStart; }).length;
-  var week = scans.filter(function(s){ var d=parseScanDate(s.date); return d&&d>weekAgo; }).length;
-  var month = scans.filter(function(s){ var d=parseScanDate(s.date); return d&&d>monthAgo; }).length;
-
+  var today = scans.filter(function(s){ var d=parseDate(s.date); return d&&d>=todayStart; }).length;
+  var week = scans.filter(function(s){ var d=parseDate(s.date); return d&&d>weekAgo; }).length;
+  var month = scans.filter(function(s){ var d=parseDate(s.date); return d&&d>monthAgo; }).length;
   document.getElementById('scanTotal').textContent = scans.length;
   document.getElementById('scanToday').textContent = today;
   document.getElementById('scanWeek').textContent = week;
   document.getElementById('scanMonth').textContent = month;
-
-  var last = scans.length > 0 ? String(scans[scans.length-1].date).split(' ')[0] : '—';
-  document.getElementById('scanLast').textContent = last;
-
-  updateConversion(scans, allProspects);
+  document.getElementById('scanLast').textContent = scans.length>0 ? formatDate(scans[scans.length-1].date) : '—';
 }
 
 function updateProspectStats(prospects) {
@@ -274,39 +249,26 @@ function renderChart(scans, prospects) {
     var d = new Date(now.getFullYear(), now.getMonth()-i, 1);
     months.push({ label: d.toLocaleDateString('fr-FR',{month:'short'}), year: d.getFullYear(), month: d.getMonth(), scans: 0, prospects: 0 });
   }
-
-  function parseScanDate(raw) {
-    if (!raw) return null;
-    raw = String(raw).trim();
-    var m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-    if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
-    return null;
-  }
-
-  scans.forEach(function(s){ var d=parseScanDate(s.date); if(d) months.forEach(function(m){ if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.scans++; }); });
+  scans.forEach(function(s){ var d=parseDate(s.date); if(d) months.forEach(function(m){ if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.scans++; }); });
   prospects.forEach(function(p){ var d=parseDate(p.dateRaw); if(d) months.forEach(function(m){ if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.prospects++; }); });
-
-  var maxVal = Math.max.apply(null, months.map(function(m){ return Math.max(m.scans, m.prospects); })) || 1;
+  var maxVal = Math.max.apply(null, months.map(function(m){ return Math.max(m.scans,m.prospects); })) || 1;
   var currentMonth = now.getMonth();
-
   var html = months.map(function(m){
     var hS = Math.max(3, Math.round((m.scans/maxVal)*70));
-    var hP = m.prospects > 0 ? Math.max(2, Math.round((m.prospects/maxVal)*70)) : 2;
-    var isActive = m.month === currentMonth;
+    var hP = m.prospects>0 ? Math.max(2, Math.round((m.prospects/maxVal)*70)) : 2;
+    var isActive = m.month===currentMonth;
     return '<div class="chart-bar-wrap">'
       + (m.scans>0?'<div style="font-size:9px;color:var(--text-muted)">'+m.scans+'</div>':'<div style="font-size:9px">&nbsp;</div>')
       + '<div style="display:flex;gap:2px;align-items:flex-end;width:100%">'
       + '<div class="chart-bar scans'+(isActive?' active':'')+'" style="height:'+hS+'px;flex:1"></div>'
       + '<div class="chart-bar prospects'+(isActive?' active':'')+'" style="height:'+hP+'px;flex:1"></div>'
-      + '</div>'
-      + '<div class="chart-bar-label">'+m.label+'</div>'
-      + '</div>';
+      + '</div><div class="chart-bar-label">'+m.label+'</div></div>';
   }).join('');
   document.getElementById('chartWrap').innerHTML = html;
 }
 
 function renderTable(prospects) {
-  if (prospects.length===0) { document.getElementById('tableWrap').innerHTML='<div class="empty"><p>Aucun prospect pour l\'instant.<br>Partagez votre carte NFC !</p></div>'; return; }
+  if (prospects.length===0) { document.getElementById('tableWrap').innerHTML='<div class="empty"><p>Aucun prospect pour l\'instant.</p></div>'; return; }
   var now=new Date(); var weekAgo=new Date(now-7*24*60*60*1000);
   var rows=prospects.map(function(p){
     var d=parseDate(p.dateRaw); var dateStr=formatDate(p.dateRaw); var isNew=d&&d>weekAgo;
