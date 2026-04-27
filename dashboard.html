@@ -18,31 +18,37 @@
     .login-logo .logo-text { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--text); }
     .login-logo .logo-text span { color: var(--gold); }
     .login-logo .logo-sub { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-top: 6px; }
-    .login-title { font-size: 18px; font-weight: 400; color: var(--text); margin-bottom: 24px; text-align: center; }
     .login-input-group { margin-bottom: 14px; }
     .login-input-group label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 8px; }
-    .login-input-group input { width: 100%; padding: 14px 16px; background: var(--dark3); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 300; outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
-    .login-input-group input::placeholder { color: var(--text-muted); opacity: 0.5; }
+    .login-input-group input { width: 100%; padding: 14px 16px; background: var(--dark3); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
     .login-input-group input:focus { border-color: rgba(201,168,76,0.5); }
-    .login-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 12px; color: var(--dark); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 8px; transition: opacity 0.2s; }
-    .login-btn:active { opacity: 0.85; }
+    .login-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 12px; color: var(--dark); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 8px; }
     .login-error { background: rgba(224,85,85,0.1); border: 1px solid rgba(224,85,85,0.3); border-radius: 10px; padding: 12px 16px; font-size: 12px; color: var(--red); text-align: center; margin-top: 14px; display: none; }
     .login-error.show { display: block; }
 
-    /* DASHBOARD */
-    .dashboard-page { display: none; }
-    .header { padding: 32px 24px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    /* APP */
+    .app { display: none; }
+    .header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
     .logo-wrap { display: flex; align-items: center; gap: 8px; }
     .logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; color: var(--text); }
     .logo-text span { color: var(--gold); }
     .logo-badge { font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--border); padding: 3px 8px; border-radius: 100px; }
-    .header-right { display: flex; align-items: center; gap: 16px; }
-    .header-info { text-align: right; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
     .header-name { font-size: 13px; color: var(--text); }
-    .header-role { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-top: 2px; }
-    .logout-btn { padding: 8px 14px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 11px; cursor: pointer; transition: border-color 0.2s; }
+    .logout-btn { padding: 7px 14px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 11px; cursor: pointer; }
     .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+    /* TABS */
+    .tabs { display: flex; gap: 4px; padding: 16px 24px 0; border-bottom: 1px solid var(--border); }
+    .tab { padding: 10px 20px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    /* PAGES */
+    .page { display: none; }
+    .page.active { display: block; }
     .main { max-width: 1000px; margin: 0 auto; padding: 24px; }
+
+    /* STATS */
     .section-title { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; opacity: 0.8; }
     .stats-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
     .stats-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
@@ -72,11 +78,9 @@
     .conversion-bar { height: 8px; background: var(--dark3); border-radius: 4px; overflow: hidden; }
     .conversion-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 4px; transition: width 0.8s ease; }
     .table-actions { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
-    .search-input { flex: 1; padding: 12px 16px; background: var(--dark2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 300; outline: none; transition: border-color 0.2s; }
-    .search-input::placeholder { color: var(--text-muted); opacity: 0.6; }
+    .search-input { flex: 1; padding: 12px 16px; background: var(--dark2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 300; outline: none; }
     .search-input:focus { border-color: rgba(201,168,76,0.4); }
     .refresh-btn { padding: 12px 16px; background: transparent; border: 1px solid var(--border); border-radius: 12px; color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
-    .refresh-btn:hover { background: rgba(201,168,76,0.06); }
     .table-wrap { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
     .table { width: 100%; border-collapse: collapse; }
     .table th { padding: 14px 16px; text-align: left; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 400; }
@@ -87,10 +91,47 @@
     .empty { text-align: center; padding: 48px 24px; color: var(--text-muted); }
     .empty p { font-size: 13px; }
     .loading { text-align: center; padding: 32px; color: var(--text-muted); font-size: 13px; }
+
+    /* BACK OFFICE */
+    .bo-section { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 20px; }
+    .bo-section-title { font-size: 13px; font-weight: 500; color: var(--gold); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .bo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .bo-field { display: flex; flex-direction: column; gap: 6px; }
+    .bo-field.full { grid-column: 1 / -1; }
+    .bo-label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+    .bo-input { padding: 12px 14px; background: var(--dark3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; transition: border-color 0.2s; width: 100%; }
+    .bo-input:focus { border-color: rgba(201,168,76,0.4); }
+    .bo-textarea { padding: 12px 14px; background: var(--dark3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; resize: vertical; min-height: 100px; width: 100%; }
+    .bo-textarea:focus { border-color: rgba(201,168,76,0.4); }
+    .bo-save-btn { padding: 12px 24px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 10px; color: var(--dark); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 16px; }
+    .bo-save-btn:active { opacity: 0.85; }
+    .bo-success { display: none; padding: 10px 16px; background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.2); border-radius: 10px; color: var(--green); font-size: 12px; margin-top: 12px; }
+    .bo-success.show { display: block; }
+
+    /* TOGGLE */
+    .social-toggle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .social-toggle { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--dark3); border: 1px solid var(--border); border-radius: 10px; }
+    .social-toggle-name { font-size: 12px; color: var(--text); }
+    .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: var(--dark); border: 1px solid var(--border); border-radius: 22px; cursor: pointer; transition: 0.3s; }
+    .toggle-slider:before { content: ''; position: absolute; width: 16px; height: 16px; left: 2px; top: 2px; background: var(--text-muted); border-radius: 50%; transition: 0.3s; }
+    .toggle input:checked + .toggle-slider { background: rgba(201,168,76,0.2); border-color: var(--gold); }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(18px); background: var(--gold); }
+
+    /* NEWSLETTER */
+    .newsletter-stats { display: flex; gap: 12px; margin-bottom: 16px; }
+    .nl-stat { background: var(--dark3); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; flex: 1; text-align: center; }
+    .nl-stat-value { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--gold); }
+    .nl-stat-label { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+    .send-btn { padding: 12px 24px; background: var(--dark3); border: 1px solid var(--green); border-radius: 10px; color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 16px; }
+    .send-btn:hover { background: rgba(76,175,125,0.1); }
+
     @media (max-width: 768px) {
       .stats-grid-4, .stats-grid-4b { grid-template-columns: repeat(2, 1fr); }
       .stats-grid-3 { grid-template-columns: repeat(2, 1fr); }
-      .chart-row { grid-template-columns: 1fr; }
+      .chart-row, .bo-grid { grid-template-columns: 1fr; }
+      .social-toggle-grid { grid-template-columns: repeat(2, 1fr); }
       .table th:nth-child(3), .table td:nth-child(3) { display: none; }
       .main { padding: 16px; }
     }
@@ -98,7 +139,7 @@
 </head>
 <body>
 
-<!-- LOGIN PAGE -->
+<!-- LOGIN -->
 <div class="login-page" id="loginPage">
   <div class="login-card">
     <div class="login-logo">
@@ -111,80 +152,150 @@
     </div>
     <div class="login-input-group">
       <label>Mot de passe</label>
-      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      <input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
     <button class="login-btn" onclick="doLogin()">Se connecter</button>
     <div class="login-error" id="loginError">Email ou mot de passe incorrect.</div>
   </div>
 </div>
 
-<!-- DASHBOARD PAGE -->
-<div class="dashboard-page" id="dashboardPage">
+<!-- APP -->
+<div class="app" id="app">
   <div class="header">
     <div class="logo-wrap">
       <span class="logo-text"><span>Fidele</span>MC</span>
-      <span class="logo-badge">Dashboard</span>
+      <span class="logo-badge">Pro</span>
     </div>
     <div class="header-right">
-      <div class="header-info">
-        <div class="header-name">Lilian Giteau</div>
-        <div class="header-role">Fondateur</div>
-      </div>
+      <span class="header-name" id="headerName">Lilian Giteau</span>
       <button class="logout-btn" onclick="doLogout()">Deconnexion</button>
     </div>
   </div>
-  <div class="main">
 
-    <div class="section-title">Scans de la carte</div>
-    <div class="stats-grid-4">
-      <div class="stat-card highlight"><div class="stat-label">Total Scans</div><div class="stat-value blue" id="scanTotal">—</div><div class="stat-sub">depuis le debut</div></div>
-      <div class="stat-card"><div class="stat-label">Aujourd'hui</div><div class="stat-value blue" id="scanToday">—</div><div class="stat-sub">scans aujourd'hui</div></div>
-      <div class="stat-card"><div class="stat-label">Cette semaine</div><div class="stat-value blue" id="scanWeek">—</div><div class="stat-sub">7 derniers jours</div></div>
-      <div class="stat-card"><div class="stat-label">Ce mois</div><div class="stat-value blue" id="scanMonth">—</div><div class="stat-sub">30 derniers jours</div></div>
-    </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('dashboard')">📊 Dashboard</div>
+    <div class="tab" onclick="showTab('backoffice')">⚙️ Back Office</div>
+  </div>
 
-    <div class="section-title">Prospects</div>
-    <div class="stats-grid-3">
-      <div class="stat-card"><div class="stat-label">Total Prospects</div><div class="stat-value" id="statTotal">—</div><div class="stat-sub">depuis le debut</div></div>
-      <div class="stat-card"><div class="stat-label">Cette semaine</div><div class="stat-value" id="statWeek">—</div><div class="stat-sub">7 derniers jours</div></div>
-      <div class="stat-card"><div class="stat-label">Ce mois</div><div class="stat-value" id="statMonth">—</div><div class="stat-sub">30 derniers jours</div></div>
-    </div>
-
-    <div class="chart-row">
-      <div class="chart-card">
-        <div class="chart-title">Taux de conversion</div>
-        <div class="conversion-label"><span>Scans → Prospects</span><span id="convPct" style="color:var(--gold);font-weight:500">—</span></div>
-        <div class="conversion-bar"><div class="conversion-fill" id="convFill" style="width:0%"></div></div>
-        <div style="margin-top:16px;font-size:11px;color:var(--text-muted)" id="convDetail">Chargement...</div>
+  <!-- DASHBOARD PAGE -->
+  <div class="page active" id="page-dashboard">
+    <div class="main">
+      <div class="section-title">Scans de la carte</div>
+      <div class="stats-grid-4">
+        <div class="stat-card highlight"><div class="stat-label">Total Scans</div><div class="stat-value blue" id="scanTotal">—</div><div class="stat-sub">depuis le debut</div></div>
+        <div class="stat-card"><div class="stat-label">Aujourd'hui</div><div class="stat-value blue" id="scanToday">—</div><div class="stat-sub">scans aujourd'hui</div></div>
+        <div class="stat-card"><div class="stat-label">Cette semaine</div><div class="stat-value blue" id="scanWeek">—</div><div class="stat-sub">7 derniers jours</div></div>
+        <div class="stat-card"><div class="stat-label">Ce mois</div><div class="stat-value blue" id="scanMonth">—</div><div class="stat-sub">30 derniers jours</div></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-title">Activite mensuelle</div>
-        <div class="chart-wrap" id="chartWrap"><div class="loading">Chargement...</div></div>
-        <div class="legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Scans</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Prospects</div>
+      <div class="section-title">Prospects</div>
+      <div class="stats-grid-3">
+        <div class="stat-card"><div class="stat-label">Total Prospects</div><div class="stat-value" id="statTotal">—</div><div class="stat-sub">depuis le debut</div></div>
+        <div class="stat-card"><div class="stat-label">Cette semaine</div><div class="stat-value" id="statWeek">—</div><div class="stat-sub">7 derniers jours</div></div>
+        <div class="stat-card"><div class="stat-label">Ce mois</div><div class="stat-value" id="statMonth">—</div><div class="stat-sub">30 derniers jours</div></div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-card">
+          <div class="chart-title">Taux de conversion</div>
+          <div class="conversion-label"><span>Scans → Prospects</span><span id="convPct" style="color:var(--gold);font-weight:500">—</span></div>
+          <div class="conversion-bar"><div class="conversion-fill" id="convFill" style="width:0%"></div></div>
+          <div style="margin-top:16px;font-size:11px;color:var(--text-muted)" id="convDetail">Chargement...</div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Activite mensuelle</div>
+          <div class="chart-wrap" id="chartWrap"><div class="loading">Chargement...</div></div>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Scans</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Prospects</div>
+          </div>
         </div>
       </div>
+      <div class="stats-grid-4b">
+        <div class="stat-card"><div class="stat-label">Dernier prospect</div><div class="stat-value small" id="statLast">—</div><div class="stat-sub">date du dernier contact</div></div>
+        <div class="stat-card"><div class="stat-label">Dernier scan</div><div class="stat-value small" id="scanLast">—</div><div class="stat-sub">date du dernier scan</div></div>
+        <div class="stat-card"><div class="stat-label">Taux email</div><div class="stat-value" id="statEmail">—</div><div class="stat-sub">prospects avec email</div></div>
+        <div class="stat-card"><div class="stat-label">Taux telephone</div><div class="stat-value" id="statPhone">—</div><div class="stat-sub">prospects avec telephone</div></div>
+      </div>
+      <div class="section-title">Liste des prospects</div>
+      <div class="table-actions">
+        <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un prospect..." oninput="filterProspects()">
+        <button class="refresh-btn" onclick="loadAll()">Actualiser</button>
+      </div>
+      <div class="table-wrap" id="tableWrap"><div class="loading">Chargement...</div></div>
     </div>
+  </div>
 
-    <div class="stats-grid-4b">
-      <div class="stat-card"><div class="stat-label">Dernier prospect</div><div class="stat-value small" id="statLast">—</div><div class="stat-sub">date du dernier contact</div></div>
-      <div class="stat-card"><div class="stat-label">Dernier scan</div><div class="stat-value small" id="scanLast">—</div><div class="stat-sub">date du dernier scan</div></div>
-      <div class="stat-card"><div class="stat-label">Taux email</div><div class="stat-value" id="statEmail">—</div><div class="stat-sub">prospects avec email</div></div>
-      <div class="stat-card"><div class="stat-label">Taux telephone</div><div class="stat-value" id="statPhone">—</div><div class="stat-sub">prospects avec telephone</div></div>
-    </div>
+  <!-- BACK OFFICE PAGE -->
+  <div class="page" id="page-backoffice">
+    <div class="main">
 
-    <div class="section-title">Liste des prospects</div>
-    <div class="table-actions">
-      <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un prospect..." oninput="filterProspects()">
-      <button class="refresh-btn" onclick="loadAll()">Actualiser</button>
+      <!-- Profil -->
+      <div class="bo-section">
+        <div class="bo-section-title">👤 Mon profil</div>
+        <div class="bo-grid">
+          <div class="bo-field"><div class="bo-label">Nom complet</div><input class="bo-input" id="bo-nom" placeholder="Lilian Giteau"></div>
+          <div class="bo-field"><div class="bo-label">Titre / Poste</div><input class="bo-input" id="bo-titre" placeholder="Fondateur · Monaco"></div>
+          <div class="bo-field"><div class="bo-label">Telephone</div><input class="bo-input" id="bo-telephone" placeholder="0676257858"></div>
+          <div class="bo-field"><div class="bo-label">Email</div><input class="bo-input" id="bo-email" placeholder="email@gmail.com"></div>
+          <div class="bo-field full"><div class="bo-label">Lien Calendly (Rendez-vous)</div><input class="bo-input" id="bo-calendly" placeholder="https://calendly.com/..."></div>
+          <div class="bo-field"><div class="bo-label">Lien Catalogue</div><input class="bo-input" id="bo-catalogue_lien" placeholder="https://..."></div>
+          <div class="bo-field"><div class="bo-label">Label Catalogue</div><input class="bo-input" id="bo-catalogue_label" placeholder="Voir mes projets"></div>
+        </div>
+        <button class="bo-save-btn" onclick="saveProfil()">Enregistrer le profil</button>
+        <div class="bo-success" id="successProfil">✓ Profil mis à jour avec succès !</div>
+      </div>
+
+      <!-- Réseaux sociaux -->
+      <div class="bo-section">
+        <div class="bo-section-title">🌐 Réseaux sociaux</div>
+        <div class="bo-grid" style="margin-bottom:16px">
+          <div class="bo-field"><div class="bo-label">LinkedIn</div><input class="bo-input" id="bo-linkedin" placeholder="https://linkedin.com/in/..."></div>
+          <div class="bo-field"><div class="bo-label">Instagram</div><input class="bo-input" id="bo-instagram" placeholder="https://instagram.com/..."></div>
+          <div class="bo-field"><div class="bo-label">WhatsApp</div><input class="bo-input" id="bo-whatsapp" placeholder="https://wa.me/..."></div>
+          <div class="bo-field"><div class="bo-label">TikTok</div><input class="bo-input" id="bo-tiktok" placeholder="https://tiktok.com/@..."></div>
+          <div class="bo-field"><div class="bo-label">YouTube</div><input class="bo-input" id="bo-youtube" placeholder="https://youtube.com/@..."></div>
+          <div class="bo-field"><div class="bo-label">X / Twitter</div><input class="bo-input" id="bo-twitter" placeholder="https://twitter.com/..."></div>
+        </div>
+        <div class="section-title" style="margin-bottom:12px">Affichage</div>
+        <div class="social-toggle-grid">
+          <div class="social-toggle"><span class="social-toggle-name">LinkedIn</span><label class="toggle"><input type="checkbox" id="bo-linkedin_actif"><span class="toggle-slider"></span></label></div>
+          <div class="social-toggle"><span class="social-toggle-name">Instagram</span><label class="toggle"><input type="checkbox" id="bo-instagram_actif"><span class="toggle-slider"></span></label></div>
+          <div class="social-toggle"><span class="social-toggle-name">WhatsApp</span><label class="toggle"><input type="checkbox" id="bo-whatsapp_actif"><span class="toggle-slider"></span></label></div>
+          <div class="social-toggle"><span class="social-toggle-name">TikTok</span><label class="toggle"><input type="checkbox" id="bo-tiktok_actif"><span class="toggle-slider"></span></label></div>
+          <div class="social-toggle"><span class="social-toggle-name">YouTube</span><label class="toggle"><input type="checkbox" id="bo-youtube_actif"><span class="toggle-slider"></span></label></div>
+          <div class="social-toggle"><span class="social-toggle-name">X / Twitter</span><label class="toggle"><input type="checkbox" id="bo-twitter_actif"><span class="toggle-slider"></span></label></div>
+        </div>
+        <button class="bo-save-btn" onclick="saveProfil()">Enregistrer les reseaux</button>
+        <div class="bo-success" id="successReseaux">✓ Reseaux mis à jour !</div>
+      </div>
+
+      <!-- Email automatique -->
+      <div class="bo-section">
+        <div class="bo-section-title">📧 Email automatique</div>
+        <div class="bo-field" style="margin-bottom:14px"><div class="bo-label">Sujet de l'email</div><input class="bo-input" id="bo-email_sujet" placeholder="Merci pour notre echange !"></div>
+        <div class="bo-field"><div class="bo-label">Message (utilisez {nom} pour le prenom du prospect)</div><textarea class="bo-textarea" id="bo-email_message" placeholder="Bonjour {nom}, merci pour notre echange..."></textarea></div>
+        <button class="bo-save-btn" onclick="saveConfig()">Enregistrer l'email</button>
+        <div class="bo-success" id="successEmail">✓ Email automatique mis à jour !</div>
+      </div>
+
+      <!-- Newsletter -->
+      <div class="bo-section">
+        <div class="bo-section-title">📨 Newsletter</div>
+        <div class="newsletter-stats">
+          <div class="nl-stat"><div class="nl-stat-value" id="nlTotal">—</div><div class="nl-stat-label">Contacts avec email</div></div>
+          <div class="nl-stat"><div class="nl-stat-value" id="nlSent" style="color:var(--green)">0</div><div class="nl-stat-label">Emails envoyés</div></div>
+        </div>
+        <div class="bo-field" style="margin-bottom:14px"><div class="bo-label">Sujet</div><input class="bo-input" id="nl-sujet" placeholder="Votre sujet de newsletter..."></div>
+        <div class="bo-field"><div class="bo-label">Message</div><textarea class="bo-textarea" id="nl-message" placeholder="Votre message..."></textarea></div>
+        <button class="send-btn" onclick="sendNewsletter()">📨 Envoyer à tous les prospects</button>
+        <div class="bo-success" id="successNl">✓ Newsletter envoyee !</div>
+      </div>
+
     </div>
-    <div class="table-wrap" id="tableWrap"><div class="loading">Chargement...</div></div>
   </div>
 </div>
 
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyf69AQdhE8GhG6sLKZjb9tzKCBF7lsV9CDDnzhHWyRWZ9r6pi43YfxeN68vp1FEXVf/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSrA70lw288Oswp1wjgVCrDY7OFAt974QsNjTEocZtbu59ITHEJUPtoO_-mtwgErWK/exec';
 var VALID_EMAIL = 'giteaulilian@gmail.com';
 var VALID_PASSWORD = 'Lg20Lg10=';
 var allProspects = [];
@@ -195,8 +306,10 @@ var scansLoaded = false;
 // Check session
 if (sessionStorage.getItem('protap_auth') === 'true') {
   document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('dashboardPage').style.display = 'block';
+  document.getElementById('app').style.display = 'block';
   loadAll();
+  loadProfil();
+  loadConfig();
 }
 
 function doLogin() {
@@ -205,9 +318,11 @@ function doLogin() {
   if (email === VALID_EMAIL && password === VALID_PASSWORD) {
     sessionStorage.setItem('protap_auth', 'true');
     document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('dashboardPage').style.display = 'block';
+    document.getElementById('app').style.display = 'block';
     document.getElementById('loginError').classList.remove('show');
     loadAll();
+    loadProfil();
+    loadConfig();
   } else {
     document.getElementById('loginError').classList.add('show');
     document.getElementById('loginPassword').value = '';
@@ -216,10 +331,19 @@ function doLogin() {
 
 function doLogout() {
   sessionStorage.removeItem('protap_auth');
-  document.getElementById('dashboardPage').style.display = 'none';
+  document.getElementById('app').style.display = 'none';
   document.getElementById('loginPage').style.display = 'flex';
   document.getElementById('loginEmail').value = '';
   document.getElementById('loginPassword').value = '';
+}
+
+function showTab(tab) {
+  document.querySelectorAll('.tab').forEach(function(t, i){ t.classList.remove('active'); });
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('page-' + tab).classList.add('active');
+  var tabs = document.querySelectorAll('.tab');
+  if (tab === 'dashboard') tabs[0].classList.add('active');
+  else tabs[1].classList.add('active');
 }
 
 function parseDate(raw) {
@@ -238,35 +362,34 @@ function formatDate(raw) {
 }
 
 function jsonp(url, cbName, callback) {
-  window[cbName] = function(data) {
-    callback(data);
-    delete window[cbName];
-    var s = document.getElementById(cbName);
-    if (s) s.remove();
-  };
+  window[cbName] = function(data) { callback(data); delete window[cbName]; var s=document.getElementById(cbName); if(s)s.remove(); };
   var script = document.createElement('script');
   script.id = cbName;
   script.src = url + '&callback=' + cbName + '&t=' + Date.now();
   document.body.appendChild(script);
 }
 
+function imgCall(url) {
+  var img = new Image();
+  img.src = url + '&t=' + Date.now();
+}
+
 function loadAll() {
-  prospectsLoaded = false;
-  scansLoaded = false;
-  allProspects = [];
-  allScans = [];
+  prospectsLoaded = false; scansLoaded = false;
+  allProspects = []; allScans = [];
   document.getElementById('tableWrap').innerHTML = '<div class="loading">Chargement...</div>';
   document.getElementById('chartWrap').innerHTML = '<div class="loading">Chargement...</div>';
 
   jsonp(SCRIPT_URL + '?action=get', 'prospectCb', function(data) {
     if (data.status === 'success') {
-      allProspects = (data.data || []).reverse().map(function(p) {
-        return { dateRaw: p.date ? String(p.date) : '', nom: p.nom || '', telephone: p.telephone || '', email: p.email || '', commercial: p.commercial || '' };
-      }).filter(function(p){ return p.nom || p.email || p.telephone; });
+      allProspects = (data.data || []).reverse().map(function(p){
+        return { dateRaw: p.date?String(p.date):'', nom: p.nom||'', telephone: p.telephone||'', email: p.email||'', commercial: p.commercial||'' };
+      }).filter(function(p){ return p.nom||p.email||p.telephone; });
     }
     prospectsLoaded = true;
     updateProspectStats(allProspects);
     renderTable(allProspects);
+    updateNlStats(allProspects);
     if (scansLoaded) { renderChart(allScans, allProspects); updateConversion(allScans, allProspects); }
   });
 
@@ -276,6 +399,72 @@ function loadAll() {
     updateScanStats(allScans);
     if (prospectsLoaded) { renderChart(allScans, allProspects); updateConversion(allScans, allProspects); }
   });
+}
+
+function loadProfil() {
+  jsonp(SCRIPT_URL + '?action=getProfil', 'profilCb', function(data) {
+    if (data.status !== 'success') return;
+    var p = data.data;
+    var fields = ['nom','titre','telephone','email','calendly','catalogue_lien','catalogue_label','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+    fields.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el&&p[f]) el.value=p[f]; });
+    var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+    toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) el.checked=(p[f+'_actif']==='oui'); });
+    if (p['nom']) document.getElementById('headerName').textContent = p['nom'];
+  });
+}
+
+function loadConfig() {
+  jsonp(SCRIPT_URL + '?action=get', 'configCb2', function(data) {});
+  // Load config separately via direct fetch simulation
+  jsonp(SCRIPT_URL + '?action=getProfil', 'configLoad', function(data) {});
+  // Load email config from Apps Script
+  fetch(SCRIPT_URL + '?action=getConfig&t=' + Date.now())
+    .then(function(r){ return r.text(); })
+    .catch(function(){});
+}
+
+function saveProfil() {
+  var params = ['nom','titre','telephone','email','calendly','catalogue_lien','catalogue_label','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+  var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+  var url = SCRIPT_URL + '?action=saveProfil';
+  params.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value); });
+  toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) url+='&'+f+'_actif='+(el.checked?'oui':'non'); });
+  imgCall(url);
+  document.getElementById('successProfil').classList.add('show');
+  document.getElementById('successReseaux').classList.add('show');
+  setTimeout(function(){ document.getElementById('successProfil').classList.remove('show'); document.getElementById('successReseaux').classList.remove('show'); }, 3000);
+}
+
+function saveConfig() {
+  var sujet = document.getElementById('bo-email_sujet').value;
+  var message = document.getElementById('bo-email_message').value;
+  var url = SCRIPT_URL + '?action=saveConfig&email_sujet=' + encodeURIComponent(sujet) + '&email_message=' + encodeURIComponent(message);
+  imgCall(url);
+  document.getElementById('successEmail').classList.add('show');
+  setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
+}
+
+function sendNewsletter() {
+  var sujet = document.getElementById('nl-sujet').value.trim();
+  var message = document.getElementById('nl-message').value.trim();
+  if (!sujet || !message) { alert('Remplissez le sujet et le message.'); return; }
+  if (!confirm('Envoyer cet email à tous vos prospects avec une adresse email ?')) return;
+  var url = SCRIPT_URL + '?action=newsletter&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(message);
+  fetch(url).then(function(r){ return r.json(); }).then(function(data){
+    if (data.status === 'success') {
+      document.getElementById('nlSent').textContent = data.sent;
+      document.getElementById('successNl').classList.add('show');
+      setTimeout(function(){ document.getElementById('successNl').classList.remove('show'); }, 4000);
+    }
+  }).catch(function(){
+    document.getElementById('successNl').classList.add('show');
+    setTimeout(function(){ document.getElementById('successNl').classList.remove('show'); }, 4000);
+  });
+}
+
+function updateNlStats(prospects) {
+  var withEmail = prospects.filter(function(p){ return p.email&&p.email.indexOf('@')!==-1; }).length;
+  document.getElementById('nlTotal').textContent = withEmail;
 }
 
 function updateScanStats(scans) {
@@ -319,24 +508,14 @@ function updateConversion(scans, prospects) {
 function renderChart(scans, prospects) {
   var now = new Date();
   var months = [];
-  for (var i=5;i>=0;i--) {
-    var d = new Date(now.getFullYear(), now.getMonth()-i, 1);
-    months.push({ label: d.toLocaleDateString('fr-FR',{month:'short'}), year: d.getFullYear(), month: d.getMonth(), scans: 0, prospects: 0 });
-  }
+  for (var i=5;i>=0;i--) { var d=new Date(now.getFullYear(),now.getMonth()-i,1); months.push({label:d.toLocaleDateString('fr-FR',{month:'short'}),year:d.getFullYear(),month:d.getMonth(),scans:0,prospects:0}); }
   scans.forEach(function(s){ var d=parseDate(s.date); if(d) months.forEach(function(m){ if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.scans++; }); });
   prospects.forEach(function(p){ var d=parseDate(p.dateRaw); if(d) months.forEach(function(m){ if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.prospects++; }); });
   var maxVal = Math.max.apply(null, months.map(function(m){ return Math.max(m.scans,m.prospects); })) || 1;
   var currentMonth = now.getMonth();
   var html = months.map(function(m){
-    var hS = Math.max(3, Math.round((m.scans/maxVal)*70));
-    var hP = m.prospects>0 ? Math.max(2, Math.round((m.prospects/maxVal)*70)) : 2;
-    var isActive = m.month===currentMonth;
-    return '<div class="chart-bar-wrap">'
-      + (m.scans>0?'<div style="font-size:9px;color:var(--text-muted)">'+m.scans+'</div>':'<div style="font-size:9px">&nbsp;</div>')
-      + '<div style="display:flex;gap:2px;align-items:flex-end;width:100%">'
-      + '<div class="chart-bar scans'+(isActive?' active':'')+'" style="height:'+hS+'px;flex:1"></div>'
-      + '<div class="chart-bar prospects'+(isActive?' active':'')+'" style="height:'+hP+'px;flex:1"></div>'
-      + '</div><div class="chart-bar-label">'+m.label+'</div></div>';
+    var hS=Math.max(3,Math.round((m.scans/maxVal)*70)); var hP=m.prospects>0?Math.max(2,Math.round((m.prospects/maxVal)*70)):2; var isActive=m.month===currentMonth;
+    return '<div class="chart-bar-wrap">'+(m.scans>0?'<div style="font-size:9px;color:var(--text-muted)">'+m.scans+'</div>':'<div style="font-size:9px">&nbsp;</div>')+'<div style="display:flex;gap:2px;align-items:flex-end;width:100%"><div class="chart-bar scans'+(isActive?' active':'')+'" style="height:'+hS+'px;flex:1"></div><div class="chart-bar prospects'+(isActive?' active':'')+'" style="height:'+hP+'px;flex:1"></div></div><div class="chart-bar-label">'+m.label+'</div></div>';
   }).join('');
   document.getElementById('chartWrap').innerHTML = html;
 }
@@ -344,10 +523,7 @@ function renderChart(scans, prospects) {
 function renderTable(prospects) {
   if (prospects.length===0) { document.getElementById('tableWrap').innerHTML='<div class="empty"><p>Aucun prospect pour l\'instant.</p></div>'; return; }
   var now=new Date(); var weekAgo=new Date(now-7*24*60*60*1000);
-  var rows=prospects.map(function(p){
-    var d=parseDate(p.dateRaw); var dateStr=formatDate(p.dateRaw); var isNew=d&&d>weekAgo;
-    return '<tr><td>'+(p.nom||'—')+(isNew?'<span class="badge-new">Nouveau</span>':'')+'</td><td>'+(p.telephone||'—')+'</td><td>'+(p.email||'—')+'</td><td>'+dateStr+'</td></tr>';
-  }).join('');
+  var rows=prospects.map(function(p){ var d=parseDate(p.dateRaw); var dateStr=formatDate(p.dateRaw); var isNew=d&&d>weekAgo; return '<tr><td>'+(p.nom||'—')+(isNew?'<span class="badge-new">Nouveau</span>':'')+'</td><td>'+(p.telephone||'—')+'</td><td>'+(p.email||'—')+'</td><td>'+dateStr+'</td></tr>'; }).join('');
   document.getElementById('tableWrap').innerHTML='<table class="table"><thead><tr><th>Nom</th><th>Telephone</th><th>Email</th><th>Date</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
 
