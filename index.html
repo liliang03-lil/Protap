@@ -183,7 +183,7 @@
 <script>
 // Enregistrer le scan automatiquement
 var img = new Image();
-img.src = 'https://script.google.com/macros/s/AKfycbyf69AQdhE8GhG6sLKZjb9tzKCBF7lsV9CDDnzhHWyRWZ9r6pi43YfxeN68vp1FEXVf/exec?action=scan&page=profil&t=' + Date.now();
+img.src = 'https://script.google.com/macros/s/AKfycbwSrA70lw288Oswp1wjgVCrDY7OFAt974QsNjTEocZtbu59ITHEJUPtoO_-mtwgErWK/exec?action=scan&page=profil&t=' + Date.now();
 
 function downloadVCard(e) {
   e.preventDefault();
@@ -200,7 +200,7 @@ function submitForm() {
   var phone = document.getElementById('prospectPhone').value.trim();
   var email = document.getElementById('prospectEmail').value.trim();
   if (!name && !phone && !email) { document.getElementById('prospectName').focus(); return; }
-  var url = 'https://script.google.com/macros/s/AKfycbyf69AQdhE8GhG6sLKZjb9tzKCBF7lsV9CDDnzhHWyRWZ9r6pi43YfxeN68vp1FEXVf/exec'
+  var url = 'https://script.google.com/macros/s/AKfycbwSrA70lw288Oswp1wjgVCrDY7OFAt974QsNjTEocZtbu59ITHEJUPtoO_-mtwgErWK/exec'
     + '?nom=' + encodeURIComponent(name)
     + '&telephone=' + encodeURIComponent(phone)
     + '&email=' + encodeURIComponent(email)
