@@ -181,6 +181,10 @@
   </div>
 </div>
 <script>
+// Enregistrer le scan automatiquement
+var img = new Image();
+img.src = 'https://script.google.com/macros/s/AKfycbzjbYlK7pVL73HSx2gLQcJpBBO03gBxHnCMT1poHg4MHlYrPlkfMu3MZm6jPXqsVwk9sQ/exec?action=scan&page=profil&t=' + Date.now();
+
 function downloadVCard(e) {
   e.preventDefault();
   var vcard = "BEGIN:VCARD\nVERSION:3.0\nFN:Lilian Giteau\nN:Giteau;Lilian;;;\nTITLE:Fondateur\nTEL;TYPE=CELL:+33676257858\nEMAIL:giteaulilian@gmail.com\nURL:https://liliang03-lil.github.io/Protap\nEND:VCARD";
@@ -190,18 +194,19 @@ function downloadVCard(e) {
   a.href = url; a.download = 'Lilian_Giteau.vcf'; a.click();
   URL.revokeObjectURL(url);
 }
+
 function submitForm() {
   var name = document.getElementById('prospectName').value.trim();
   var phone = document.getElementById('prospectPhone').value.trim();
   var email = document.getElementById('prospectEmail').value.trim();
   if (!name && !phone && !email) { document.getElementById('prospectName').focus(); return; }
-  var url = 'https://script.google.com/macros/s/AKfycbwQVT70lwY09BnyyZOhgVXrRwEstVGtLgEFrZYohvshH5XRvaxlcg_EYOOLIypveXaLxw/exec'
+  var url = 'https://script.google.com/macros/s/AKfycbzjbYlK7pVL73HSx2gLQcJpBBO03gBxHnCMT1poHg4MHlYrPlkfMu3MZm6jPXqsVwk9sQ/exec'
     + '?nom=' + encodeURIComponent(name)
     + '&telephone=' + encodeURIComponent(phone)
     + '&email=' + encodeURIComponent(email)
     + '&commercial=Lilian%20Giteau';
-  var img = new Image();
-  img.src = url;
+  var img2 = new Image();
+  img2.src = url;
   document.getElementById('prospectForm').style.display = 'none';
   document.getElementById('successMsg').classList.add('show');
 }
