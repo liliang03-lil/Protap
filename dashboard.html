@@ -295,7 +295,7 @@
 </div>
 
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzUmy0xlHIZV6qLFFVzN5OJCinOcWXvCfHSdur4Qo0p3twZkSQ7kpXI71L8ijelCiPSVQ/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzguecAUoYAjfE0SR53jm821A7hfUK-HRuCV3cqKz4oYwhjRxeX5dvHPCNgp8y1E1yWSg/exec';
 var VALID_EMAIL = 'giteaulilian@gmail.com';
 var VALID_PASSWORD = 'Lg20Lg10=';
 var allProspects = [];
@@ -437,17 +437,19 @@ function saveProfil() {
 function saveConfig() {
   var sujet = document.getElementById('bo-email_sujet').value;
   var message = document.getElementById('bo-email_message').value;
-  var url = SCRIPT_URL + '?action=saveConfig&email_sujet=' + encodeURIComponent(sujet) + '&email_message=' + encodeURIComponent(message);
-  fetch(url)
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      document.getElementById('successEmail').classList.add('show');
-      setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
-    })
-    .catch(function(){
-      document.getElementById('successEmail').classList.add('show');
-      setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
-    });
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({action: 'saveConfig', email_sujet: sujet, email_message: message})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    document.getElementById('successEmail').classList.add('show');
+    setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
+  })
+  .catch(function(){
+    document.getElementById('successEmail').classList.add('show');
+    setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
+  });
 }
 
 function sendNewsletter() {
