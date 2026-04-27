@@ -438,9 +438,16 @@ function saveConfig() {
   var sujet = document.getElementById('bo-email_sujet').value;
   var message = document.getElementById('bo-email_message').value;
   var url = SCRIPT_URL + '?action=saveConfig&email_sujet=' + encodeURIComponent(sujet) + '&email_message=' + encodeURIComponent(message);
-  imgCall(url);
-  document.getElementById('successEmail').classList.add('show');
-  setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      document.getElementById('successEmail').classList.add('show');
+      setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
+    })
+    .catch(function(){
+      document.getElementById('successEmail').classList.add('show');
+      setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
+    });
 }
 
 function sendNewsletter() {
