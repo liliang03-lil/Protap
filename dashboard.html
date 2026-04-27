@@ -134,7 +134,7 @@
 
 <script>
 var CSV_PROSPECTS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSk5Y0hWzSV_xUTink8-3OCzoK5fgpGjih-a1eNavt3KvCJ4mR4AXEt5evvPJ6FKxlTD5SWsJ3vp4dF/pub?gid=0CSV_PROSPECTS_PLACEHOLDERsingle=trueCSV_PROSPECTS_PLACEHOLDERoutput=csv';
-var CSV_SCANS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSk5Y0hWzSV_xUTink8-3OCzoK5fgpGjih-a1eNavt3KvCJ4mR4AXEt5evvPJ6FKxlTD5SWsJ3vp4dF/pub?gid=2042489652CSV_SCANS_PLACEHOLDERsingle=trueCSV_SCANS_PLACEHOLDERoutput=csv';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjbYlK7pVL73HSx2gLQcJpBBO03gBxHnCMT1poHg4MHlYrPlkfMu3MZm6jPXqsVwk9sQ/exec';
 var allProspects = [];
 var allScans = [];
 
@@ -146,10 +146,8 @@ function cleanCell(v) {
 function parseDate(raw) {
   if (!raw) return null;
   raw = cleanCell(raw);
-  // DD/MM/YYYY
   var m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
   if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
-  // Try standard
   var d = new Date(raw);
   return isNaN(d.getTime()) ? null : d;
 }
@@ -161,16 +159,13 @@ function formatDate(raw) {
 }
 
 function parseCSV(text) {
-  // Remove BOM and HTML artifacts
   text = text.replace(/^\uFEFF/, '').replace(/<[^>]*>/g, '');
   var lines = text.trim().split('\n');
   var rows = [];
   for (var i = 1; i < lines.length; i++) {
     var line = lines[i].trim();
     if (!line) continue;
-    // Handle quoted fields
-    var cols = [];
-    var cur = ''; var inQ = false;
+    var cols = []; var cur = ''; var inQ = false;
     for (var c = 0; c < line.length; c++) {
       if (line[c] === '"') { inQ = !inQ; }
       else if (line[c] === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
@@ -182,38 +177,40 @@ function parseCSV(text) {
   return rows;
 }
 
-function isToday(d) {
-  if (!d) return false;
-  var now = new Date();
-  return d.getDate()===now.getDate() && d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
-}
-
 function loadAll() {
   document.getElementById('tableWrap').innerHTML = '<div class="loading">Chargement...</div>';
   document.getElementById('chartWrap').innerHTML = '<div class="loading">Chargement...</div>';
 
-  var p1 = fetch(CSV_PROSPECTS + '&t=' + Date.now()).then(function(r){ return r.text(); });
-  var p2 = fetch(CSV_SCANS + '&t=' + Date.now()).then(function(r){ return r.text(); });
+  // Load prospects via CSV
+  fetch(CSV_PROSPECTS + '&t=' + Date.now())
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      var rows = parseCSV(text);
+      allProspects = rows.map(function(r){
+        return { dateRaw: r[0]||'', nom: r[1]||'', telephone: r[2]||'', email: r[3]||'', commercial: r[4]||'' };
+      }).filter(function(p){ return p.nom || p.email || p.telephone; }).reverse();
+      updateProspectStats(allProspects);
+      renderTable(allProspects);
+      renderChart(allScans, allProspects);
+    });
 
-  Promise.all([p1, p2]).then(function(results) {
-    var prospectRows = parseCSV(results[0]);
-    allProspects = prospectRows.map(function(r){
-      return { dateRaw: r[0]||'', nom: r[1]||'', telephone: r[2]||'', email: r[3]||'', commercial: r[4]||'' };
-    }).filter(function(p){ return p.nom || p.email || p.telephone; }).reverse();
-
-    var scanRows = parseCSV(results[1]);
-    allScans = scanRows.map(function(r){
-      return { date: r[0]||'', heure: r[1]||'', page: r[2]||'' };
-    }).filter(function(s){ return s.date; });
-
-    updateScanStats(allScans);
-    updateProspectStats(allProspects);
-    updateConversion(allScans, allProspects);
-    renderChart(allScans, allProspects);
-    renderTable(allProspects);
-  }).catch(function(e) {
-    document.getElementById('tableWrap').innerHTML = '<div class="empty"><p>Impossible de charger les donnees.</p></div>';
-  });
+  // Load scans via JSONP
+  var cbName = 'scanCb_' + Date.now();
+  window[cbName] = function(data) {
+    if (data.status === 'success') {
+      allScans = data.data || [];
+      updateScanStats(allScans);
+      updateConversion(allScans, allProspects);
+      renderChart(allScans, allProspects);
+    }
+    delete window[cbName];
+    var s = document.getElementById('scanScript');
+    if (s) s.remove();
+  };
+  var script = document.createElement('script');
+  script.id = 'scanScript';
+  script.src = SCRIPT_URL + '?action=getScans&callback=' + cbName + '&t=' + Date.now();
+  document.body.appendChild(script);
 }
 
 function updateScanStats(scans) {
@@ -221,15 +218,30 @@ function updateScanStats(scans) {
   var todayStart = new Date(now); todayStart.setHours(0,0,0,0);
   var weekAgo = new Date(now - 7*24*60*60*1000);
   var monthAgo = new Date(now - 30*24*60*60*1000);
-  var today = scans.filter(function(s){ var d=parseDate(s.date); return d&&d>=todayStart; }).length;
-  var week = scans.filter(function(s){ var d=parseDate(s.date); return d&&d>weekAgo; }).length;
-  var month = scans.filter(function(s){ var d=parseDate(s.date); return d&&d>monthAgo; }).length;
+
+  // Parse scan dates — format is DD/MM/YYYY from Apps Script
+  function parseScanDate(raw) {
+    if (!raw) return null;
+    raw = String(raw).trim();
+    var m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
+    var d = new Date(raw);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  var today = scans.filter(function(s){ var d=parseScanDate(s.date); return d&&d>=todayStart; }).length;
+  var week = scans.filter(function(s){ var d=parseScanDate(s.date); return d&&d>weekAgo; }).length;
+  var month = scans.filter(function(s){ var d=parseScanDate(s.date); return d&&d>monthAgo; }).length;
+
   document.getElementById('scanTotal').textContent = scans.length;
   document.getElementById('scanToday').textContent = today;
   document.getElementById('scanWeek').textContent = week;
   document.getElementById('scanMonth').textContent = month;
-  var last = scans.length > 0 ? formatDate(scans[scans.length-1].date) : '—';
+
+  var last = scans.length > 0 ? String(scans[scans.length-1].date).split(' ')[0] : '—';
   document.getElementById('scanLast').textContent = last;
+
+  updateConversion(scans, allProspects);
 }
 
 function updateProspectStats(prospects) {
@@ -262,16 +274,27 @@ function renderChart(scans, prospects) {
     var d = new Date(now.getFullYear(), now.getMonth()-i, 1);
     months.push({ label: d.toLocaleDateString('fr-FR',{month:'short'}), year: d.getFullYear(), month: d.getMonth(), scans: 0, prospects: 0 });
   }
-  scans.forEach(function(s){ var d=parseDate(s.date); if(d) months.forEach(function(m){ if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.scans++; }); });
+
+  function parseScanDate(raw) {
+    if (!raw) return null;
+    raw = String(raw).trim();
+    var m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
+    return null;
+  }
+
+  scans.forEach(function(s){ var d=parseScanDate(s.date); if(d) months.forEach(function(m){ if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.scans++; }); });
   prospects.forEach(function(p){ var d=parseDate(p.dateRaw); if(d) months.forEach(function(m){ if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.prospects++; }); });
+
   var maxVal = Math.max.apply(null, months.map(function(m){ return Math.max(m.scans, m.prospects); })) || 1;
   var currentMonth = now.getMonth();
+
   var html = months.map(function(m){
     var hS = Math.max(3, Math.round((m.scans/maxVal)*70));
-    var hP = m.scans>0 ? Math.max(2, Math.round((m.prospects/maxVal)*70)) : 2;
+    var hP = m.prospects > 0 ? Math.max(2, Math.round((m.prospects/maxVal)*70)) : 2;
     var isActive = m.month === currentMonth;
     return '<div class="chart-bar-wrap">'
-      + (m.scans>0?'<div style="font-size:9px;color:var(--text-muted)">'+m.scans+'</div>':'<div style="font-size:9px"></div>')
+      + (m.scans>0?'<div style="font-size:9px;color:var(--text-muted)">'+m.scans+'</div>':'<div style="font-size:9px">&nbsp;</div>')
       + '<div style="display:flex;gap:2px;align-items:flex-end;width:100%">'
       + '<div class="chart-bar scans'+(isActive?' active':'')+'" style="height:'+hS+'px;flex:1"></div>'
       + '<div class="chart-bar prospects'+(isActive?' active':'')+'" style="height:'+hP+'px;flex:1"></div>'
