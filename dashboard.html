@@ -437,19 +437,39 @@ function saveProfil() {
 function saveConfig() {
   var sujet = document.getElementById('bo-email_sujet').value;
   var message = document.getElementById('bo-email_message').value;
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    body: JSON.stringify({action: 'saveConfig', email_sujet: sujet, email_message: message})
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    document.getElementById('successEmail').classList.add('show');
-    setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
-  })
-  .catch(function(){
-    document.getElementById('successEmail').classList.add('show');
-    setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
+
+  // Créer un formulaire invisible pour contourner le CORS
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = SCRIPT_URL;
+  form.target = 'hidden_iframe';
+  form.style.display = 'none';
+
+  var fields = {action: 'saveConfig', email_sujet: sujet, email_message: message};
+  Object.keys(fields).forEach(function(key) {
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = fields[key];
+    form.appendChild(input);
   });
+
+  // Créer un iframe invisible pour recevoir la réponse
+  var iframe = document.getElementById('hidden_iframe');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.name = 'hidden_iframe';
+    iframe.id = 'hidden_iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+
+  document.getElementById('successEmail').classList.add('show');
+  setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
 }
 
 function sendNewsletter() {
