@@ -295,7 +295,7 @@
 </div>
 
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzd7FFZm2E8t2triaI-ZKTKizVkFysgrOPSyY0dfWPo5xhFkMnJUruzJ2YxFKABjSzp-Q/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8REapFmrwE-LbT8TsCc8J_GaZkuUtItlyMuZvQSUeHBTLkzG_bQL8_ZjVXJQWYFkD/exec';
 var VALID_EMAIL = 'giteaulilian@gmail.com';
 var VALID_PASSWORD = 'Lg20Lg10=';
 var allProspects = [];
@@ -437,37 +437,12 @@ function saveProfil() {
 function saveConfig() {
   var sujet = document.getElementById('bo-email_sujet').value;
   var message = document.getElementById('bo-email_message').value;
-
-  // Créer un formulaire invisible pour contourner le CORS
-  var form = document.createElement('form');
-  form.method = 'POST';
-  form.action = SCRIPT_URL;
-  form.target = 'hidden_iframe';
-  form.style.display = 'none';
-
-  var fields = {action: 'saveConfig', email_sujet: sujet, email_message: message};
-  Object.keys(fields).forEach(function(key) {
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = key;
-    input.value = fields[key];
-    form.appendChild(input);
-  });
-
-  // Créer un iframe invisible pour recevoir la réponse
-  var iframe = document.getElementById('hidden_iframe');
-  if (!iframe) {
-    iframe = document.createElement('iframe');
-    iframe.name = 'hidden_iframe';
-    iframe.id = 'hidden_iframe';
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-  }
-
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
-
+  // Encode en base64 pour contourner les problemes de caracteres speciaux
+  var sujetB64 = btoa(unescape(encodeURIComponent(sujet)));
+  var messageB64 = btoa(unescape(encodeURIComponent(message)));
+  var url = SCRIPT_URL + '?action=saveConfig&email_sujet_b64=' + sujetB64 + '&email_message_b64=' + messageB64;
+  var img = new Image();
+  img.src = url;
   document.getElementById('successEmail').classList.add('show');
   setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
 }
