@@ -154,12 +154,14 @@
 </div>
 
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzUWpHogDnWJxiHG9Nlf6Z8AeXSY0klEv7R2abCPW-z5guT7cDavw71gLhff3y4L8PGBw/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyN8bD_V9LguhN4otAfpVuv5X6qND-7b9iq6WNSxzziYty29_Q9pp-4baPo4f_gtfUm2A/exec';
 var profil = {};
 
 // Enregistrer scan
 var scanImg = new Image();
-scanImg.src = SCRIPT_URL + '?action=scan&page=profil&t=' + Date.now();
+var urlParams = new URLSearchParams(window.location.search);
+var commercialId = urlParams.get('id') || 'lilian';
+scanImg.src = SCRIPT_URL + '?action=scan&page=profil&id=' + commercialId + '&t=' + Date.now();
 
 // Icones réseaux sociaux
 var socialIcons = {
@@ -212,7 +214,7 @@ window[cbName] = function(data) {
 };
 var script = document.createElement('script');
 script.id = cbName;
-script.src = SCRIPT_URL + '?action=getProfil&callback=' + cbName + '&t=' + Date.now();
+script.src = SCRIPT_URL + '?action=getProfil&id=' + commercialId + '&callback=' + cbName + '&t=' + Date.now();
 document.body.appendChild(script);
 
 function formatPhone(tel) {
@@ -245,7 +247,8 @@ function submitForm() {
     + '?nom=' + encodeURIComponent(name)
     + '&telephone=' + encodeURIComponent(phone)
     + '&email=' + encodeURIComponent(email)
-    + '&commercial=' + encodeURIComponent(commercial);
+    + '&commercial=' + encodeURIComponent(commercial)
+    + '&id=' + commercialId;
   var img2 = new Image();
   img2.src = url;
   document.getElementById('prospectForm').style.display = 'none';
