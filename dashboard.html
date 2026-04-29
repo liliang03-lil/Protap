@@ -295,9 +295,8 @@
 </div>
 
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzUWpHogDnWJxiHG9Nlf6Z8AeXSY0klEv7R2abCPW-z5guT7cDavw71gLhff3y4L8PGBw/exec';
-var VALID_EMAIL = 'giteaulilian@gmail.com';
-var VALID_PASSWORD = 'Lg20Lg10=';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyN8bD_V9LguhN4otAfpVuv5X6qND-7b9iq6WNSxzziYty29_Q9pp-4baPo4f_gtfUm2A/exec';
+var COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
 var allProspects = [];
 var allScans = [];
 var prospectsLoaded = false;
@@ -305,6 +304,7 @@ var scansLoaded = false;
 
 // Check session
 if (sessionStorage.getItem('protap_auth') === 'true') {
+  COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   loadAll();
@@ -315,18 +315,33 @@ if (sessionStorage.getItem('protap_auth') === 'true') {
 function doLogin() {
   var email = document.getElementById('loginEmail').value.trim().toLowerCase();
   var password = document.getElementById('loginPassword').value;
-  if (email === VALID_EMAIL && password === VALID_PASSWORD) {
-    sessionStorage.setItem('protap_auth', 'true');
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    document.getElementById('loginError').classList.remove('show');
-    loadAll();
-    loadProfil();
-    loadConfig();
-  } else {
-    document.getElementById('loginError').classList.add('show');
-    document.getElementById('loginPassword').value = '';
-  }
+  
+  var cbName = 'loginCb_' + Date.now();
+  window[cbName] = function(data) {
+    delete window[cbName];
+    var s = document.getElementById(cbName);
+    if (s) s.remove();
+    if (data.status === 'success') {
+      sessionStorage.setItem('protap_auth', 'true');
+      sessionStorage.setItem('protap_id', data.id);
+      sessionStorage.setItem('protap_nom', data.nom);
+      COMMERCIAL_ID = data.id;
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      document.getElementById('loginError').classList.remove('show');
+      document.getElementById('headerName').textContent = data.nom;
+      loadAll();
+      loadProfil();
+      loadConfig();
+    } else {
+      document.getElementById('loginError').classList.add('show');
+      document.getElementById('loginPassword').value = '';
+    }
+  };
+  var script = document.createElement('script');
+  script.id = cbName;
+  script.src = SCRIPT_URL + '?action=login&email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&callback=' + cbName;
+  document.body.appendChild(script);
 }
 
 function doLogout() {
@@ -380,7 +395,7 @@ function loadAll() {
   document.getElementById('tableWrap').innerHTML = '<div class="loading">Chargement...</div>';
   document.getElementById('chartWrap').innerHTML = '<div class="loading">Chargement...</div>';
 
-  jsonp(SCRIPT_URL + '?action=get', 'prospectCb', function(data) {
+  jsonp(SCRIPT_URL + '?action=get&id=' + COMMERCIAL_ID, 'prospectCb', function(data) {
     if (data.status === 'success') {
       allProspects = (data.data || []).reverse().map(function(p){
         return { dateRaw: p.date?String(p.date):'', nom: p.nom||'', telephone: p.telephone||'', email: p.email||'', commercial: p.commercial||'' };
@@ -393,7 +408,7 @@ function loadAll() {
     if (scansLoaded) { renderChart(allScans, allProspects); updateConversion(allScans, allProspects); }
   });
 
-  jsonp(SCRIPT_URL + '?action=getScans', 'scansCb', function(data) {
+  jsonp(SCRIPT_URL + '?action=getScans&id=' + COMMERCIAL_ID, 'scansCb', function(data) {
     if (data.status === 'success') allScans = data.data || [];
     scansLoaded = true;
     updateScanStats(allScans);
@@ -402,7 +417,7 @@ function loadAll() {
 }
 
 function loadProfil() {
-  jsonp(SCRIPT_URL + '?action=getProfil', 'profilCb', function(data) {
+  jsonp(SCRIPT_URL + '?action=getProfil&id=' + COMMERCIAL_ID, 'profilCb', function(data) {
     if (data.status !== 'success') return;
     var p = data.data;
     var fields = ['nom','titre','telephone','email','calendly','catalogue_lien','catalogue_label','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
@@ -414,7 +429,7 @@ function loadProfil() {
 }
 
 function loadConfig() {
-  jsonp(SCRIPT_URL + '?action=getConfig', 'configCb', function(data) {
+  jsonp(SCRIPT_URL + '?action=getConfig&id=' + COMMERCIAL_ID, 'configCb', function(data) {
     if (data.status !== 'success') return;
     var c = data.data;
     if (c['email_sujet']) document.getElementById('bo-email_sujet').value = c['email_sujet'];
@@ -425,7 +440,7 @@ function loadConfig() {
 function saveProfil() {
   var params = ['nom','titre','telephone','email','calendly','catalogue_lien','catalogue_label','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
   var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
-  var url = SCRIPT_URL + '?action=saveProfil';
+  var url = SCRIPT_URL + '?action=saveProfil&id=' + COMMERCIAL_ID;
   params.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value); });
   toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) url+='&'+f+'_actif='+(el.checked?'oui':'non'); });
   imgCall(url);
@@ -440,7 +455,7 @@ function saveConfig() {
   // Encode en base64 pour contourner les problemes de caracteres speciaux
   var sujetB64 = btoa(unescape(encodeURIComponent(sujet)));
   var messageB64 = btoa(unescape(encodeURIComponent(message)));
-  var url = SCRIPT_URL + '?action=saveConfig&email_sujet_b64=' + sujetB64 + '&email_message_b64=' + messageB64;
+  var url = SCRIPT_URL + '?action=saveConfig&id=' + COMMERCIAL_ID + '&email_sujet_b64=' + sujetB64 + '&email_message_b64=' + messageB64;
   var img = new Image();
   img.src = url;
   document.getElementById('successEmail').classList.add('show');
@@ -452,7 +467,7 @@ function sendNewsletter() {
   var message = document.getElementById('nl-message').value.trim();
   if (!sujet || !message) { alert('Remplissez le sujet et le message.'); return; }
   if (!confirm('Envoyer cet email à tous vos prospects avec une adresse email ?')) return;
-  var url = SCRIPT_URL + '?action=newsletter&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(message);
+  var url = SCRIPT_URL + '?action=newsletter&id=' + COMMERCIAL_ID + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(message);
   fetch(url).then(function(r){ return r.json(); }).then(function(data){
     if (data.status === 'success') {
       document.getElementById('nlSent').textContent = data.sent;
