@@ -297,6 +297,7 @@
 <script>
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyN8bD_V9LguhN4otAfpVuv5X6qND-7b9iq6WNSxzziYty29_Q9pp-4baPo4f_gtfUm2A/exec';
 var COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
+console.log('COMMERCIAL_ID:', COMMERCIAL_ID);
 var allProspects = [];
 var allScans = [];
 var prospectsLoaded = false;
@@ -305,11 +306,15 @@ var scansLoaded = false;
 // Check session
 if (sessionStorage.getItem('protap_auth') === 'true') {
   COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
+  var savedNom = sessionStorage.getItem('protap_nom') || 'Commercial';
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('app').style.display = 'block';
-  loadAll();
-  loadProfil();
-  loadConfig();
+  document.getElementById('headerName').textContent = savedNom;
+  setTimeout(function() {
+    loadAll();
+    loadProfil();
+    loadConfig();
+  }, 100);
 }
 
 function doLogin() {
