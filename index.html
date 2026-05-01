@@ -246,12 +246,12 @@ function applyTheme(profil) {
   var root = document.documentElement;
 
   if (isClair) {
-    root.style.setProperty('--dark', '#f8fafc');
-    root.style.setProperty('--dark2', '#ffffff');
+    root.style.setProperty('--dark', '#eef2f6');
+    root.style.setProperty('--dark2', '#f5f7fa');
     root.style.setProperty('--text', '#1a2a3a');
-    root.style.setProperty('--text-muted', '#6b7f8f');
-    root.style.setProperty('--border', 'rgba(52,100,140,0.15)');
-    document.body.style.background = 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(52,100,140,0.08) 0%, transparent 70%), #f8fafc';
+    root.style.setProperty('--text-muted', '#5a6f82');
+    root.style.setProperty('--border', 'rgba(' + hexToRgb(couleurPrincipale) + ',0.18)');
+    document.body.style.background = 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(' + hexToRgb(couleurPrincipale) + ',0.12) 0%, transparent 70%), #eef2f6';
   } else {
     root.style.setProperty('--dark', couleurPrincipale);
     root.style.setProperty('--dark2', couleurSecondaire);
