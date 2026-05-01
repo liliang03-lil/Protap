@@ -67,7 +67,7 @@
 <body>
 <div class="page" id="profilePage">
   <div class="header">
-    <div class="logo-wrap">
+    <div class="logo-wrap" id="logoWrap">
       <span class="logo-text"><span>Fidele</span>MC</span>
       <span class="logo-badge">NFC</span>
     </div>
@@ -149,7 +149,7 @@
   </div>
 
   <div class="footer">
-    <div class="footer-brand">FideleMC · Carte NFC connectee · Monaco</div>
+    <div class="footer-brand" id="footerBrand">ProTap · Carte NFC · Monaco</div>
   </div>
 </div>
 
@@ -188,8 +188,13 @@ window[cbName] = function(data) {
   if (profil.photo && profil.photo.trim()) {
     photoEl.src = profil.photo;
   } else {
-    photoEl.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profil.nom || 'C') + '&background=15202e&color=C9A84C&size=90';
+    var bgColor = (profil.fond === 'Clair') ? 'f0f4f8' : '15202e';
+    var textColor = profil.couleur_accent ? profil.couleur_accent.replace('#','') : 'C9A84C';
+    photoEl.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profil.nom || 'C') + '&background=' + bgColor + '&color=' + textColor + '&size=90';
   }
+
+  // Apply dynamic theme
+  applyTheme(profil);
   document.getElementById('profileTitre').textContent = profil.titre || '';
   document.getElementById('profileTel').textContent = formatPhone(profil.telephone || '');
   document.getElementById('profileEmail').textContent = profil.email || '';
@@ -228,6 +233,58 @@ function formatPhone(tel) {
   tel = tel.replace(/\D/g,'');
   if (tel.length === 10) return tel.replace(/(\d{2})(?=\d)/g,'$1 ').trim();
   return tel;
+}
+
+function applyTheme(profil) {
+  var isClair = profil.fond === 'Clair';
+  var couleurPrincipale = profil.couleur_principale || '#0d1621';
+  var couleurSecondaire = profil.couleur_secondaire || '#15202e';
+  var couleurAccent = profil.couleur_accent || '#C9A84C';
+  var nomEntreprise = profil.nom_entreprise || '';
+  var logoUrl = profil.logo_url || '';
+
+  var root = document.documentElement;
+
+  if (isClair) {
+    root.style.setProperty('--dark', '#f8fafc');
+    root.style.setProperty('--dark2', '#ffffff');
+    root.style.setProperty('--text', '#1a2a3a');
+    root.style.setProperty('--text-muted', '#6b7f8f');
+    root.style.setProperty('--border', 'rgba(52,100,140,0.15)');
+    document.body.style.background = 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(52,100,140,0.08) 0%, transparent 70%), #f8fafc';
+  } else {
+    root.style.setProperty('--dark', couleurPrincipale);
+    root.style.setProperty('--dark2', couleurSecondaire);
+    document.body.style.background = 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.10) 0%, transparent 70%), ' + couleurPrincipale;
+  }
+
+  root.style.setProperty('--gold', couleurAccent);
+  root.style.setProperty('--gold-light', couleurAccent);
+  root.style.setProperty('--border', 'rgba(' + hexToRgb(couleurAccent) + ',0.18)');
+
+  // Logo entreprise
+  var logoWrap = document.getElementById('logoWrap');
+  if (logoUrl && logoWrap) {
+    logoWrap.innerHTML = '<img src="' + logoUrl + '" style="height:28px;max-width:120px;object-fit:contain;" alt="' + nomEntreprise + '">';
+  } else if (nomEntreprise && logoWrap) {
+    var parts = nomEntreprise.split(' ');
+    var first = parts[0] || '';
+    var rest = parts.slice(1).join(' ');
+    logoWrap.innerHTML = '<span class="logo-text"><span>' + first + '</span>' + (rest ? ' ' + rest : '') + '</span><span class="logo-badge">NFC</span>';
+  }
+
+  // Footer
+  var footer = document.getElementById('footerBrand');
+  if (footer) footer.textContent = (nomEntreprise || 'ProTap') + ' · Carte NFC · Monaco';
+}
+
+function hexToRgb(hex) {
+  hex = hex.replace('#','');
+  if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+  var r = parseInt(hex.substring(0,2),16);
+  var g = parseInt(hex.substring(2,4),16);
+  var b = parseInt(hex.substring(4,6),16);
+  return r+','+g+','+b;
 }
 
 function downloadVCard(e) {
