@@ -306,14 +306,36 @@ function hexToRgb(hex) {
 function downloadVCard(e) {
   e.preventDefault();
   var nom = profil.nom || 'Contact';
-  var tel = (profil.telephone || '').replace(/\s/g,'');
+  var tel = (profil.telephone || '').replace(/[^0-9+]/g,'');
   var email = profil.email || '';
-  var url = 'https://liliang03-lil.github.io/Protap';
-  var vcard = "BEGIN:VCARD\nVERSION:3.0\nFN:"+nom+"\nTITLE:"+(profil.titre||'')+"\nTEL;TYPE=CELL:"+tel+"\nEMAIL:"+email+"\nURL:"+url+"\nEND:VCARD";
+  var url = 'https://liliang03-lil.github.io/Protap?id=' + commercialId;
+  var entreprise = profil.nom_entreprise || '';
+
+  var note = '';
+  if (profil.linkedin && profil.linkedin_actif === 'oui') note += 'LinkedIn: ' + profil.linkedin + '\n';
+  if (profil.instagram && profil.instagram_actif === 'oui') note += 'Instagram: ' + profil.instagram + '\n';
+  if (profil.whatsapp && profil.whatsapp_actif === 'oui') note += 'WhatsApp: ' + profil.whatsapp + '\n';
+  if (profil.tiktok && profil.tiktok_actif === 'oui') note += 'TikTok: ' + profil.tiktok + '\n';
+  if (profil.youtube && profil.youtube_actif === 'oui') note += 'YouTube: ' + profil.youtube + '\n';
+  if (profil.twitter && profil.twitter_actif === 'oui') note += 'Twitter: ' + profil.twitter + '\n';
+  note += 'Page profil: ' + url;
+
+  var vcard = "BEGIN:VCARD\n"
+    + "VERSION:3.0\n"
+    + "FN:" + nom + "\n"
+    + "N:" + (nom.split(' ')[1] || '') + ";" + (nom.split(' ')[0] || '') + ";;;\n"
+    + "TITLE:" + (profil.titre || '') + "\n"
+    + (entreprise ? "ORG:" + entreprise + "\n" : "")
+    + "TEL;TYPE=CELL:" + tel + "\n"
+    + "EMAIL:" + email + "\n"
+    + "URL:" + url + "\n"
+    + "NOTE:" + note + "\n"
+    + "END:VCARD";
+
   var blob = new Blob([vcard], {type: 'text/vcard'});
   var u = URL.createObjectURL(blob);
   var a = document.createElement('a');
-  a.href = u; a.download = nom.replace(' ','_')+'.vcf'; a.click();
+  a.href = u; a.download = nom.replace(' ','_') + '.vcf'; a.click();
   URL.revokeObjectURL(u);
 }
 
