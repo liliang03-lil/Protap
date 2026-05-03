@@ -278,7 +278,8 @@ function applyTheme(profil) {
   // Logo entreprise
   var logoWrap = document.getElementById('logoWrap');
   if (logoUrl && logoWrap) {
-    logoWrap.innerHTML = '<img src="' + logoUrl + '" style="height:45px;max-width:150px;object-fit:contain;" alt="' + nomEntreprise + '">';
+    var bgStyle = isClair ? '' : 'background:rgba(255,255,255,0.92);padding:6px 12px;border-radius:8px;';
+    logoWrap.innerHTML = '<div style="display:inline-flex;align-items:center;justify-content:center;' + bgStyle + '"><img src="' + logoUrl + '" style="height:45px;max-width:150px;object-fit:contain;" alt="' + nomEntreprise + '"></div>';
   } else if (nomEntreprise && logoWrap) {
     var parts = nomEntreprise.split(' ');
     var first = parts[0] || '';
