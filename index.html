@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carte NFC — ProTap</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --gold: #C9A84C; --gold-light: #E8C97A; --dark: #0d1621; --dark2: #15202e; --text: #F0EDE6; --text-muted: #8A8478; --border: rgba(201,168,76,0.18); }
@@ -20,8 +20,11 @@
     .avatar-wrap { position: relative; width: 90px; height: 90px; margin: 0 auto 20px; animation: fadeDown 0.6s 0.1s ease both; }
     .avatar { width: 90px; height: 90px; border-radius: 50%; border: 2px solid var(--border); object-fit: cover; display: block; }
     .avatar-ring { position: absolute; inset: -5px; border-radius: 50%; border: 1px solid transparent; background: linear-gradient(135deg, var(--gold), transparent 60%) border-box; -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); -webkit-mask-composite: destination-out; mask-composite: exclude; opacity: 0.5; }
-    .name { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 300; letter-spacing: 0.03em; color: var(--text); margin-bottom: 6px; animation: fadeDown 0.6s 0.15s ease both; }
+    .name { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 400; letter-spacing: 0.02em; color: var(--text); margin-bottom: 6px; animation: fadeDown 0.6s 0.15s ease both; }
     .title { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); animation: fadeDown 0.6s 0.2s ease both; }
+    .description { font-size: 13px; color: var(--text-muted); line-height: 1.7; text-align: center; padding: 16px 28px 0; animation: fadeDown 0.6s 0.25s ease both; font-style: italic; max-width: 340px; margin: 0 auto; }
+    .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80vw; max-width: 400px; opacity: 0.04; pointer-events: none; z-index: 0; filter: blur(2px); }
+    .page { position: relative; z-index: 1; }
     .section { padding: 28px 20px 0; animation: fadeUp 0.7s 0.3s ease both; }
     .section-label { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; padding-left: 4px; opacity: 0.8; }
     .card { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 10px; }
@@ -65,6 +68,7 @@
   </style>
 </head>
 <body>
+<div id="watermarkWrap"></div>
 <div class="page" id="profilePage">
   <div class="header">
     <div class="logo-wrap" id="logoWrap">
@@ -77,6 +81,7 @@
     </div>
     <div class="name" id="profileNom">Chargement...</div>
     <div class="title" id="profileTitre"></div>
+    <div class="description" id="profileDescription"></div>
   </div>
 
   <div class="section">
@@ -183,6 +188,14 @@ window[cbName] = function(data) {
 
   // Mettre à jour le contenu
   document.getElementById('profileNom').textContent = profil.nom || '';
+  // Description
+  var descEl = document.getElementById('profileDescription');
+  if (descEl) descEl.textContent = profil.description || '';
+  // Watermark
+  var watermarkWrap = document.getElementById('watermarkWrap');
+  if (watermarkWrap && profil.logo_url) {
+    watermarkWrap.innerHTML = '<img class="watermark" src="' + profil.logo_url + '" alt="">';
+  }
   // Set photo
   var photoEl = document.getElementById('profilePhoto');
   if (profil.photo && profil.photo.trim()) {
