@@ -281,7 +281,7 @@ function applyTheme(profil) {
     var logoFond = profil.logo_fond || 'sombre';
     var needsBg = !isClair && logoFond === 'clair';
     var bgStyle = needsBg ? 'background:rgba(255,255,255,0.92);padding:6px 12px;border-radius:8px;' : '';
-    logoWrap.innerHTML = '<div style="display:inline-flex;align-items:center;justify-content:center;' + bgStyle + '"><img src="' + logoUrl + '" style="height:45px;max-width:150px;object-fit:contain;" alt="' + nomEntreprise + '"></div>';
+    logoWrap.innerHTML = '<div style="display:inline-flex;align-items:center;justify-content:center;' + bgStyle + '"><img src="' + logoUrl + '" style="height:60px;max-width:180px;object-fit:contain;" alt="' + nomEntreprise + '"></div>';
   } else if (nomEntreprise && logoWrap) {
     var parts = nomEntreprise.split(' ');
     var first = parts[0] || '';
