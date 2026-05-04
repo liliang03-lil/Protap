@@ -296,7 +296,7 @@
 </div>
 
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyN8bD_V9LguhN4otAfpVuv5X6qND-7b9iq6WNSxzziYty29_Q9pp-4baPo4f_gtfUm2A/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzCkcqZ45bWGf0hgY-1lS7FGDKkwopeKvKc_r3d8zx5XBXVqMVB4KR1FvUjmKk367q0-g/exec';
 var COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
 console.log('COMMERCIAL_ID:', COMMERCIAL_ID);
 var allProspects = [];
@@ -393,6 +393,63 @@ function jsonp(url, cbName, callback) {
 function imgCall(url) {
   var img = new Image();
   img.src = url + '&t=' + Date.now();
+}
+
+function toggleSelectAll(cb) {
+  var checks = document.querySelectorAll('.prospect-check');
+  checks.forEach(function(c){ c.checked = cb.checked; });
+  updateEmailBtn();
+}
+
+function updateEmailBtn() {
+  var checked = document.querySelectorAll('.prospect-check:checked');
+  var btn = document.getElementById('sendEmailBtn');
+  var count = document.getElementById('selectedCount');
+  if (checked.length > 0) {
+    btn.style.display = 'block';
+    count.textContent = checked.length;
+  } else {
+    btn.style.display = 'none';
+    document.getElementById('emailPanel').style.display = 'none';
+  }
+}
+
+function toggleEmailPanel() {
+  var panel = document.getElementById('emailPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function sendSelectedEmails() {
+  var checked = document.querySelectorAll('.prospect-check:checked');
+  var sujet = document.getElementById('selEmailSujet').value.trim();
+  var message = document.getElementById('selEmailMessage').value.trim();
+  if (!sujet || !message) { alert('Remplissez le sujet et le message.'); return; }
+  
+  var sent = 0;
+  checked.forEach(function(c) {
+    var email = c.getAttribute('data-email');
+    var nom = c.getAttribute('data-nom');
+    if (email && email.indexOf('@') !== -1) {
+      var msg = message
+        .replace(/{nom}/g, nom)
+        .replace(/{lien_profil}/g, 'https://liliang03-lil.github.io/Protap?id=' + COMMERCIAL_ID)
+        .replace(/{calendly}/g, '')
+        .replace(/{site}/g, '')
+        .replace(/{linkedin}/g, '')
+        .replace(/{instagram}/g, '')
+        .replace(/{whatsapp}/g, '');
+      
+      fetch(SCRIPT_URL + '?action=sendEmail&email=' + encodeURIComponent(email) + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(msg) + '&id=' + COMMERCIAL_ID);
+      sent++;
+    }
+  });
+  
+  document.getElementById('emailSentMsg').style.display = 'block';
+  document.getElementById('emailSentMsg').textContent = '✓ ' + sent + ' email(s) envoyé(s) !';
+  setTimeout(function(){
+    document.getElementById('emailSentMsg').style.display = 'none';
+    document.getElementById('emailPanel').style.display = 'none';
+  }, 3000);
 }
 
 function loadAll() {
@@ -547,8 +604,8 @@ function renderChart(scans, prospects) {
 function renderTable(prospects) {
   if (prospects.length===0) { document.getElementById('tableWrap').innerHTML='<div class="empty"><p>Aucun prospect pour l\'instant.</p></div>'; return; }
   var now=new Date(); var weekAgo=new Date(now-7*24*60*60*1000);
-  var rows=prospects.map(function(p){ var d=parseDate(p.dateRaw); var dateStr=formatDate(p.dateRaw); var isNew=d&&d>weekAgo; return '<tr><td>'+(p.nom||'—')+(isNew?'<span class="badge-new">Nouveau</span>':'')+'</td><td>'+(p.telephone||'—')+'</td><td>'+(p.email||'—')+'</td><td>'+dateStr+'</td></tr>'; }).join('');
-  document.getElementById('tableWrap').innerHTML='<table class="table"><thead><tr><th>Nom</th><th>Telephone</th><th>Email</th><th>Date</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  var rows=prospects.map(function(p){ var d=parseDate(p.dateRaw); var dateStr=formatDate(p.dateRaw); var isNew=d&&d>weekAgo; return '<tr><td><input type="checkbox" class="prospect-check" data-nom="'+(p.nom||'')+'" data-email="'+(p.email||'')+'" onchange="updateEmailBtn()" style="accent-color:var(--gold)"></td><td>'+(p.nom||'—')+(isNew?'<span class="badge-new">Nouveau</span>':'')+'</td><td>'+(p.telephone||'—')+'</td><td>'+(p.email||'—')+'</td><td>'+dateStr+'</td></tr>'; }).join('');
+  document.getElementById('tableWrap').innerHTML='<table class="table"><thead><tr><th style="width:32px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" style="accent-color:var(--gold)"></th><th>Nom</th><th>Telephone</th><th>Email</th><th>Date</th></tr></thead><tbody>'+rows+'</tbody></table>'; document.getElementById('selectAll') && (document.getElementById('selectAll').onchange = function(){ toggleSelectAll(this); });
 }
 
 function filterProspects() {
