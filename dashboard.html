@@ -444,14 +444,21 @@ function sendSelectedEmails() {
     var email = c.getAttribute('data-email');
     var nom = c.getAttribute('data-nom');
     if (email && email.indexOf('@') !== -1) {
+      // Get profil data from already loaded back office fields
+      var lienProfil = 'https://liliang03-lil.github.io/Protap?id=' + COMMERCIAL_ID;
+      var calendlyVal = document.getElementById('bo-calendly') ? document.getElementById('bo-calendly').value || '' : '';
+      var siteVal = document.getElementById('bo-catalogue_lien') ? document.getElementById('bo-catalogue_lien').value || '' : '';
+      var linkedinVal = document.getElementById('bo-linkedin') ? document.getElementById('bo-linkedin').value || '' : '';
+      var instagramVal = document.getElementById('bo-instagram') ? document.getElementById('bo-instagram').value || '' : '';
+      var whatsappVal = document.getElementById('bo-whatsapp') ? document.getElementById('bo-whatsapp').value || '' : '';
       var msg = message
         .replace(/{nom}/g, nom)
-        .replace(/{lien_profil}/g, 'https://liliang03-lil.github.io/Protap?id=' + COMMERCIAL_ID)
-        .replace(/{calendly}/g, '')
-        .replace(/{site}/g, '')
-        .replace(/{linkedin}/g, '')
-        .replace(/{instagram}/g, '')
-        .replace(/{whatsapp}/g, '');
+        .replace(/{lien_profil}/g, lienProfil)
+        .replace(/{calendly}/g, calendlyVal)
+        .replace(/{site}/g, siteVal)
+        .replace(/{linkedin}/g, linkedinVal)
+        .replace(/{instagram}/g, instagramVal)
+        .replace(/{whatsapp}/g, whatsappVal);
       
       fetch(SCRIPT_URL + '?action=sendEmail&email=' + encodeURIComponent(email) + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(msg) + '&id=' + COMMERCIAL_ID);
       sent++;
