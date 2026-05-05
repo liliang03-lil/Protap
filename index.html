@@ -312,12 +312,15 @@ function downloadVCard(e) {
   var entreprise = profil.nom_entreprise || '';
 
   var note = '';
-  if (profil.linkedin && profil.linkedin_actif === 'oui') note += 'LinkedIn: ' + profil.linkedin + '\n';
-  if (profil.instagram && profil.instagram_actif === 'oui') note += 'Instagram: ' + profil.instagram + '\n';
-  if (profil.whatsapp && profil.whatsapp_actif === 'oui') note += 'WhatsApp: ' + profil.whatsapp + '\n';
-  if (profil.tiktok && profil.tiktok_actif === 'oui') note += 'TikTok: ' + profil.tiktok + '\n';
-  if (profil.youtube && profil.youtube_actif === 'oui') note += 'YouTube: ' + profil.youtube + '\n';
-  if (profil.twitter && profil.twitter_actif === 'oui') note += 'Twitter: ' + profil.twitter + '\n';
+  function validLink(val) { return val && val !== 'Aucun' && val.indexOf('http') !== -1; }
+  if (validLink(profil.linkedin) && profil.linkedin_actif === 'oui') note += 'LinkedIn: ' + profil.linkedin + '\n';
+  if (validLink(profil.instagram) && profil.instagram_actif === 'oui') note += 'Instagram: ' + profil.instagram + '\n';
+  if (validLink(profil.whatsapp) && profil.whatsapp_actif === 'oui') note += 'WhatsApp: ' + profil.whatsapp + '\n';
+  if (validLink(profil.tiktok) && profil.tiktok_actif === 'oui') note += 'TikTok: ' + profil.tiktok + '\n';
+  if (validLink(profil.youtube) && profil.youtube_actif === 'oui') note += 'YouTube: ' + profil.youtube + '\n';
+  if (validLink(profil.twitter) && profil.twitter_actif === 'oui') note += 'Twitter: ' + profil.twitter + '\n';
+  if (validLink(profil.calendly)) note += 'Calendly: ' + profil.calendly + '\n';
+  if (validLink(profil.catalogue_lien)) note += 'Site: ' + profil.catalogue_lien + '\n';
   note += 'Page profil: ' + url;
 
   var vcard = "BEGIN:VCARD\n"
