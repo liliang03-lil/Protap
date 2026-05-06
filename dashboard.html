@@ -168,6 +168,7 @@
     </div>
     <div class="header-right">
       <span class="header-name" id="headerName">Lilian Giteau</span>
+      <a id="profileLink" href="https://liliang03-lil.github.io/Protap?id=lilian" target="_blank" style="padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--gold);font-family:'DM Sans',sans-serif;font-size:11px;text-decoration:none;letter-spacing:0.05em;">👁 Mon profil</a>
       <button class="logout-btn" onclick="doLogout()">Deconnexion</button>
     </div>
   </div>
@@ -337,6 +338,8 @@ if (sessionStorage.getItem('protap_auth') === 'true') {
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   document.getElementById('headerName').textContent = savedNom;
+  var profileLink = document.getElementById('profileLink');
+  if (profileLink) profileLink.href = 'https://liliang03-lil.github.io/Protap?id=' + COMMERCIAL_ID;
   setTimeout(function() {
     loadAll();
     loadProfil();
@@ -362,6 +365,8 @@ function doLogin() {
       document.getElementById('app').style.display = 'block';
       document.getElementById('loginError').classList.remove('show');
       document.getElementById('headerName').textContent = data.nom;
+      var profileLink = document.getElementById('profileLink');
+      if (profileLink) profileLink.href = 'https://liliang03-lil.github.io/Protap?id=' + data.id;
       loadAll();
       loadProfil();
       loadConfig();
