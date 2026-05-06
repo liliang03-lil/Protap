@@ -254,6 +254,18 @@
           <div class="bo-field full"><div class="bo-label">Lien Calendly (Rendez-vous)</div><input class="bo-input" id="bo-calendly" placeholder="https://calendly.com/..."></div>
           <div class="bo-field"><div class="bo-label">Lien Catalogue</div><input class="bo-input" id="bo-catalogue_lien" placeholder="https://..."></div>
           <div class="bo-field"><div class="bo-label">Label Catalogue</div><input class="bo-input" id="bo-catalogue_label" placeholder="Voir mes projets"></div>
+          <div class="bo-field full"><div class="bo-label">Description</div><textarea class="bo-textarea" id="bo-description" placeholder="Décrivez votre activité en quelques mots..." style="min-height:80px"></textarea></div>
+        </div>
+
+        <div class="section-title" style="margin:20px 0 14px">🎨 Identité visuelle</div>
+        <div class="bo-grid">
+          <div class="bo-field"><div class="bo-label">Nom de l'entreprise</div><input class="bo-input" id="bo-nom_entreprise" placeholder="Ex: AFIM France"></div>
+          <div class="bo-field"><div class="bo-label">URL Logo entreprise</div><input class="bo-input" id="bo-logo_url" placeholder="https://..."></div>
+          <div class="bo-field"><div class="bo-label">Couleur principale</div><input class="bo-input" id="bo-couleur_principale" placeholder="#0d1621" type="text"><input type="color" id="bo-couleur_principale_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_principale').value=this.value"></div>
+          <div class="bo-field"><div class="bo-label">Couleur secondaire</div><input class="bo-input" id="bo-couleur_secondaire" placeholder="#15202e" type="text"><input type="color" id="bo-couleur_secondaire_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_secondaire').value=this.value"></div>
+          <div class="bo-field"><div class="bo-label">Couleur accent</div><input class="bo-input" id="bo-couleur_accent" placeholder="#C9A84C" type="text"><input type="color" id="bo-couleur_accent_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_accent').value=this.value"></div>
+          <div class="bo-field"><div class="bo-label">Fond</div><select class="bo-input" id="bo-fond"><option value="Sombre">Sombre</option><option value="Clair">Clair</option></select></div>
+          <div class="bo-field"><div class="bo-label">Logo fond</div><select class="bo-input" id="bo-logo_fond"><option value="sombre">Logo sombre (pastille blanche)</option><option value="clair">Logo clair (pas de pastille)</option></select></div>
         </div>
         <button class="bo-save-btn" onclick="saveProfil()">Enregistrer le profil</button>
         <div class="bo-success" id="successProfil">✓ Profil mis à jour avec succès !</div>
@@ -504,10 +516,19 @@ function loadProfil() {
   jsonp(SCRIPT_URL + '?action=getProfil&id=' + COMMERCIAL_ID, 'profilCb', function(data) {
     if (data.status !== 'success') return;
     var p = data.data;
-    var fields = ['nom','titre','telephone','email','photo','calendly','catalogue_lien','catalogue_label','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+    var fields = ['nom','titre','telephone','email','photo','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
     fields.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el&&p[f]) el.value=p[f]; });
     var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
     toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) el.checked=(p[f+'_actif']==='oui'); });
+    // Load select fields
+    if (p['fond']) { var fondEl = document.getElementById('bo-fond'); if(fondEl) fondEl.value = p['fond']; }
+    if (p['logo_fond']) { var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) logoFondEl.value = p['logo_fond']; }
+    // Sync color pickers
+    ['couleur_principale','couleur_secondaire','couleur_accent'].forEach(function(c){
+      var input = document.getElementById('bo-'+c);
+      var picker = document.getElementById('bo-'+c+'_picker');
+      if(input && picker && input.value && input.value.startsWith('#')) picker.value = input.value;
+    });
     if (p['nom']) document.getElementById('headerName').textContent = p['nom'];
   });
 }
@@ -522,11 +543,13 @@ function loadConfig() {
 }
 
 function saveProfil() {
-  var params = ['nom','titre','telephone','email','photo','calendly','catalogue_lien','catalogue_label','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+  var params = ['nom','titre','telephone','email','photo','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
   var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
   var url = SCRIPT_URL + '?action=saveProfil&id=' + COMMERCIAL_ID;
   params.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value); });
   toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) url+='&'+f+'_actif='+(el.checked?'oui':'non'); });
+  var fondEl = document.getElementById('bo-fond'); if(fondEl) url+='&fond='+encodeURIComponent(fondEl.value);
+  var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) url+='&logo_fond='+encodeURIComponent(logoFondEl.value);
   imgCall(url);
   document.getElementById('successProfil').classList.add('show');
   document.getElementById('successReseaux').classList.add('show');
