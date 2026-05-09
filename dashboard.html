@@ -176,6 +176,7 @@
   <div class="tabs">
     <div class="tab active" onclick="showTab('dashboard')">📊 Dashboard</div>
     <div class="tab" onclick="showTab('backoffice')">⚙️ Back Office</div>
+    <div class="tab" id="adminTab" style="display:none" onclick="showTab('admin')">👑 Admin</div>
   </div>
 
   <!-- DASHBOARD PAGE -->
@@ -320,10 +321,23 @@
 
     </div>
   </div>
+  <!-- ADMIN PAGE -->
+  <div class="page" id="page-admin">
+    <div class="main">
+      <div class="section-title">Vue globale des commerciaux</div>
+
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;" id="adminStatsCards"></div>
+
+      <div class="table-wrap" id="adminTable">
+        <div class="loading">Chargement...</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzCkcqZ45bWGf0hgY-1lS7FGDKkwopeKvKc_r3d8zx5XBXVqMVB4KR1FvUjmKk367q0-g/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzz-gxu2oUaNKcPyppQacK7meLnerVXwSstONZ-b1Aja-FAm8el3NHBRbAXnj3_5Tz9Q/exec';
 var COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
 console.log('COMMERCIAL_ID:', COMMERCIAL_ID);
 var allProspects = [];
@@ -340,6 +354,11 @@ if (sessionStorage.getItem('protap_auth') === 'true') {
   document.getElementById('headerName').textContent = savedNom;
   var profileLink = document.getElementById('profileLink');
   if (profileLink) profileLink.href = 'https://liliang03-lil.github.io/Protap?id=' + COMMERCIAL_ID;
+  var savedRole = sessionStorage.getItem('protap_role') || 'commercial';
+  if (savedRole === 'admin') {
+    document.getElementById('adminTab').style.display = 'block';
+    loadAdminStats();
+  }
   setTimeout(function() {
     loadAll();
     loadProfil();
@@ -367,6 +386,11 @@ function doLogin() {
       document.getElementById('headerName').textContent = data.nom;
       var profileLink = document.getElementById('profileLink');
       if (profileLink) profileLink.href = 'https://liliang03-lil.github.io/Protap?id=' + data.id;
+      sessionStorage.setItem('protap_role', data.role || 'commercial');
+      if (data.role === 'admin') {
+        document.getElementById('adminTab').style.display = 'block';
+        loadAdminStats();
+      }
       loadAll();
       loadProfil();
       loadConfig();
@@ -390,12 +414,42 @@ function doLogout() {
 }
 
 function showTab(tab) {
-  document.querySelectorAll('.tab').forEach(function(t, i){ t.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
   document.getElementById('page-' + tab).classList.add('active');
-  var tabs = document.querySelectorAll('.tab');
-  if (tab === 'dashboard') tabs[0].classList.add('active');
-  else tabs[1].classList.add('active');
+  event.target.classList.add('active');
+}
+
+function loadAdminStats() {
+  var cbName = 'adminCb_' + Date.now();
+  window[cbName] = function(data) {
+    delete window[cbName];
+    var s = document.getElementById(cbName);
+    if (s) s.remove();
+    if (data.status !== 'success') return;
+    var commerciaux = data.data;
+
+    // Stats cards
+    var totalScans = commerciaux.reduce(function(a,c){ return a+c.scans; }, 0);
+    var totalProspects = commerciaux.reduce(function(a,c){ return a+c.prospects; }, 0);
+    document.getElementById('adminStatsCards').innerHTML =
+      '<div class="stat-card"><div class="stat-label">Commerciaux actifs</div><div class="stat-value" style="color:var(--blue)">' + commerciaux.length + '</div></div>' +
+      '<div class="stat-card"><div class="stat-label">Total scans</div><div class="stat-value">' + totalScans + '</div></div>' +
+      '<div class="stat-card"><div class="stat-label">Total prospects</div><div class="stat-value">' + totalProspects + '</div></div>';
+
+    // Table
+    var rows = commerciaux.map(function(c) {
+      var actif = c.scans > 0 ? '<span class="badge-new">Actif</span>' : '<span style="font-size:9px;color:var(--text-muted);background:rgba(138,132,120,0.1);border:1px solid rgba(138,132,120,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">Inactif</span>';
+      return '<tr><td>' + c.nom + actif + '</td><td>' + c.email + '</td><td>' + c.scans + '</td><td>' + c.prospects + '</td><td><a href="https://liliang03-lil.github.io/Protap?id=' + c.id + '" target="_blank" style="color:var(--gold);font-size:12px;">Voir profil →</a></td></tr>';
+    }).join('');
+
+    document.getElementById('adminTable').innerHTML =
+      '<table class="table"><thead><tr><th>Nom</th><th>Email</th><th>Scans</th><th>Prospects</th><th>Profil</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  };
+  var script = document.createElement('script');
+  script.id = cbName;
+  script.src = SCRIPT_URL + '?action=getAdminStats&callback=' + cbName + '&t=' + Date.now();
+  document.body.appendChild(script);
 }
 
 function parseDate(raw) {
