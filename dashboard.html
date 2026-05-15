@@ -300,6 +300,10 @@
       <!-- Email automatique -->
       <div class="bo-section">
         <div class="bo-section-title">📧 Email automatique</div>
+        <div style="margin-bottom:16px;">
+          <a id="emailEditorBtn" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:10px;color:var(--gold);font-size:12px;text-decoration:none;letter-spacing:0.05em;">✉️ Modifier l'email automatique</a>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:8px;">S'ouvre dans un nouvel onglet — modifiez le sujet et le message directement.</p>
+        </div>
         <div class="bo-field" style="margin-bottom:14px"><div class="bo-label">Sujet de l'email</div><input class="bo-input" id="bo-email_sujet" placeholder="Merci pour notre echange !"></div>
         <div class="bo-field"><div class="bo-label">Message — Variables disponibles : {nom} {lien_profil} {calendly} {site} {linkedin} {instagram} {whatsapp}</div><textarea class="bo-textarea" id="bo-email_message" placeholder="Bonjour {nom}, merci pour notre echange..."></textarea></div>
         <button class="bo-save-btn" onclick="saveConfig()">Enregistrer l'email</button>
@@ -337,7 +341,7 @@
 </div>
 
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTeme25bmbkxTz9mBrd0Y7UTwvENrSD-UbHgVPjABAVQ-ehT4u4IqoQo2djlNm63HT4A/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwp1TgbDeUWcLVoBhvwril84cB3DAJBWIfK2dLnkzVxam8Bv06_q9hX1YTBVaBbn1mhAQ/exec';
 var COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
 console.log('COMMERCIAL_ID:', COMMERCIAL_ID);
 var allProspects = [];
@@ -354,6 +358,8 @@ if (sessionStorage.getItem('protap_auth') === 'true') {
   document.getElementById('headerName').textContent = savedNom;
   var profileLink = document.getElementById('profileLink');
   if (profileLink) profileLink.href = 'https://liliang03-lil.github.io/Protap?id=' + COMMERCIAL_ID;
+  var emailBtn = document.getElementById('emailEditorBtn');
+  if (emailBtn) emailBtn.href = SCRIPT_URL + '?action=emailEditor&id=' + COMMERCIAL_ID;
   var savedRole = sessionStorage.getItem('protap_role') || 'commercial';
   if (savedRole === 'admin') {
     document.getElementById('adminTab').style.display = 'block';
@@ -386,6 +392,8 @@ function doLogin() {
       document.getElementById('headerName').textContent = data.nom;
       var profileLink = document.getElementById('profileLink');
       if (profileLink) profileLink.href = 'https://liliang03-lil.github.io/Protap?id=' + data.id;
+      var emailBtn = document.getElementById('emailEditorBtn');
+      if (emailBtn) emailBtn.href = SCRIPT_URL + '?action=emailEditor&id=' + data.id;
       sessionStorage.setItem('protap_role', data.role || 'commercial');
       if (data.role === 'admin') {
         document.getElementById('adminTab').style.display = 'block';
