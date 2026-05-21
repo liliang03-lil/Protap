@@ -507,6 +507,7 @@ function loadAdminStats() {
         '<td style="display:flex;gap:6px;flex-wrap:wrap;">' +
           '<a href="https://liliang03-lil.github.io/Protap?id=' + c.id + '" target="_blank" style="color:var(--gold);font-size:11px;white-space:nowrap;">👁 Profil</a>' +
           '<button onclick="openAdminEmail(this)" data-email="' + c.email.replace(/"/g,'&quot;') + '" data-nom="' + c.nom.replace(/"/g,'&quot;') + '" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;padding:0;">✉️ Email</button>' +
+          '<button onclick="toggleCommercial(this)" data-id="' + c.id + '" data-statut="' + (c.statut || 'actif') + '" style="background:none;border:none;color:' + (c.statut === 'inactif' ? 'var(--green)' : '#C0392B') + ';font-size:11px;cursor:pointer;padding:0;">' + (c.statut === 'inactif' ? '✓ Réactiver' : '⊘ Désactiver') + '</button>' +
         '</td>' +
         '</tr>';
     }).join('');
@@ -541,6 +542,17 @@ function sendAdminEmail() {
   setTimeout(function(){
     document.getElementById('adminEmailPanel').style.display = 'none';
   }, 2000);
+}
+
+function toggleCommercial(btn) {
+  var id = btn.getAttribute('data-id');
+  var statut = btn.getAttribute('data-statut');
+  var newStatut = statut === 'inactif' ? 'actif' : 'inactif';
+  var msg = newStatut === 'inactif' ? 'Désactiver ce commercial ?' : 'Réactiver ce commercial ?';
+  if (!confirm(msg)) return;
+  var img = new Image();
+  img.src = SCRIPT_URL + '?action=toggleCommercial&id=' + id + '&statut=' + newStatut;
+  setTimeout(function(){ loadAdminStats(); }, 1000);
 }
 
 function parseDate(raw) {
