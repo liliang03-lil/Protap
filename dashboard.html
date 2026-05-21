@@ -470,14 +470,12 @@ function loadAdminStats() {
     var totalProspects = commerciaux.reduce(function(a,c){ return a+c.prospects; }, 0);
     var actifs = commerciaux.filter(function(c){ return c.scans > 0; }).length;
     var tauxGlobal = totalScans > 0 ? Math.round(totalProspects/totalScans*100) : 0;
-    var revenuEstime = commerciaux.length * 12;
-
     // Stats globales
     document.getElementById('adminStatsCards').innerHTML =
       '<div class="stat-card"><div class="stat-label">Commerciaux</div><div class="stat-value" style="color:var(--blue)">' + commerciaux.length + '</div><div class="stat-sublabel">' + actifs + ' actifs</div></div>' +
       '<div class="stat-card"><div class="stat-label">Total scans</div><div class="stat-value">' + totalScans + '</div></div>' +
       '<div class="stat-card"><div class="stat-label">Total prospects</div><div class="stat-value">' + totalProspects + '</div></div>' +
-      '<div class="stat-card"><div class="stat-label">Revenu estimé</div><div class="stat-value" style="color:var(--green)">' + revenuEstime + '€</div><div class="stat-sublabel">/mois</div></div>';
+      '';
 
     // Classement
     var sorted = commerciaux.slice().sort(function(a,b){ return b.scans - a.scans; });
