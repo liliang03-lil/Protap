@@ -253,6 +253,7 @@
           <div class="bo-field"><div class="bo-label">Telephone</div><input class="bo-input" id="bo-telephone" placeholder="0676257858"></div>
           <div class="bo-field"><div class="bo-label">Email</div><input class="bo-input" id="bo-email" placeholder="email@gmail.com"></div>
           <div class="bo-field full"><div class="bo-label">URL Photo de profil</div><input class="bo-input" id="bo-photo" placeholder="https://... (lien vers votre photo)"></div>
+          <div class="bo-field full"><div class="bo-label">URL Photo de couverture</div><input class="bo-input" id="bo-photo_couverture" placeholder="https://... (logo, image brandée ou photo)"></div>
           <div class="bo-field full"><div class="bo-label">Lien Calendly (Rendez-vous)</div><input class="bo-input" id="bo-calendly" placeholder="https://calendly.com/..."></div>
           <div class="bo-field"><div class="bo-label">Lien Catalogue</div><input class="bo-input" id="bo-catalogue_lien" placeholder="https://..."></div>
           <div class="bo-field"><div class="bo-label">Label Catalogue</div><input class="bo-input" id="bo-catalogue_label" placeholder="Voir mes projets"></div>
@@ -678,7 +679,7 @@ function loadProfil() {
   jsonp(SCRIPT_URL + '?action=getProfil&id=' + COMMERCIAL_ID, 'profilCb', function(data) {
     if (data.status !== 'success') return;
     var p = data.data;
-    var fields = ['nom','titre','telephone','email','photo','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+    var fields = ['nom','titre','telephone','email','photo','photo_couverture','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
     fields.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el&&p[f]) el.value=p[f]; });
     var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
     toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) el.checked=(p[f+'_actif']==='oui'); });
@@ -705,7 +706,7 @@ function loadConfig() {
 }
 
 function saveProfil() {
-  var params = ['nom','titre','telephone','email','photo','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+  var params = ['nom','titre','telephone','email','photo','photo_couverture','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
   var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
   var url = SCRIPT_URL + '?action=saveProfil&id=' + COMMERCIAL_ID;
   params.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value); });
