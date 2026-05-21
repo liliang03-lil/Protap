@@ -252,8 +252,28 @@
           <div class="bo-field"><div class="bo-label">Titre / Poste</div><input class="bo-input" id="bo-titre" placeholder="Fondateur · Monaco"></div>
           <div class="bo-field"><div class="bo-label">Telephone</div><input class="bo-input" id="bo-telephone" placeholder="0676257858"></div>
           <div class="bo-field"><div class="bo-label">Email</div><input class="bo-input" id="bo-email" placeholder="email@gmail.com"></div>
-          <div class="bo-field full"><div class="bo-label">URL Photo de profil</div><input class="bo-input" id="bo-photo" placeholder="https://... (lien vers votre photo)"></div>
-          <div class="bo-field full"><div class="bo-label">URL Photo de couverture</div><input class="bo-input" id="bo-photo_couverture" placeholder="https://... (logo, image brandée ou photo)"></div>
+          <div class="bo-field full">
+            <div class="bo-label">Photo de profil</div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <input class="bo-input" id="bo-photo" placeholder="https://... ou utilisez le bouton" style="flex:1;">
+              <label style="padding:10px 16px;background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:10px;color:var(--gold);font-size:11px;cursor:pointer;white-space:nowrap;">
+                📷 Uploader
+                <input type="file" accept="image/*" onchange="uploadPhoto(this,'bo-photo')" style="display:none;">
+              </label>
+            </div>
+            <div id="upload-progress-photo" style="display:none;font-size:11px;color:var(--text-muted);margin-top:6px;">Envoi en cours...</div>
+          </div>
+          <div class="bo-field full">
+            <div class="bo-label">Photo de couverture</div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <input class="bo-input" id="bo-photo_couverture" placeholder="https://... ou utilisez le bouton" style="flex:1;">
+              <label style="padding:10px 16px;background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:10px;color:var(--gold);font-size:11px;cursor:pointer;white-space:nowrap;">
+                🖼 Uploader
+                <input type="file" accept="image/*" onchange="uploadPhoto(this,'bo-photo_couverture')" style="display:none;">
+              </label>
+            </div>
+            <div id="upload-progress-photo_couverture" style="display:none;font-size:11px;color:var(--text-muted);margin-top:6px;">Envoi en cours...</div>
+          </div>
           <div class="bo-field full"><div class="bo-label">Lien Calendly (Rendez-vous)</div><input class="bo-input" id="bo-calendly" placeholder="https://calendly.com/..."></div>
           <div class="bo-field"><div class="bo-label">Lien Catalogue</div><input class="bo-input" id="bo-catalogue_lien" placeholder="https://..."></div>
           <div class="bo-field"><div class="bo-label">Label Catalogue</div><input class="bo-input" id="bo-catalogue_label" placeholder="Voir mes projets"></div>
@@ -646,6 +666,35 @@ function sendSelectedEmails() {
     document.getElementById('emailSentMsg').style.display = 'none';
     document.getElementById('emailPanel').style.display = 'none';
   }, 3000);
+}
+
+function uploadPhoto(input, targetId) {
+  var file = input.files[0];
+  if (!file) return;
+  var progressEl = document.getElementById('upload-progress-' + targetId);
+  if (progressEl) { progressEl.style.display = 'block'; progressEl.textContent = 'Envoi en cours...'; }
+
+  var formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'protap_upload');
+
+  fetch('https://api.cloudinary.com/v1_1/dm1tevzqt/image/upload', {
+    method: 'POST',
+    body: formData
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.secure_url) {
+      document.getElementById(targetId).value = data.secure_url;
+      if (progressEl) { progressEl.textContent = '✓ Photo uploadée !'; progressEl.style.color = 'var(--green)'; }
+      setTimeout(function(){ if (progressEl) progressEl.style.display = 'none'; }, 3000);
+    } else {
+      if (progressEl) { progressEl.textContent = '✗ Erreur upload'; progressEl.style.color = '#C0392B'; }
+    }
+  })
+  .catch(function() {
+    if (progressEl) { progressEl.textContent = '✗ Erreur réseau'; progressEl.style.color = '#C0392B'; }
+  });
 }
 
 function loadAll() {
