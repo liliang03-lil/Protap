@@ -328,12 +328,38 @@
   <!-- ADMIN PAGE -->
   <div class="page" id="page-admin">
     <div class="main">
-      <div class="section-title">Vue globale des commerciaux</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+        <div class="section-title">Vue globale</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a id="adminFormLink" href="https://docs.google.com/forms/d/1bd1wyRGnAS7HmoxWgs5LDosMJK9zM72dKnJGclADZJA/edit" target="_blank" style="padding:8px 16px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:8px;color:var(--dark);font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;">+ Ajouter un commercial</a>
+          <button onclick="loadAdminStats()" style="padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--gold);font-size:11px;cursor:pointer;">Actualiser</button>
+        </div>
+      </div>
 
-      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;" id="adminStatsCards"></div>
+      <!-- Stats globales -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;" id="adminStatsCards"></div>
 
+      <!-- Graphique global -->
+      <div class="stat-card" style="margin-bottom:20px;">
+        <div class="stat-label" style="margin-bottom:12px;">CLASSEMENT DES COMMERCIAUX</div>
+        <div id="adminRanking"></div>
+      </div>
+
+      <!-- Table commerciaux -->
       <div class="table-wrap" id="adminTable">
         <div class="loading">Chargement...</div>
+      </div>
+
+      <!-- Panel email admin -->
+      <div id="adminEmailPanel" style="display:none;background:var(--dark2);border:1px solid rgba(201,168,76,0.3);border-radius:14px;padding:20px;margin-top:16px;">
+        <div style="font-size:11px;font-weight:500;color:var(--gold);margin-bottom:10px;">✉️ Envoyer un email à <span id="adminEmailTarget"></span></div>
+        <input type="text" id="adminEmailSujet" placeholder="Sujet..." class="search-input" style="width:100%;margin-bottom:8px;">
+        <textarea id="adminEmailMessage" placeholder="Message..." style="width:100%;padding:12px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;resize:vertical;min-height:80px;"></textarea>
+        <div style="display:flex;gap:10px;margin-top:10px;">
+          <button class="bo-save-btn" onclick="sendAdminEmail()">Envoyer</button>
+          <button class="refresh-btn" onclick="document.getElementById('adminEmailPanel').style.display='none'">Annuler</button>
+        </div>
+        <div id="adminEmailSent" style="display:none;margin-top:8px;padding:8px;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.2);border-radius:8px;color:var(--green);font-size:12px;">✓ Email envoyé !</div>
       </div>
     </div>
   </div>
@@ -428,6 +454,9 @@ function showTab(tab) {
   event.target.classList.add('active');
 }
 
+var adminEmailTargetEmail = '';
+var adminEmailTargetNom = '';
+
 function loadAdminStats() {
   var cbName = 'adminCb_' + Date.now();
   window[cbName] = function(data) {
@@ -437,27 +466,83 @@ function loadAdminStats() {
     if (data.status !== 'success') return;
     var commerciaux = data.data;
 
-    // Stats cards
     var totalScans = commerciaux.reduce(function(a,c){ return a+c.scans; }, 0);
     var totalProspects = commerciaux.reduce(function(a,c){ return a+c.prospects; }, 0);
+    var actifs = commerciaux.filter(function(c){ return c.scans > 0; }).length;
+    var tauxGlobal = totalScans > 0 ? Math.round(totalProspects/totalScans*100) : 0;
+    var revenuEstime = commerciaux.length * 12;
+
+    // Stats globales
     document.getElementById('adminStatsCards').innerHTML =
-      '<div class="stat-card"><div class="stat-label">Commerciaux actifs</div><div class="stat-value" style="color:var(--blue)">' + commerciaux.length + '</div></div>' +
+      '<div class="stat-card"><div class="stat-label">Commerciaux</div><div class="stat-value" style="color:var(--blue)">' + commerciaux.length + '</div><div class="stat-sublabel">' + actifs + ' actifs</div></div>' +
       '<div class="stat-card"><div class="stat-label">Total scans</div><div class="stat-value">' + totalScans + '</div></div>' +
-      '<div class="stat-card"><div class="stat-label">Total prospects</div><div class="stat-value">' + totalProspects + '</div></div>';
+      '<div class="stat-card"><div class="stat-label">Total prospects</div><div class="stat-value">' + totalProspects + '</div></div>' +
+      '<div class="stat-card"><div class="stat-label">Revenu estimé</div><div class="stat-value" style="color:var(--green)">' + revenuEstime + '€</div><div class="stat-sublabel">/mois</div></div>';
+
+    // Classement
+    var sorted = commerciaux.slice().sort(function(a,b){ return b.scans - a.scans; });
+    var rankHtml = sorted.map(function(c, i) {
+      var pct = totalScans > 0 ? Math.round(c.scans/totalScans*100) : 0;
+      var medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i+1) + '.';
+      return '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">' +
+        '<span style="font-size:14px;width:24px;text-align:center;">' + medal + '</span>' +
+        '<span style="font-size:13px;color:var(--text);min-width:140px;">' + c.nom + '</span>' +
+        '<div style="flex:1;height:6px;background:var(--dark3);border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + pct + '%;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:3px;"></div></div>' +
+        '<span style="font-size:12px;color:var(--text-muted);min-width:60px;text-align:right;">' + c.scans + ' scans</span>' +
+        '</div>';
+    }).join('');
+    document.getElementById('adminRanking').innerHTML = rankHtml || '<div style="color:var(--text-muted);font-size:13px;">Aucune donnée</div>';
 
     // Table
+    var now = new Date();
     var rows = commerciaux.map(function(c) {
-      var actif = c.scans > 0 ? '<span class="badge-new">Actif</span>' : '<span style="font-size:9px;color:var(--text-muted);background:rgba(138,132,120,0.1);border:1px solid rgba(138,132,120,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">Inactif</span>';
-      return '<tr><td>' + c.nom + actif + '</td><td>' + c.email + '</td><td>' + c.scans + '</td><td>' + c.prospects + '</td><td><a href="https://liliang03-lil.github.io/Protap?id=' + c.id + '" target="_blank" style="color:var(--gold);font-size:12px;">Voir profil →</a></td></tr>';
+      var taux = c.scans > 0 ? Math.round(c.prospects/c.scans*100) : 0;
+      var actifBadge = c.scans > 0
+        ? '<span class="badge-new">Actif</span>'
+        : '<span style="font-size:9px;color:var(--text-muted);background:rgba(138,132,120,0.1);border:1px solid rgba(138,132,120,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">Inactif</span>';
+      return '<tr>' +
+        '<td>' + c.nom + actifBadge + '</td>' +
+        '<td>' + c.email + '</td>' +
+        '<td>' + c.scans + '</td>' +
+        '<td>' + c.prospects + '</td>' +
+        '<td>' + taux + '%</td>' +
+        '<td style="display:flex;gap:6px;flex-wrap:wrap;">' +
+          '<a href="https://liliang03-lil.github.io/Protap?id=' + c.id + '" target="_blank" style="color:var(--gold);font-size:11px;white-space:nowrap;">👁 Profil</a>' +
+          '<button onclick="openAdminEmail(this)" data-email="' + c.email.replace(/"/g,'&quot;') + '" data-nom="' + c.nom.replace(/"/g,'&quot;') + '" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;padding:0;">✉️ Email</button>' +
+        '</td>' +
+        '</tr>';
     }).join('');
 
     document.getElementById('adminTable').innerHTML =
-      '<table class="table"><thead><tr><th>Nom</th><th>Email</th><th>Scans</th><th>Prospects</th><th>Profil</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      '<table class="table"><thead><tr><th>Nom</th><th>Email</th><th>Scans</th><th>Prospects</th><th>Conversion</th><th>Actions</th></tr></thead><tbody>' + rows + '</tbody></table>';
   };
   var script = document.createElement('script');
   script.id = cbName;
   script.src = SCRIPT_URL + '?action=getAdminStats&callback=' + cbName + '&t=' + Date.now();
   document.body.appendChild(script);
+}
+
+function openAdminEmail(btn) {
+  var email = btn.dataset ? btn.dataset.email : btn.getAttribute('data-email');
+  var nom = btn.dataset ? btn.dataset.nom : btn.getAttribute('data-nom');
+  adminEmailTargetEmail = email;
+  adminEmailTargetNom = nom;
+  document.getElementById('adminEmailTarget').textContent = nom;
+  document.getElementById('adminEmailPanel').style.display = 'block';
+  document.getElementById('adminEmailSujet').value = '';
+  document.getElementById('adminEmailMessage').value = '';
+  document.getElementById('adminEmailSent').style.display = 'none';
+}
+
+function sendAdminEmail() {
+  var sujet = document.getElementById('adminEmailSujet').value.trim();
+  var message = document.getElementById('adminEmailMessage').value.trim();
+  if (!sujet || !message) { alert('Remplissez le sujet et le message.'); return; }
+  fetch(SCRIPT_URL + '?action=sendEmail&email=' + encodeURIComponent(adminEmailTargetEmail) + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(message) + '&id=' + COMMERCIAL_ID);
+  document.getElementById('adminEmailSent').style.display = 'block';
+  setTimeout(function(){
+    document.getElementById('adminEmailPanel').style.display = 'none';
+  }, 2000);
 }
 
 function parseDate(raw) {
