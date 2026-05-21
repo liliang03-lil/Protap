@@ -332,7 +332,7 @@ function downloadVCard(e) {
     + "TEL;TYPE=CELL:" + tel + "\n"
     + "EMAIL:" + email + "\n"
     + "URL:" + url + "\n"
-    + "NOTE:" + note.replace(/\n/g, "\n ") + "\n"
+    + "NOTE:" + note.replace(/\n/g, "\r\n") + "\n"
     + "END:VCARD";
 
   var blob = new Blob([vcard], {type: 'text/vcard'});
