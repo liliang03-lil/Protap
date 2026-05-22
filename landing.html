@@ -599,7 +599,7 @@ function submitContact(e) {
   var email = document.getElementById('contactEmail').value;
   var tel = document.getElementById('contactTel').value;
   var message = document.getElementById('contactMessage').value;
-  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7Qf32bOZdiBjJhCFIkBAPI-6uzZ5ak0F2RlQnij4m_RoEQOgcKKhcK4MVhMsR5JuuXw/exec';
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw__X9Y2xTdmzRZiPVIBSvp3BYFEfcx-uRfektlFAHd_bpGUc_ae1KLsB2FYEF3JXXipQ/exec';
   var url = SCRIPT_URL + '?nom=' + encodeURIComponent(nom + (entreprise ? ' (' + entreprise + ')' : '')) + '&telephone=' + encodeURIComponent(tel) + '&email=' + encodeURIComponent(email) + '&commercial=Landing+ProTap&id=lilian';
   var img = new Image();
   img.src = url;
