@@ -388,7 +388,7 @@
 </div>
 
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7Qf32bOZdiBjJhCFIkBAPI-6uzZ5ak0F2RlQnij4m_RoEQOgcKKhcK4MVhMsR5JuuXw/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw__X9Y2xTdmzRZiPVIBSvp3BYFEfcx-uRfektlFAHd_bpGUc_ae1KLsB2FYEF3JXXipQ/exec';
 var COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
 console.log('COMMERCIAL_ID:', COMMERCIAL_ID);
 var allProspects = [];
@@ -516,15 +516,31 @@ function loadAdminStats() {
     var now = new Date();
     var rows = commerciaux.map(function(c) {
       var taux = c.scans > 0 ? Math.round(c.prospects/c.scans*100) : 0;
-      var actifBadge = c.scans > 0
-        ? '<span class="badge-new">Actif</span>'
-        : '<span style="font-size:9px;color:var(--text-muted);background:rgba(138,132,120,0.1);border:1px solid rgba(138,132,120,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">Inactif</span>';
+
+      // Badge activité basé sur le dernier scan
+      var activityBadge = '';
+      if (c.dernierScan) {
+        var parts = c.dernierScan.toString().split('/');
+        var lastDate = new Date(parts[2], parts[1]-1, parts[0]);
+        var diffDays = Math.floor((now - lastDate) / (1000*60*60*24));
+        if (diffDays <= 7) {
+          activityBadge = '<span style="font-size:9px;color:#4CAF7D;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">🟢 Actif</span>';
+        } else if (diffDays <= 30) {
+          activityBadge = '<span style="font-size:9px;color:#E8C97A;background:rgba(232,201,122,0.1);border:1px solid rgba(232,201,122,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">🟡 Peu actif</span>';
+        } else {
+          activityBadge = '<span style="font-size:9px;color:#C0392B;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">🔴 Inactif</span>';
+        }
+      } else {
+        activityBadge = '<span style="font-size:9px;color:var(--text-muted);background:rgba(138,132,120,0.1);border:1px solid rgba(138,132,120,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">⚪ Aucun scan</span>';
+      }
+
       return '<tr>' +
-        '<td>' + c.nom + actifBadge + '</td>' +
+        '<td>' + c.nom + activityBadge + '</td>' +
         '<td>' + c.email + '</td>' +
         '<td>' + c.scans + '</td>' +
         '<td>' + c.prospects + '</td>' +
         '<td>' + taux + '%</td>' +
+        '<td>' + (c.dernierScan || '—') + '</td>' +
         '<td style="display:flex;gap:6px;flex-wrap:wrap;">' +
           '<a href="https://liliang03-lil.github.io/Protap?id=' + c.id + '" target="_blank" style="color:var(--gold);font-size:11px;white-space:nowrap;">👁 Profil</a>' +
           '<button onclick="openAdminEmail(this)" data-email="' + c.email.replace(/"/g,'&quot;') + '" data-nom="' + c.nom.replace(/"/g,'&quot;') + '" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;padding:0;">✉️ Email</button>' +
@@ -534,7 +550,7 @@ function loadAdminStats() {
     }).join('');
 
     document.getElementById('adminTable').innerHTML =
-      '<table class="table"><thead><tr><th>Nom</th><th>Email</th><th>Scans</th><th>Prospects</th><th>Conversion</th><th>Actions</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      '<table class="table"><thead><tr><th>Nom</th><th>Email</th><th>Scans</th><th>Prospects</th><th>Conversion</th><th>Dernier scan</th><th>Actions</th></tr></thead><tbody>' + rows + '</tbody></table>';
   };
   var script = document.createElement('script');
   script.id = cbName;
