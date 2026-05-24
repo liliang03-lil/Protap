@@ -283,7 +283,17 @@
         <div class="section-title" style="margin:20px 0 14px">🎨 Identité visuelle</div>
         <div class="bo-grid">
           <div class="bo-field"><div class="bo-label">Nom de l'entreprise</div><input class="bo-input" id="bo-nom_entreprise" placeholder="Ex: AFIM France"></div>
-          <div class="bo-field"><div class="bo-label">URL Logo entreprise</div><input class="bo-input" id="bo-logo_url" placeholder="https://..."></div>
+          <div class="bo-field">
+            <div class="bo-label">Logo entreprise</div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <input class="bo-input" id="bo-logo_url" placeholder="https://... ou utilisez le bouton" style="flex:1;">
+              <label style="padding:10px 16px;background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:10px;color:var(--gold);font-size:11px;cursor:pointer;white-space:nowrap;">
+                🏢 Uploader
+                <input type="file" accept="image/*" onchange="uploadPhoto(this,'bo-logo_url')" style="display:none;">
+              </label>
+            </div>
+            <div id="upload-progress-bo-logo_url" style="display:none;font-size:11px;color:var(--text-muted);margin-top:6px;">Envoi en cours...</div>
+          </div>
           <div class="bo-field"><div class="bo-label">Couleur principale</div><input class="bo-input" id="bo-couleur_principale" placeholder="#0d1621" type="text"><input type="color" id="bo-couleur_principale_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_principale').value=this.value"></div>
           <div class="bo-field"><div class="bo-label">Couleur secondaire</div><input class="bo-input" id="bo-couleur_secondaire" placeholder="#15202e" type="text"><input type="color" id="bo-couleur_secondaire_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_secondaire').value=this.value"></div>
           <div class="bo-field"><div class="bo-label">Couleur accent</div><input class="bo-input" id="bo-couleur_accent" placeholder="#C9A84C" type="text"><input type="color" id="bo-couleur_accent_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_accent').value=this.value"></div>
