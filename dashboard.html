@@ -557,6 +557,7 @@ function loadAll() {
     allProspects = data.data;
     renderProspects(allProspects);
     updateProspectStats(allProspects);
+    renderChart(allScans, allProspects);
   };
   var script = document.createElement('script');
   script.id = cbName;
@@ -601,7 +602,16 @@ function updateScanStats(scans) {
   document.getElementById('statTodayScans').textContent = today;
   document.getElementById('statWeekScans').textContent = week;
   document.getElementById('statMonthScans').textContent = month;
-  document.getElementById('statLastScan').textContent = last || '—';
+  if (last) {
+    var d = new Date(last);
+    if (!isNaN(d)) {
+      document.getElementById('statLastScan').textContent = d.toLocaleDateString('fr-FR');
+    } else {
+      document.getElementById('statLastScan').textContent = last;
+    }
+  } else {
+    document.getElementById('statLastScan').textContent = '—';
+  }
 }
 
 function updateProspectStats(prospects) {
