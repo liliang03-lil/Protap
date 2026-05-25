@@ -126,7 +126,7 @@
 
   <div class="tabs">
     <div class="tab active" onclick="showTab(this,'dashboard')" data-i18n="dashboard">Dashboard</div>
-    <div class="tab" onclick="showTab(this,'backoffice')" data-i18n="backoffice">Back Office</div>
+    <div class="tab" onclick="showTab(this,'backoffice');loadProfil();" data-i18n="backoffice">Back Office</div>
     <div class="tab" id="adminTab" style="display:none" onclick="showTab(this,'admin')" data-i18n="admin">👑 Admin</div>
   </div>
 
@@ -555,7 +555,7 @@ function loadAll() {
     delete window[cbName];
     var s = document.getElementById(cbName); if (s) s.remove();
     if (data.status !== 'success') return;
-    allProspects = data.data;
+    allProspects = data.data.filter(function(p){ return p.nom && p.nom.toString().trim() !== ''; });
     renderProspects(allProspects);
     updateProspectStats(allProspects);
     renderChart(allScans, allProspects);
