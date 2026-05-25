@@ -867,12 +867,10 @@ function setDashLang(lang) {
   dashLang = lang;
   localStorage.setItem('protap_lang', lang);
   // Update buttons
-  document.getElementById('langFr').style.background = lang === 'fr' ? 'rgba(201,168,76,0.15)' : 'transparent';
-  document.getElementById('langFr').style.borderColor = lang === 'fr' ? 'var(--gold)' : 'var(--border)';
-  document.getElementById('langFr').style.color = lang === 'fr' ? 'var(--gold)' : 'var(--text-muted)';
-  document.getElementById('langEn').style.background = lang === 'en' ? 'rgba(201,168,76,0.15)' : 'transparent';
-  document.getElementById('langEn').style.borderColor = lang === 'en' ? 'var(--gold)' : 'var(--border)';
-  document.getElementById('langEn').style.color = lang === 'en' ? 'var(--gold)' : 'var(--text-muted)';
+  var frBtn = document.getElementById('langFr');
+  var enBtn = document.getElementById('langEn');
+  if (frBtn) { frBtn.style.background = lang === 'fr' ? 'rgba(201,168,76,0.15)' : 'transparent'; frBtn.style.borderColor = lang === 'fr' ? 'var(--gold)' : 'var(--border)'; frBtn.style.color = lang === 'fr' ? 'var(--gold)' : 'var(--text-muted)'; }
+  if (enBtn) { enBtn.style.background = lang === 'en' ? 'rgba(201,168,76,0.15)' : 'transparent'; enBtn.style.borderColor = lang === 'en' ? 'var(--gold)' : 'var(--border)'; enBtn.style.color = lang === 'en' ? 'var(--gold)' : 'var(--text-muted)'; }
   // Apply translations to all elements with data-i18n
   document.querySelectorAll('[data-i18n]').forEach(function(el) {
     var key = el.getAttribute('data-i18n');
