@@ -141,11 +141,11 @@
         <div class="stat-card"><div class="stat-label"><span data-i18n="thisMonth">CE MOIS</span></div><div class="stat-value" id="statMonthScans">—</div><div class="stat-sublabel"><span data-i18n="last30days">30 derniers jours</span></div></div>
       </div>
 
-      <div class="section-title" data-i18n="prospectsTitle">PROSPECTS</div>
+      <div class="section-title">PROSPECTS</div>
       <div class="stats-row">
-        <div class="stat-card" style="grid-column:span 1"><div class="stat-label"><span data-i18n="totalProspects">TOTAL PROSPECTS</span></div><div class="stat-value" id="statTotalProspects">—</div><div class="stat-sublabel"><span data-i18n="sinceBeginning">depuis le début</span></div></div>
-        <div class="stat-card"><div class="stat-label"><span data-i18n="thisWeek">CETTE SEMAINE</span></div><div class="stat-value" id="statWeekProspects">—</div><div class="stat-sublabel"><span data-i18n="last7days">7 derniers jours</span></div></div>
-        <div class="stat-card"><div class="stat-label"><span data-i18n="thisMonth">CE MOIS</span></div><div class="stat-value" id="statMonthProspects">—</div><div class="stat-sublabel"><span data-i18n="last30days">30 derniers jours</span></div></div>
+        <div class="stat-card" style="grid-column:span 1"><div class="stat-label">TOTAL PROSPECTS</div><div class="stat-value" id="statTotalProspects">—</div><div class="stat-sublabel">depuis le début</div></div>
+        <div class="stat-card"><div class="stat-label">CETTE SEMAINE</div><div class="stat-value" id="statWeekProspects">—</div><div class="stat-sublabel">7 derniers jours</div></div>
+        <div class="stat-card"><div class="stat-label">CE MOIS</div><div class="stat-value" id="statMonthProspects">—</div><div class="stat-sublabel">30 derniers jours</div></div>
       </div>
 
       <div class="charts-row">
@@ -619,6 +619,8 @@ function updateScanStats(scans) {
 }
 
 function updateProspectStats(prospects) {
+  // Force affichage immédiat
+  document.getElementById('statTotalProspects').textContent = '...';
   var now = new Date();
   var week = 0, month = 0, emailCount = 0, phoneCount = 0, last = '';
   prospects.forEach(function(p) {
