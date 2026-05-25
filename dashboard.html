@@ -309,6 +309,7 @@
           <div class="bo-field"><div class="bo-label">Couleur secondaire</div><input class="bo-input" id="bo-couleur_secondaire" placeholder="#15202e" type="text"><input type="color" id="bo-couleur_secondaire_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_secondaire').value=this.value"></div>
           <div class="bo-field"><div class="bo-label">Couleur accent</div><input class="bo-input" id="bo-couleur_accent" placeholder="#C9A84C" type="text"><input type="color" id="bo-couleur_accent_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_accent').value=this.value"></div>
           <div class="bo-field"><div class="bo-label">Fond</div><select class="bo-input" id="bo-fond"><option value="Sombre">Sombre</option><option value="Clair">Clair</option></select></div>
+          <div class="bo-field"><div class="bo-label">Langue du back office</div><select class="bo-input" id="bo-langue"><option value="fr">🇫🇷 Français</option><option value="en">🇬🇧 English</option></select></div>
           <div class="bo-field"><div class="bo-label">Logo fond</div><select class="bo-input" id="bo-logo_fond"><option value="clair">Mon logo est sombre → pastille blanche</option><option value="sombre">Mon logo est clair → pas de pastille</option></select></div>
         </div>
         <button class="bo-save-btn" onclick="saveProfil()">Enregistrer le profil</button>
@@ -783,13 +784,14 @@ function loadProfil() {
   jsonp(SCRIPT_URL + '?action=getProfil&id=' + COMMERCIAL_ID, 'profilCb', function(data) {
     if (data.status !== 'success') return;
     var p = data.data;
-    var fields = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+    var fields = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
     fields.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el&&p[f]) el.value=p[f]; });
     var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
     toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) el.checked=(p[f+'_actif']==='oui'); });
     // Load select fields
     if (p['fond']) { var fondEl = document.getElementById('bo-fond'); if(fondEl) fondEl.value = p['fond']; }
     if (p['logo_fond']) { var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) logoFondEl.value = p['logo_fond']; }
+    if (p['langue']) { var langueEl = document.getElementById('bo-langue'); if(langueEl) langueEl.value = p['langue']; }
     // Load cover position
     if (p['cover_position'] !== undefined) {
       var coverSlider = document.getElementById('bo-cover_position');
@@ -817,12 +819,13 @@ function loadConfig() {
 }
 
 function saveProfil() {
-  var params = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+  var params = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
   var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
   var url = SCRIPT_URL + '?action=saveProfil&id=' + COMMERCIAL_ID;
   params.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value); });
   toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) url+='&'+f+'_actif='+(el.checked?'oui':'non'); });
   var fondEl = document.getElementById('bo-fond'); if(fondEl) url+='&fond='+encodeURIComponent(fondEl.value);
+  var langueEl = document.getElementById('bo-langue'); if(langueEl) url+='&langue='+encodeURIComponent(langueEl.value);
   var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) url+='&logo_fond='+encodeURIComponent(logoFondEl.value);
   imgCall(url);
   document.getElementById('successProfil').classList.add('show');
