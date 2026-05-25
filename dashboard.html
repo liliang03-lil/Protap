@@ -638,7 +638,8 @@ function updateProspectStats(prospects) {
   document.getElementById('statTotalProspects').textContent = realProspects.length;
   document.getElementById('statWeekProspects').textContent = week;
   document.getElementById('statMonthProspects').textContent = month;
-  document.getElementById('statLastProspect').textContent = last || '—';
+  var lastDateStr = last ? new Date(last).toLocaleDateString('fr-FR') : '—';
+  document.getElementById('statLastProspect').textContent = lastDateStr;
   var totalScans = allScans.length;
   var taux = totalScans > 0 ? Math.round(prospects.length/totalScans*100) : 0;
   document.getElementById('convRate').textContent = taux + '%';
