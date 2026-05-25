@@ -266,13 +266,24 @@
           <div class="bo-field full">
             <div class="bo-label">Photo de couverture</div>
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-              <input class="bo-input" id="bo-photo_couverture" placeholder="https://... ou utilisez le bouton" style="flex:1;">
+              <input class="bo-input" id="bo-photo_couverture" placeholder="https://... ou utilisez le bouton" style="flex:1;" oninput="updateCoverPreview()">
               <label style="padding:10px 16px;background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:10px;color:var(--gold);font-size:11px;cursor:pointer;white-space:nowrap;">
                 🖼 Uploader
-                <input type="file" accept="image/*" onchange="uploadPhoto(this,'bo-photo_couverture')" style="display:none;">
+                <input type="file" accept="image/*" onchange="uploadPhoto(this,'bo-photo_couverture');setTimeout(updateCoverPreview,2000)" style="display:none;">
               </label>
             </div>
             <div id="upload-progress-photo_couverture" style="display:none;font-size:11px;color:var(--text-muted);margin-top:6px;">Envoi en cours...</div>
+            <div id="coverPreviewWrap" style="display:none;margin-top:12px;">
+              <div style="width:100%;height:100px;border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:8px;">
+                <img id="coverPreviewImg" src="" style="width:100%;height:100%;object-fit:cover;object-position:center 50%;">
+              </div>
+              <div class="bo-label" style="margin-bottom:6px;">Position verticale de la photo</div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:11px;color:var(--text-muted);">Haut</span>
+                <input type="range" id="bo-cover_position" min="0" max="100" value="50" style="flex:1;accent-color:var(--gold);" oninput="updateCoverPosition(this.value)">
+                <span style="font-size:11px;color:var(--text-muted);">Bas</span>
+              </div>
+            </div>
           </div>
           <div class="bo-field full"><div class="bo-label">Lien Calendly (Rendez-vous)</div><input class="bo-input" id="bo-calendly" placeholder="https://calendly.com/..."></div>
           <div class="bo-field"><div class="bo-label">Lien Catalogue</div><input class="bo-input" id="bo-catalogue_lien" placeholder="https://..."></div>
@@ -693,6 +704,25 @@ function sendSelectedEmails() {
   }, 3000);
 }
 
+function updateCoverPreview() {
+  var url = document.getElementById('bo-photo_couverture') ? document.getElementById('bo-photo_couverture').value : '';
+  var wrap = document.getElementById('coverPreviewWrap');
+  var img = document.getElementById('coverPreviewImg');
+  if (url && url.trim() && wrap && img) {
+    wrap.style.display = 'block';
+    img.src = url;
+    var pos = document.getElementById('bo-cover_position') ? document.getElementById('bo-cover_position').value : 50;
+    img.style.objectPosition = 'center ' + pos + '%';
+  } else if (wrap) {
+    wrap.style.display = 'none';
+  }
+}
+
+function updateCoverPosition(val) {
+  var img = document.getElementById('coverPreviewImg');
+  if (img) img.style.objectPosition = 'center ' + val + '%';
+}
+
 function uploadPhoto(input, targetId) {
   var file = input.files[0];
   if (!file) return;
@@ -753,13 +783,18 @@ function loadProfil() {
   jsonp(SCRIPT_URL + '?action=getProfil&id=' + COMMERCIAL_ID, 'profilCb', function(data) {
     if (data.status !== 'success') return;
     var p = data.data;
-    var fields = ['nom','titre','telephone','email','photo','photo_couverture','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+    var fields = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
     fields.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el&&p[f]) el.value=p[f]; });
     var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
     toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) el.checked=(p[f+'_actif']==='oui'); });
     // Load select fields
     if (p['fond']) { var fondEl = document.getElementById('bo-fond'); if(fondEl) fondEl.value = p['fond']; }
     if (p['logo_fond']) { var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) logoFondEl.value = p['logo_fond']; }
+    // Load cover position
+    if (p['cover_position'] !== undefined) {
+      var coverSlider = document.getElementById('bo-cover_position');
+      if (coverSlider) { coverSlider.value = p['cover_position']; updateCoverPreview(); }
+    }
     // Sync color pickers
     ['couleur_principale','couleur_secondaire','couleur_accent'].forEach(function(c){
       var input = document.getElementById('bo-'+c);
@@ -780,7 +815,7 @@ function loadConfig() {
 }
 
 function saveProfil() {
-  var params = ['nom','titre','telephone','email','photo','photo_couverture','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+  var params = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
   var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
   var url = SCRIPT_URL + '?action=saveProfil&id=' + COMMERCIAL_ID;
   params.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value); });
