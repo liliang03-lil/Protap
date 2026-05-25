@@ -3,137 +3,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ProTap — Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <title>ProTap Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --gold: #C9A84C; --gold-light: #E8C97A; --dark: #0d1621; --dark2: #15202e; --dark3: #1c2b3a; --text: #F0EDE6; --text-muted: #8A8478; --border: rgba(201,168,76,0.18); --green: #4CAF7D; --blue: #4A9ECA; --red: #E05555; }
+    :root { --gold: #C9A84C; --gold-light: #E8C97A; --dark: #0d1621; --dark2: #15202e; --dark3: #1c2b3a; --text: #F0EDE6; --text-muted: #8A8478; --border: rgba(201,168,76,0.18); --green: #4CAF7D; --blue: #4A9ECA; --red: #C0392B; }
     html, body { min-height: 100vh; background: var(--dark); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; -webkit-font-smoothing: antialiased; }
-    body { background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.08) 0%, transparent 70%), var(--dark); }
 
     /* LOGIN */
-    .login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
-    .login-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 20px; padding: 40px; width: 100%; max-width: 380px; }
-    .login-logo { text-align: center; margin-bottom: 32px; }
-    .login-logo .logo-text { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--text); }
-    .login-logo .logo-text span { color: var(--gold); }
-    .login-logo .logo-sub { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-top: 6px; }
-    .login-input-group { margin-bottom: 14px; }
-    .login-input-group label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 8px; }
-    .login-input-group input { width: 100%; padding: 14px 16px; background: var(--dark3); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
-    .login-input-group input:focus { border-color: rgba(201,168,76,0.5); }
-    .login-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 12px; color: var(--dark); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 8px; }
-    .login-error { background: rgba(224,85,85,0.1); border: 1px solid rgba(224,85,85,0.3); border-radius: 10px; padding: 12px 16px; font-size: 12px; color: var(--red); text-align: center; margin-top: 14px; display: none; }
+    .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.08) 0%, transparent 70%), var(--dark); }
+    .login-box { background: var(--dark2); border: 1px solid var(--border); border-radius: 20px; padding: 40px 36px; width: 100%; max-width: 380px; }
+    .login-logo { font-family: 'DM Sans', sans-serif; font-size: 24px; font-weight: 400; color: var(--text); text-align: center; margin-bottom: 8px; letter-spacing: 0.05em; }
+    .login-logo span { color: var(--gold); }
+    .login-sub { font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 32px; }
+    .login-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+    .login-input { width: 100%; padding: 13px 16px; background: var(--dark); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 300; outline: none; margin-bottom: 14px; transition: border-color 0.2s; }
+    .login-input:focus { border-color: rgba(201,168,76,0.5); }
+    .login-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 10px; color: var(--dark); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 6px; }
+    .login-error { display: none; padding: 12px; background: rgba(192,57,43,0.1); border: 1px solid rgba(192,57,43,0.2); border-radius: 8px; color: #C0392B; font-size: 12px; text-align: center; margin-top: 12px; }
     .login-error.show { display: block; }
 
     /* APP */
-    .app { display: none; }
-    .header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .logo-wrap { display: flex; align-items: center; gap: 8px; }
-    .logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; color: var(--text); }
-    .logo-text span { color: var(--gold); }
-    .logo-badge { font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--border); padding: 3px 8px; border-radius: 100px; }
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    .header-name { font-size: 13px; color: var(--text); }
-    .logout-btn { padding: 7px 14px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 11px; cursor: pointer; }
-    .logout-btn:hover { border-color: var(--red); color: var(--red); }
-
-    /* TABS */
-    .tabs { display: flex; gap: 4px; padding: 16px 24px 0; border-bottom: 1px solid var(--border); }
-    .tab { padding: 10px 20px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .app { display: none; min-height: 100vh; flex-direction: column; }
+    .header { background: var(--dark2); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+    .header-logo { font-size: 18px; font-weight: 400; color: var(--text); letter-spacing: 0.05em; }
+    .header-logo span { color: var(--gold); }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .header-name { font-size: 13px; color: var(--text-muted); }
+    .tabs { background: var(--dark2); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; gap: 0; }
+    .tab { padding: 14px 20px; font-size: 12px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
     .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-
-    /* PAGES */
-    .page { display: none; }
+    .page { display: none; flex: 1; }
     .page.active { display: block; }
-    .main { max-width: 1000px; margin: 0 auto; padding: 24px; }
+    .main { max-width: 960px; margin: 0 auto; padding: 28px 24px; }
+    .section-title { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; opacity: 0.8; }
 
     /* STATS */
-    .section-title { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; opacity: 0.8; }
-    .stats-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
-    .stats-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
-    .stats-grid-4b { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
-    .stat-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
-    .stat-card.highlight { border-color: rgba(74,158,202,0.4); background: var(--dark3); }
-    .stat-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
-    .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: var(--gold); line-height: 1; }
-    .stat-value.blue { color: var(--blue); }
-    .stat-value.small { font-size: 16px; padding-top: 8px; line-height: 1.3; }
-    .stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
-    .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    .stat-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; padding: 20px 18px; }
+    .stat-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+    .stat-value { font-size: 36px; font-weight: 200; color: var(--gold); line-height: 1; margin-bottom: 6px; }
+    .stat-sublabel { font-size: 11px; color: var(--text-muted); }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
     .chart-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
-    .chart-title { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; opacity: 0.8; }
-    .chart-wrap { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
-    .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .chart-bar { width: 100%; border-radius: 4px; min-height: 3px; }
-    .chart-bar.scans { background: rgba(74,158,202,0.25); }
-    .chart-bar.scans.active { background: var(--blue); }
-    .chart-bar.prospects { background: rgba(201,168,76,0.2); }
-    .chart-bar.prospects.active { background: var(--gold); }
-    .chart-bar-label { font-size: 8px; color: var(--text-muted); }
-    .legend { display: flex; gap: 16px; margin-top: 12px; }
-    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--text-muted); }
-    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-    .conversion-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
-    .conversion-bar { height: 8px; background: var(--dark3); border-radius: 4px; overflow: hidden; }
-    .conversion-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 4px; transition: width 0.8s ease; }
-    .table-actions { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
-    .search-input { flex: 1; padding: 12px 16px; background: var(--dark2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 300; outline: none; }
-    .search-input:focus { border-color: rgba(201,168,76,0.4); }
-    .refresh-btn { padding: 12px 16px; background: transparent; border: 1px solid var(--border); border-radius: 12px; color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
-    .table-wrap { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-    .table { width: 100%; border-collapse: collapse; }
-    .table th { padding: 14px 16px; text-align: left; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 400; }
-    .table td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid rgba(201,168,76,0.06); color: var(--text); }
+    .badge-new { font-size: 9px; color: var(--green); background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.2); padding: 2px 8px; border-radius: 100px; margin-left: 6px; }
+    .loading { color: var(--text-muted); font-size: 13px; padding: 20px 0; }
+
+    /* TABLE */
+    .table-actions { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+    .search-input { flex: 1; min-width: 180px; padding: 10px 14px; background: var(--dark2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; }
+    .refresh-btn { padding: 10px 16px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; white-space: nowrap; }
+    .refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .table-wrap { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; overflow: auto; }
+    .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .table th { padding: 12px 16px; text-align: left; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 400; }
+    .table td { padding: 12px 16px; border-bottom: 1px solid rgba(201,168,76,0.06); color: var(--text); vertical-align: middle; }
     .table tr:last-child td { border-bottom: none; }
-    .table tr:hover td { background: rgba(255,255,255,0.02); }
-    .badge-new { display: inline-block; font-size: 9px; text-transform: uppercase; color: var(--green); background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.2); padding: 2px 8px; border-radius: 100px; margin-left: 6px; }
-    .empty { text-align: center; padding: 48px 24px; color: var(--text-muted); }
-    .empty p { font-size: 13px; }
-    .loading { text-align: center; padding: 32px; color: var(--text-muted); font-size: 13px; }
 
     /* BACK OFFICE */
-    .bo-section { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 20px; }
-    .bo-section-title { font-size: 13px; font-weight: 500; color: var(--gold); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .bo-section { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 16px; }
+    .bo-section-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
     .bo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .bo-field { display: flex; flex-direction: column; gap: 6px; }
     .bo-field.full { grid-column: 1 / -1; }
     .bo-label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
-    .bo-input { padding: 12px 14px; background: var(--dark3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; transition: border-color 0.2s; width: 100%; }
+    .bo-input { padding: 11px 14px; background: var(--dark); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300; outline: none; transition: border-color 0.2s; width: 100%; }
     .bo-input:focus { border-color: rgba(201,168,76,0.4); }
-    .bo-textarea { padding: 12px 14px; background: var(--dark3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; resize: vertical; min-height: 100px; width: 100%; }
-    .bo-textarea:focus { border-color: rgba(201,168,76,0.4); }
+    .bo-textarea { padding: 11px 14px; background: var(--dark); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300; outline: none; resize: vertical; min-height: 80px; width: 100%; }
     .bo-save-btn { padding: 12px 24px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 10px; color: var(--dark); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 16px; }
-    .bo-save-btn:active { opacity: 0.85; }
-    .bo-success { display: none; padding: 10px 16px; background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.2); border-radius: 10px; color: var(--green); font-size: 12px; margin-top: 12px; }
+    .bo-toggle { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--dark); border: 1px solid var(--border); border-radius: 10px; }
+    .bo-toggle input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
+    .bo-toggle label { font-size: 13px; color: var(--text); cursor: pointer; }
+    .bo-success { display: none; padding: 10px 14px; background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.2); border-radius: 8px; color: var(--green); font-size: 12px; margin-top: 10px; }
     .bo-success.show { display: block; }
+    .upload-btn-label { padding: 10px 16px; background: rgba(201,168,76,0.1); border: 1px solid var(--border); border-radius: 10px; color: var(--gold); font-size: 11px; cursor: pointer; white-space: nowrap; }
 
-    /* TOGGLE */
-    .social-toggle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .social-toggle { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--dark3); border: 1px solid var(--border); border-radius: 10px; }
-    .social-toggle-name { font-size: 12px; color: var(--text); }
-    .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
-    .toggle input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider { position: absolute; inset: 0; background: var(--dark); border: 1px solid var(--border); border-radius: 22px; cursor: pointer; transition: 0.3s; }
-    .toggle-slider:before { content: ''; position: absolute; width: 16px; height: 16px; left: 2px; top: 2px; background: var(--text-muted); border-radius: 50%; transition: 0.3s; }
-    .toggle input:checked + .toggle-slider { background: rgba(201,168,76,0.2); border-color: var(--gold); }
-    .toggle input:checked + .toggle-slider:before { transform: translateX(18px); background: var(--gold); }
+    /* EMAIL PANEL */
+    .email-panel { display: none; background: var(--dark2); border: 1px solid rgba(201,168,76,0.3); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
 
-    /* NEWSLETTER */
-    .newsletter-stats { display: flex; gap: 12px; margin-bottom: 16px; }
-    .nl-stat { background: var(--dark3); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; flex: 1; text-align: center; }
-    .nl-stat-value { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--gold); }
-    .nl-stat-label { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
-    .send-btn { padding: 12px 24px; background: var(--dark3); border: 1px solid var(--green); border-radius: 10px; color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 16px; }
-    .send-btn:hover { background: rgba(76,175,125,0.1); }
+    /* LOGOUT BTN */
+    .logout-btn { padding: 7px 14px; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 11px; cursor: pointer; }
+    .logout-btn:hover { border-color: var(--red); color: var(--red); }
+    .lang-btn { padding: 6px 10px; border-radius: 8px; font-size: 12px; cursor: pointer; border: 1px solid; }
 
-    @media (max-width: 768px) {
-      .stats-grid-4, .stats-grid-4b { grid-template-columns: repeat(2, 1fr); }
-      .stats-grid-3 { grid-template-columns: repeat(2, 1fr); }
-      .chart-row, .bo-grid { grid-template-columns: 1fr; }
-      .social-toggle-grid { grid-template-columns: repeat(2, 1fr); }
-      .table th:nth-child(3), .table td:nth-child(3) { display: none; }
-      .main { padding: 16px; }
+    @media (max-width: 600px) {
+      .stats-grid, .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .charts-row { grid-template-columns: 1fr; }
+      .bo-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -141,106 +99,102 @@
 
 <!-- LOGIN -->
 <div class="login-page" id="loginPage">
-  <div class="login-card">
-    <div class="login-logo">
-      <div class="logo-text"><span>Fidele</span>MC</div>
-      <div class="logo-sub">Dashboard Commercial</div>
-    </div>
-    <div class="login-input-group">
-      <label>Email</label>
-      <input type="email" id="loginEmail" placeholder="votre@email.com" autocomplete="email">
-    </div>
-    <div class="login-input-group">
-      <label>Mot de passe</label>
-      <input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="login-btn" onclick="doLogin()">Se connecter</button>
-    <div class="login-error" id="loginError">Email ou mot de passe incorrect.</div>
+  <div class="login-box">
+    <div class="login-logo"><span>Pro</span>Tap</div>
+    <div class="login-sub" id="loginSub">Dashboard Commercial</div>
+    <label class="login-label" id="loginEmailLabel">Adresse email</label>
+    <input type="email" class="login-input" id="loginEmail" placeholder="votre@email.com" onkeydown="if(event.key==='Enter')doLogin()">
+    <label class="login-label" id="loginPasswordLabel">Mot de passe</label>
+    <input type="password" class="login-input" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">Se connecter</button>
+    <div class="login-error" id="loginError">Identifiants incorrects</div>
   </div>
 </div>
 
 <!-- APP -->
 <div class="app" id="app">
   <div class="header">
-    <div class="logo-wrap">
-      <span class="logo-text"><span>Fidele</span>MC</span>
-      <span class="logo-badge">Pro</span>
-    </div>
+    <div class="header-logo"><span>Pro</span>Tap</div>
     <div class="header-right">
-      <span class="header-name" id="headerName">Lilian Giteau</span>
-      <div style="display:flex;gap:6px;">
-        <button onclick="setDashLang('fr')" id="langFr" style="padding:6px 10px;background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:8px;color:var(--gold);font-size:12px;cursor:pointer;">🇫🇷</button>
-        <button onclick="setDashLang('en')" id="langEn" style="padding:6px 10px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-size:12px;cursor:pointer;">🇬🇧</button>
-      </div>
-      <a id="profileLink" href="https://liliang03-lil.github.io/Protap?id=lilian" target="_blank" style="padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--gold);font-family:'DM Sans',sans-serif;font-size:11px;text-decoration:none;letter-spacing:0.05em;">👁 <span data-i18n="myProfile">Mon profil</span></a>
-      <button class="logout-btn" onclick="doLogout()"><span data-i18n="logout">Déconnexion</span></button>
+      <button class="lang-btn" id="langFr" onclick="setDashLang('fr')" style="background:rgba(201,168,76,0.15);border-color:var(--gold);color:var(--gold);">🇫🇷</button>
+      <button class="lang-btn" id="langEn" onclick="setDashLang('en')" style="background:transparent;border-color:var(--border);color:var(--text-muted);">🇬🇧</button>
+      <a id="profileLink" href="#" target="_blank" style="padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--gold);font-size:11px;text-decoration:none;">👁 <span data-i18n="myProfile">Mon profil</span></a>
+      <span class="header-name" id="headerName"></span>
+      <button class="logout-btn" onclick="doLogout()" data-i18n="logout">Déconnexion</button>
     </div>
   </div>
 
   <div class="tabs">
-    <div class="tab active" onclick="showTab('dashboard')">📊 <span data-i18n="dashboard">Dashboard</span></div>
-    <div class="tab" onclick="showTab('backoffice')">⚙️ <span data-i18n="backoffice">Back Office</span></div>
-    <div class="tab" id="adminTab" style="display:none" onclick="showTab('admin')"><span data-i18n="admin">👑 Admin</span></div>
+    <div class="tab active" onclick="showTab(this,'dashboard')" data-i18n="dashboard">Dashboard</div>
+    <div class="tab" onclick="showTab(this,'backoffice')" data-i18n="backoffice">Back Office</div>
+    <div class="tab" id="adminTab" style="display:none" onclick="showTab(this,'admin')" data-i18n="admin">👑 Admin</div>
   </div>
 
   <!-- DASHBOARD PAGE -->
   <div class="page active" id="page-dashboard">
     <div class="main">
-      <div class="section-title">Scans de la carte</div>
-      <div class="stats-grid-4">
-        <div class="stat-card highlight"><div class="stat-label">Total Scans</div><div class="stat-value blue" id="scanTotal">—</div><div class="stat-sub">depuis le debut</div></div>
-        <div class="stat-card"><div class="stat-label">Aujourd'hui</div><div class="stat-value blue" id="scanToday">—</div><div class="stat-sub">scans aujourd'hui</div></div>
-        <div class="stat-card"><div class="stat-label">Cette semaine</div><div class="stat-value blue" id="scanWeek">—</div><div class="stat-sub">7 derniers jours</div></div>
-        <div class="stat-card"><div class="stat-label">Ce mois</div><div class="stat-value blue" id="scanMonth">—</div><div class="stat-sub">30 derniers jours</div></div>
+      <div class="section-title" data-i18n="scansTitle">SCANS DE LA CARTE</div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label" data-i18n="totalScans">TOTAL SCANS</div><div class="stat-value" id="statTotalScans">—</div><div class="stat-sublabel" data-i18n="sinceBeginning">depuis le début</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="today">AUJOURD'HUI</div><div class="stat-value" id="statTodayScans">—</div><div class="stat-sublabel" data-i18n="scansToday">scans aujourd'hui</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="thisWeek">CETTE SEMAINE</div><div class="stat-value" id="statWeekScans">—</div><div class="stat-sublabel" data-i18n="last7days">7 derniers jours</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="thisMonth">CE MOIS</div><div class="stat-value" id="statMonthScans">—</div><div class="stat-sublabel" data-i18n="last30days">30 derniers jours</div></div>
       </div>
-      <div class="section-title">Prospects</div>
-      <div class="stats-grid-3">
-        <div class="stat-card"><div class="stat-label">Total Prospects</div><div class="stat-value" id="statTotal">—</div><div class="stat-sub">depuis le debut</div></div>
-        <div class="stat-card"><div class="stat-label">Cette semaine</div><div class="stat-value" id="statWeek">—</div><div class="stat-sub">7 derniers jours</div></div>
-        <div class="stat-card"><div class="stat-label">Ce mois</div><div class="stat-value" id="statMonth">—</div><div class="stat-sub">30 derniers jours</div></div>
+
+      <div class="section-title" data-i18n="prospectsTitle">PROSPECTS</div>
+      <div class="stats-row">
+        <div class="stat-card" style="grid-column:span 1"><div class="stat-label" data-i18n="totalProspects">TOTAL PROSPECTS</div><div class="stat-value" id="statTotalProspects">—</div><div class="stat-sublabel" data-i18n="sinceBeginning">depuis le début</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="thisWeek">CETTE SEMAINE</div><div class="stat-value" id="statWeekProspects">—</div><div class="stat-sublabel" data-i18n="last7days">7 derniers jours</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="thisMonth">CE MOIS</div><div class="stat-value" id="statMonthProspects">—</div><div class="stat-sublabel" data-i18n="last30days">30 derniers jours</div></div>
       </div>
-      <div class="chart-row">
+
+      <div class="charts-row">
         <div class="chart-card">
-          <div class="chart-title">Taux de conversion</div>
-          <div class="conversion-label"><span>Scans → Prospects</span><span id="convPct" style="color:var(--gold);font-weight:500">—</span></div>
-          <div class="conversion-bar"><div class="conversion-fill" id="convFill" style="width:0%"></div></div>
-          <div style="margin-top:16px;font-size:11px;color:var(--text-muted)" id="convDetail">Chargement...</div>
+          <div class="stat-label" data-i18n="conversionRate">TAUX DE CONVERSION</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;" data-i18n="scansToProspects">Scans → Prospects</div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="flex:1;height:6px;background:var(--dark3);border-radius:3px;overflow:hidden;"><div id="convBar" style="height:100%;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:3px;width:0%;transition:width 0.8s ease;"></div></div>
+            <span id="convRate" style="font-size:18px;font-weight:400;color:var(--gold);">—</span>
+          </div>
+          <div id="convLoading" style="font-size:12px;color:var(--text-muted);margin-top:8px;" data-i18n="loading">Chargement...</div>
         </div>
         <div class="chart-card">
-          <div class="chart-title">Activite mensuelle</div>
-          <div class="chart-wrap" id="chartWrap"><div class="loading">Chargement...</div></div>
-          <div class="legend">
-            <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Scans</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Prospects</div>
+          <div class="stat-label" data-i18n="monthlyActivity">ACTIVITE MENSUELLE</div>
+          <canvas id="activityChart" height="120"></canvas>
+          <div style="display:flex;gap:16px;margin-top:10px;">
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);"><div style="width:10px;height:10px;border-radius:50%;background:var(--blue);"></div><span data-i18n="scansLabel">Scans</span></div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);"><div style="width:10px;height:10px;border-radius:50%;background:var(--gold);"></div><span data-i18n="prospectsLabel">Prospects</span></div>
           </div>
         </div>
       </div>
-      <div class="stats-grid-4b">
-        <div class="stat-card"><div class="stat-label">Dernier prospect</div><div class="stat-value small" id="statLast">—</div><div class="stat-sub">date du dernier contact</div></div>
-        <div class="stat-card"><div class="stat-label">Dernier scan</div><div class="stat-value small" id="scanLast">—</div><div class="stat-sub">date du dernier scan</div></div>
-        <div class="stat-card"><div class="stat-label">Taux email</div><div class="stat-value" id="statEmail">—</div><div class="stat-sub">prospects avec email</div></div>
-        <div class="stat-card"><div class="stat-label">Taux telephone</div><div class="stat-value" id="statPhone">—</div><div class="stat-sub">prospects avec telephone</div></div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label" data-i18n="lastProspect">DERNIER PROSPECT</div><div class="stat-value" id="statLastProspect" style="font-size:18px;margin-top:8px;">—</div><div class="stat-sublabel" data-i18n="dateLastContact">date du dernier contact</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="lastScan">DERNIER SCAN</div><div class="stat-value" id="statLastScan" style="font-size:18px;margin-top:8px;">—</div><div class="stat-sublabel" data-i18n="dateLastScan">date du dernier scan</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="emailRate">TAUX EMAIL</div><div class="stat-value" id="statEmailRate">—</div><div class="stat-sublabel" data-i18n="prospectsWithEmail">prospects avec email</div></div>
+        <div class="stat-card"><div class="stat-label" data-i18n="phoneRate">TAUX TELEPHONE</div><div class="stat-value" id="statPhoneRate">—</div><div class="stat-sublabel" data-i18n="prospectsWithPhone">prospects avec telephone</div></div>
       </div>
-      <div class="section-title">Liste des prospects</div>
+
+      <!-- PROSPECTS TABLE -->
       <div class="table-actions">
-        <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un prospect..." data-i18n-placeholder="search" oninput="filterProspects()">
-        <button class="refresh-btn" id="sendEmailBtn" onclick="toggleEmailPanel()" style="display:none;background:rgba(201,168,76,0.1);border-color:var(--gold);color:var(--gold)">✉️ Email (<span id="selectedCount">0</span>)</button>
-        <button class="refresh-btn" onclick="loadAll()"><span data-i18n="refresh">Actualiser</span></button>
+        <input type="text" class="search-input" id="searchInput" data-i18n-placeholder="search" placeholder="Rechercher un prospect..." oninput="filterProspects()">
+        <button class="refresh-btn" id="sendEmailBtn" onclick="toggleEmailPanel()" style="display:none;background:rgba(201,168,76,0.1);border-color:var(--gold);color:var(--gold)">✉️ <span data-i18n="sendEmail">Email</span> (<span id="selectedCount">0</span>)</button>
+        <button class="refresh-btn" onclick="loadAll()" data-i18n="refresh">Actualiser</button>
       </div>
 
-      <div id="emailPanel" style="display:none;background:var(--dark2);border:1px solid rgba(201,168,76,0.3);border-radius:14px;padding:20px;margin-bottom:16px;">
-        <div style="font-size:11px;font-weight:500;color:var(--gold);margin-bottom:10px;">✉️ Envoyer un email aux prospects sélectionnés</div>
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:10px;">Variables : {nom} {lien_profil} {calendly} {site} {linkedin} {instagram} {whatsapp}</div>
-        <input type="text" id="selEmailSujet" placeholder="Sujet de l'email..." class="search-input" style="width:100%;margin-bottom:8px;">
-        <textarea id="selEmailMessage" placeholder="Votre message..." style="width:100%;padding:12px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;resize:vertical;min-height:100px;"></textarea>
+      <div class="email-panel" id="emailPanel">
+        <div style="font-size:11px;font-weight:500;color:var(--gold);margin-bottom:10px;">✉️ <span data-i18n="sendEmailTo">Envoyer un email aux prospects sélectionnés</span></div>
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:10px;"><span data-i18n="variables">Variables :</span> {nom} {lien_profil} {calendly} {site} {linkedin} {instagram} {whatsapp}</div>
+        <input type="text" id="selEmailSujet" class="search-input" style="width:100%;margin-bottom:8px;" placeholder="Sujet...">
+        <textarea id="selEmailMessage" style="width:100%;padding:12px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;resize:vertical;min-height:100px;" placeholder="Message..."></textarea>
         <div style="display:flex;gap:10px;margin-top:12px;">
-          <button class="bo-save-btn" onclick="sendSelectedEmails()">Envoyer</button>
-          <button class="refresh-btn" onclick="toggleEmailPanel()">Annuler</button>
+          <button class="bo-save-btn" onclick="sendSelectedEmails()" data-i18n="send">Envoyer</button>
+          <button class="refresh-btn" onclick="toggleEmailPanel()" data-i18n="cancel">Annuler</button>
         </div>
-        <div id="emailSentMsg" style="display:none;margin-top:10px;padding:10px;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.2);border-radius:8px;color:var(--green);font-size:12px;">✓ Emails envoyés !</div>
+        <div id="emailSentMsg" style="display:none;margin-top:10px;padding:10px;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.2);border-radius:8px;color:var(--green);font-size:12px;" data-i18n="emailSent">✓ Emails envoyés !</div>
       </div>
 
-      <div class="table-wrap" id="tableWrap"><div class="loading">Chargement...</div></div>
+      <div class="table-wrap" id="tableWrap"><div class="loading" data-i18n="loading">Chargement...</div></div>
     </div>
   </div>
 
@@ -248,236 +202,325 @@
   <div class="page" id="page-backoffice">
     <div class="main">
 
-      <!-- Profil -->
+      <!-- Mon profil -->
       <div class="bo-section">
-        <div class="bo-section-title">👤 Mon profil</div>
+        <div class="bo-section-title">👤 <span data-i18n="myProfil">Mon profil</span></div>
         <div class="bo-grid">
-          <div class="bo-field"><div class="bo-label">Nom complet</div><input class="bo-input" id="bo-nom" placeholder="Lilian Giteau"></div>
-          <div class="bo-field"><div class="bo-label">Titre / Poste</div><input class="bo-input" id="bo-titre" placeholder="Fondateur · Monaco"></div>
-          <div class="bo-field"><div class="bo-label">Telephone</div><input class="bo-input" id="bo-telephone" placeholder="0676257858"></div>
-          <div class="bo-field"><div class="bo-label">Email</div><input class="bo-input" id="bo-email" placeholder="email@gmail.com"></div>
+          <div class="bo-field"><div class="bo-label" data-i18n="fullName">NOM COMPLET</div><input class="bo-input" id="bo-nom"></div>
+          <div class="bo-field"><div class="bo-label" data-i18n="titlePost">TITRE / POSTE</div><input class="bo-input" id="bo-titre" placeholder="Ex: Commercial · Monaco"></div>
+          <div class="bo-field"><div class="bo-label" data-i18n="telephone">TELEPHONE</div><input class="bo-input" id="bo-telephone" type="tel"></div>
+          <div class="bo-field"><div class="bo-label">EMAIL</div><input class="bo-input" id="bo-email" type="email"></div>
           <div class="bo-field full">
-            <div class="bo-label">Photo de profil</div>
+            <div class="bo-label" data-i18n="profilePhoto">URL Photo de profil</div>
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-              <input class="bo-input" id="bo-photo" placeholder="https://... ou utilisez le bouton" style="flex:1;">
-              <label style="padding:10px 16px;background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:10px;color:var(--gold);font-size:11px;cursor:pointer;white-space:nowrap;">
-                📷 Uploader
-                <input type="file" accept="image/*" onchange="uploadPhoto(this,'bo-photo')" style="display:none;">
-              </label>
+              <input class="bo-input" id="bo-photo" placeholder="https://..." style="flex:1;">
+              <label class="upload-btn-label">📷 <span data-i18n="upload">Uploader</span><input type="file" accept="image/*" onchange="uploadPhoto(this,'bo-photo')" style="display:none;"></label>
             </div>
-            <div id="upload-progress-photo" style="display:none;font-size:11px;color:var(--text-muted);margin-top:6px;">Envoi en cours...</div>
+            <div id="upload-progress-bo-photo" style="display:none;font-size:11px;color:var(--text-muted);margin-top:6px;">Envoi en cours...</div>
           </div>
           <div class="bo-field full">
-            <div class="bo-label">Photo de couverture</div>
+            <div class="bo-label" data-i18n="coverPhoto">Photo de couverture</div>
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-              <input class="bo-input" id="bo-photo_couverture" placeholder="https://... ou utilisez le bouton" style="flex:1;" oninput="updateCoverPreview()">
-              <label style="padding:10px 16px;background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:10px;color:var(--gold);font-size:11px;cursor:pointer;white-space:nowrap;">
-                🖼 Uploader
-                <input type="file" accept="image/*" onchange="uploadPhoto(this,'bo-photo_couverture');setTimeout(updateCoverPreview,2000)" style="display:none;">
-              </label>
+              <input class="bo-input" id="bo-photo_couverture" placeholder="https://..." style="flex:1;" oninput="updateCoverPreview()">
+              <label class="upload-btn-label">🖼 <span data-i18n="upload">Uploader</span><input type="file" accept="image/*" onchange="uploadPhoto(this,'bo-photo_couverture');setTimeout(updateCoverPreview,2000)" style="display:none;"></label>
             </div>
-            <div id="upload-progress-photo_couverture" style="display:none;font-size:11px;color:var(--text-muted);margin-top:6px;">Envoi en cours...</div>
+            <div id="upload-progress-bo-photo_couverture" style="display:none;font-size:11px;color:var(--text-muted);margin-top:6px;">Envoi en cours...</div>
             <div id="coverPreviewWrap" style="display:none;margin-top:12px;">
               <div style="width:100%;height:100px;border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:8px;">
                 <img id="coverPreviewImg" src="" style="width:100%;height:100%;object-fit:cover;object-position:center 50%;">
               </div>
-              <div class="bo-label" style="margin-bottom:6px;">Position verticale de la photo</div>
+              <div class="bo-label" style="margin-bottom:6px;" data-i18n="coverPosition">Position verticale de la photo</div>
               <div style="display:flex;align-items:center;gap:10px;">
-                <span style="font-size:11px;color:var(--text-muted);">Haut</span>
+                <span style="font-size:11px;color:var(--text-muted);" data-i18n="top">Haut</span>
                 <input type="range" id="bo-cover_position" min="0" max="100" value="50" style="flex:1;accent-color:var(--gold);" oninput="updateCoverPosition(this.value)">
-                <span style="font-size:11px;color:var(--text-muted);">Bas</span>
+                <span style="font-size:11px;color:var(--text-muted);" data-i18n="bottom">Bas</span>
               </div>
             </div>
           </div>
-          <div class="bo-field full"><div class="bo-label">Lien Calendly (Rendez-vous)</div><input class="bo-input" id="bo-calendly" placeholder="https://calendly.com/..."></div>
-          <div class="bo-field"><div class="bo-label">Lien Catalogue</div><input class="bo-input" id="bo-catalogue_lien" placeholder="https://..."></div>
-          <div class="bo-field"><div class="bo-label">Label Catalogue</div><input class="bo-input" id="bo-catalogue_label" placeholder="Voir mes projets"></div>
-          <div class="bo-field full"><div class="bo-label">Description</div><textarea class="bo-textarea" id="bo-description" placeholder="Décrivez votre activité en quelques mots..." style="min-height:80px"></textarea></div>
+          <div class="bo-field"><div class="bo-label" data-i18n="calendly">Lien Calendly</div><input class="bo-input" id="bo-calendly" placeholder="https://calendly.com/..."></div>
+          <div class="bo-field"><div class="bo-label" data-i18n="catalogLink">Lien Catalogue</div><input class="bo-input" id="bo-catalogue_lien" placeholder="https://..."></div>
+          <div class="bo-field"><div class="bo-label" data-i18n="catalogLabel">Label Catalogue</div><input class="bo-input" id="bo-catalogue_label" placeholder="Voir mes projets"></div>
+          <div class="bo-field full"><div class="bo-label" data-i18n="description">Description</div><textarea class="bo-textarea" id="bo-description" placeholder="Décrivez votre activité..."></textarea></div>
         </div>
 
-        <div class="section-title" style="margin:20px 0 14px">🎨 Identité visuelle</div>
+        <div class="section-title" style="margin:20px 0 14px" data-i18n="visualIdentity">🎨 Identité visuelle</div>
         <div class="bo-grid">
-          <div class="bo-field"><div class="bo-label">Nom de l'entreprise</div><input class="bo-input" id="bo-nom_entreprise" placeholder="Ex: AFIM France"></div>
+          <div class="bo-field"><div class="bo-label" data-i18n="companyName">Nom de l'entreprise</div><input class="bo-input" id="bo-nom_entreprise"></div>
           <div class="bo-field">
-            <div class="bo-label">Logo entreprise</div>
+            <div class="bo-label" data-i18n="logoUrl">Logo entreprise</div>
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-              <input class="bo-input" id="bo-logo_url" placeholder="https://... ou utilisez le bouton" style="flex:1;">
-              <label style="padding:10px 16px;background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:10px;color:var(--gold);font-size:11px;cursor:pointer;white-space:nowrap;">
-                🏢 Uploader
-                <input type="file" accept="image/*" onchange="uploadPhoto(this,'bo-logo_url')" style="display:none;">
-              </label>
+              <input class="bo-input" id="bo-logo_url" placeholder="https://..." style="flex:1;">
+              <label class="upload-btn-label">🏢 <span data-i18n="upload">Uploader</span><input type="file" accept="image/*" onchange="uploadPhoto(this,'bo-logo_url')" style="display:none;"></label>
             </div>
-            <div id="upload-progress-bo-logo_url" style="display:none;font-size:11px;color:var(--text-muted);margin-top:6px;">Envoi en cours...</div>
           </div>
-          <div class="bo-field"><div class="bo-label">Couleur principale</div><input class="bo-input" id="bo-couleur_principale" placeholder="#0d1621" type="text"><input type="color" id="bo-couleur_principale_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_principale').value=this.value"></div>
-          <div class="bo-field"><div class="bo-label">Couleur secondaire</div><input class="bo-input" id="bo-couleur_secondaire" placeholder="#15202e" type="text"><input type="color" id="bo-couleur_secondaire_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_secondaire').value=this.value"></div>
-          <div class="bo-field"><div class="bo-label">Couleur accent</div><input class="bo-input" id="bo-couleur_accent" placeholder="#C9A84C" type="text"><input type="color" id="bo-couleur_accent_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_accent').value=this.value"></div>
-          <div class="bo-field"><div class="bo-label">Fond</div><select class="bo-input" id="bo-fond"><option value="Sombre">Sombre</option><option value="Clair">Clair</option></select></div>
-          <div class="bo-field"><div class="bo-label">Langue du back office</div><select class="bo-input" id="bo-langue"><option value="fr">🇫🇷 Français</option><option value="en">🇬🇧 English</option></select></div>
-          <div class="bo-field"><div class="bo-label">Logo fond</div><select class="bo-input" id="bo-logo_fond"><option value="clair">Mon logo est sombre → pastille blanche</option><option value="sombre">Mon logo est clair → pas de pastille</option></select></div>
+          <div class="bo-field">
+            <div class="bo-label" data-i18n="mainColor">Couleur principale</div>
+            <input class="bo-input" id="bo-couleur_principale" placeholder="#0d1621">
+            <input type="color" id="bo-couleur_principale_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_principale').value=this.value">
+          </div>
+          <div class="bo-field">
+            <div class="bo-label" data-i18n="secondaryColor">Couleur secondaire</div>
+            <input class="bo-input" id="bo-couleur_secondaire" placeholder="#15202e">
+            <input type="color" id="bo-couleur_secondaire_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_secondaire').value=this.value">
+          </div>
+          <div class="bo-field">
+            <div class="bo-label" data-i18n="accentColor">Couleur accent</div>
+            <input class="bo-input" id="bo-couleur_accent" placeholder="#C9A84C">
+            <input type="color" id="bo-couleur_accent_picker" style="width:36px;height:36px;border:none;cursor:pointer;margin-top:4px;border-radius:6px" onchange="document.getElementById('bo-couleur_accent').value=this.value">
+          </div>
+          <div class="bo-field">
+            <div class="bo-label" data-i18n="background">Fond</div>
+            <select class="bo-input" id="bo-fond">
+              <option value="Sombre" data-i18n="dark">Sombre</option>
+              <option value="Clair" data-i18n="light">Clair</option>
+            </select>
+          </div>
+          <div class="bo-field">
+            <div class="bo-label" data-i18n="logoBackground">Logo fond</div>
+            <select class="bo-input" id="bo-logo_fond">
+              <option value="clair" data-i18n="logoBackgroundDark">Mon logo est sombre → pastille blanche</option>
+              <option value="sombre" data-i18n="logoBackgroundLight">Mon logo est clair → pas de pastille</option>
+            </select>
+          </div>
+          <div class="bo-field">
+            <div class="bo-label" data-i18n="dashboardLang">Langue du back office</div>
+            <select class="bo-input" id="bo-langue">
+              <option value="fr">🇫🇷 Français</option>
+              <option value="en">🇬🇧 English</option>
+            </select>
+          </div>
         </div>
-        <button class="bo-save-btn" onclick="saveProfil()">Enregistrer le profil</button>
-        <div class="bo-success" id="successProfil">✓ Profil mis à jour avec succès !</div>
+        <button class="bo-save-btn" onclick="saveProfil()" data-i18n="saveProfile">Enregistrer le profil</button>
+        <div class="bo-success" id="successProfil">✓ Profil mis à jour !</div>
       </div>
 
       <!-- Réseaux sociaux -->
       <div class="bo-section">
-        <div class="bo-section-title">🌐 Réseaux sociaux</div>
-        <div class="bo-grid" style="margin-bottom:16px">
+        <div class="bo-section-title">🌐 <span data-i18n="socialNetworks">Réseaux sociaux</span></div>
+        <div class="bo-grid">
           <div class="bo-field"><div class="bo-label">LinkedIn</div><input class="bo-input" id="bo-linkedin" placeholder="https://linkedin.com/in/..."></div>
           <div class="bo-field"><div class="bo-label">Instagram</div><input class="bo-input" id="bo-instagram" placeholder="https://instagram.com/..."></div>
           <div class="bo-field"><div class="bo-label">WhatsApp</div><input class="bo-input" id="bo-whatsapp" placeholder="https://wa.me/..."></div>
-          <div class="bo-field"><div class="bo-label">TikTok</div><input class="bo-input" id="bo-tiktok" placeholder="https://tiktok.com/@..."></div>
-          <div class="bo-field"><div class="bo-label">YouTube</div><input class="bo-input" id="bo-youtube" placeholder="https://youtube.com/@..."></div>
-          <div class="bo-field"><div class="bo-label">X / Twitter</div><input class="bo-input" id="bo-twitter" placeholder="https://twitter.com/..."></div>
+          <div class="bo-field"><div class="bo-label">TikTok</div><input class="bo-input" id="bo-tiktok" placeholder="https://tiktok.com/..."></div>
+          <div class="bo-field"><div class="bo-label">YouTube</div><input class="bo-input" id="bo-youtube" placeholder="https://youtube.com/..."></div>
+          <div class="bo-field"><div class="bo-label">Twitter / X</div><input class="bo-input" id="bo-twitter" placeholder="https://twitter.com/..."></div>
         </div>
-        <div class="section-title" style="margin-bottom:12px">Affichage</div>
-        <div class="social-toggle-grid">
-          <div class="social-toggle"><span class="social-toggle-name">LinkedIn</span><label class="toggle"><input type="checkbox" id="bo-linkedin_actif"><span class="toggle-slider"></span></label></div>
-          <div class="social-toggle"><span class="social-toggle-name">Instagram</span><label class="toggle"><input type="checkbox" id="bo-instagram_actif"><span class="toggle-slider"></span></label></div>
-          <div class="social-toggle"><span class="social-toggle-name">WhatsApp</span><label class="toggle"><input type="checkbox" id="bo-whatsapp_actif"><span class="toggle-slider"></span></label></div>
-          <div class="social-toggle"><span class="social-toggle-name">TikTok</span><label class="toggle"><input type="checkbox" id="bo-tiktok_actif"><span class="toggle-slider"></span></label></div>
-          <div class="social-toggle"><span class="social-toggle-name">YouTube</span><label class="toggle"><input type="checkbox" id="bo-youtube_actif"><span class="toggle-slider"></span></label></div>
-          <div class="social-toggle"><span class="social-toggle-name">X / Twitter</span><label class="toggle"><input type="checkbox" id="bo-twitter_actif"><span class="toggle-slider"></span></label></div>
+        <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
+          <div class="bo-toggle"><input type="checkbox" id="bo-linkedin_actif"><label for="bo-linkedin_actif">LinkedIn actif</label></div>
+          <div class="bo-toggle"><input type="checkbox" id="bo-instagram_actif"><label for="bo-instagram_actif">Instagram actif</label></div>
+          <div class="bo-toggle"><input type="checkbox" id="bo-whatsapp_actif"><label for="bo-whatsapp_actif">WhatsApp actif</label></div>
+          <div class="bo-toggle"><input type="checkbox" id="bo-tiktok_actif"><label for="bo-tiktok_actif">TikTok actif</label></div>
+          <div class="bo-toggle"><input type="checkbox" id="bo-youtube_actif"><label for="bo-youtube_actif">YouTube actif</label></div>
+          <div class="bo-toggle"><input type="checkbox" id="bo-twitter_actif"><label for="bo-twitter_actif">Twitter / X actif</label></div>
         </div>
-        <button class="bo-save-btn" onclick="saveProfil()">Enregistrer les reseaux</button>
-        <div class="bo-success" id="successReseaux">✓ Reseaux mis à jour !</div>
+        <button class="bo-save-btn" onclick="saveReseaux()" data-i18n="saveProfile">Enregistrer</button>
+        <div class="bo-success" id="successReseaux">✓ Réseaux mis à jour !</div>
       </div>
 
       <!-- Email automatique -->
       <div class="bo-section">
-        <div class="bo-section-title">📧 Email automatique</div>
+        <div class="bo-section-title">📧 <span data-i18n="emailAuto">Email automatique</span></div>
         <div style="margin-bottom:16px;">
-          <a id="emailEditorBtn" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:10px;color:var(--gold);font-size:12px;text-decoration:none;letter-spacing:0.05em;">✉️ Modifier l'email automatique</a>
-          <p style="font-size:11px;color:var(--text-muted);margin-top:8px;">S'ouvre dans un nouvel onglet — modifiez le sujet et le message directement.</p>
+          <a id="emailEditorBtn" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:10px;color:var(--gold);font-size:12px;text-decoration:none;">✉️ <span data-i18n="editEmailAuto">Modifier l'email automatique</span></a>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:8px;" data-i18n="emailAutoDesc">S'ouvre dans un nouvel onglet.</p>
         </div>
-        <div class="bo-field" style="margin-bottom:14px"><div class="bo-label">Sujet de l'email</div><input class="bo-input" id="bo-email_sujet" placeholder="Merci pour notre echange !"></div>
-        <div class="bo-field"><div class="bo-label">Message — Variables disponibles : {nom} {lien_profil} {calendly} {site} {linkedin} {instagram} {whatsapp}</div><textarea class="bo-textarea" id="bo-email_message" placeholder="Bonjour {nom}, merci pour notre echange..."></textarea></div>
-        <button class="bo-save-btn" onclick="saveConfig()">Enregistrer l'email</button>
-        <div class="bo-success" id="successEmail">✓ Email automatique mis à jour !</div>
       </div>
 
       <!-- Newsletter -->
       <div class="bo-section">
-        <div class="bo-section-title">📨 Newsletter</div>
-        <div class="newsletter-stats">
-          <div class="nl-stat"><div class="nl-stat-value" id="nlTotal">—</div><div class="nl-stat-label">Contacts avec email</div></div>
-          <div class="nl-stat"><div class="nl-stat-value" id="nlSent" style="color:var(--green)">0</div><div class="nl-stat-label">Emails envoyés</div></div>
+        <div class="bo-section-title">📨 <span data-i18n="newsletter">Newsletter</span></div>
+        <div class="bo-grid">
+          <div class="bo-field full"><div class="bo-label" data-i18n="newsletterSubject">Sujet</div><input class="bo-input" id="newsletterSujet" placeholder="Sujet de votre newsletter"></div>
+          <div class="bo-field full"><div class="bo-label" data-i18n="newsletterMessage">Message</div><textarea class="bo-textarea" id="newsletterMessage" style="min-height:120px;" placeholder="Votre message..."></textarea></div>
         </div>
-        <div class="bo-field" style="margin-bottom:14px"><div class="bo-label">Sujet</div><input class="bo-input" id="nl-sujet" placeholder="Votre sujet de newsletter..."></div>
-        <div class="bo-field"><div class="bo-label">Message</div><textarea class="bo-textarea" id="nl-message" placeholder="Votre message..."></textarea></div>
-        <button class="send-btn" onclick="sendNewsletter()">📨 Envoyer à tous les prospects</button>
-        <div class="bo-success" id="successNl">✓ Newsletter envoyee !</div>
+        <button class="bo-save-btn" onclick="sendNewsletter()" data-i18n="sendNewsletter">Envoyer la newsletter</button>
+        <div class="bo-success" id="successNewsletter">✓ Newsletter envoyée !</div>
       </div>
 
     </div>
   </div>
+
   <!-- ADMIN PAGE -->
   <div class="page" id="page-admin">
     <div class="main">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-        <div class="section-title">Vue globale</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <a id="adminFormLink" href="https://docs.google.com/forms/d/1bd1wyRGnAS7HmoxWgs5LDosMJK9zM72dKnJGclADZJA/edit" target="_blank" style="padding:8px 16px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:8px;color:var(--dark);font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;">+ Ajouter un commercial</a>
-          <button onclick="loadAdminStats()" style="padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--gold);font-size:11px;cursor:pointer;">Actualiser</button>
+        <div class="section-title" data-i18n="globalView">Vue globale</div>
+        <div style="display:flex;gap:10px;">
+          <a id="adminFormLink" href="https://docs.google.com/forms/d/1bd1wyRGnAS7HmoxWgs5LDosMJK9zM72dKnJGclADZJA/edit" target="_blank" style="padding:8px 16px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:8px;color:var(--dark);font-size:11px;font-weight:500;text-decoration:none;" data-i18n="addCommercial">+ Ajouter un commercial</a>
+          <button onclick="loadAdminStats()" class="refresh-btn" data-i18n="refresh">Actualiser</button>
         </div>
       </div>
-
-      <!-- Stats globales -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;" id="adminStatsCards"></div>
-
-      <!-- Graphique global -->
-      <div class="stat-card" style="margin-bottom:20px;">
-        <div class="stat-label" style="margin-bottom:12px;">CLASSEMENT DES COMMERCIAUX</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;" id="adminStatsCards"></div>
+      <div class="bo-section" style="margin-bottom:16px;">
+        <div class="stat-label" style="margin-bottom:12px;" data-i18n="ranking">CLASSEMENT DES COMMERCIAUX</div>
         <div id="adminRanking"></div>
       </div>
-
-      <!-- Table commerciaux -->
-      <div class="table-wrap" id="adminTable">
-        <div class="loading">Chargement...</div>
-      </div>
-
-      <!-- Panel email admin -->
+      <div class="table-wrap" id="adminTable"><div class="loading" data-i18n="loading">Chargement...</div></div>
       <div id="adminEmailPanel" style="display:none;background:var(--dark2);border:1px solid rgba(201,168,76,0.3);border-radius:14px;padding:20px;margin-top:16px;">
-        <div style="font-size:11px;font-weight:500;color:var(--gold);margin-bottom:10px;">✉️ Envoyer un email à <span id="adminEmailTarget"></span></div>
-        <input type="text" id="adminEmailSujet" placeholder="Sujet..." class="search-input" style="width:100%;margin-bottom:8px;">
-        <textarea id="adminEmailMessage" placeholder="Message..." style="width:100%;padding:12px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;resize:vertical;min-height:80px;"></textarea>
+        <div style="font-size:11px;font-weight:500;color:var(--gold);margin-bottom:10px;">✉️ <span data-i18n="sendEmailTo">Envoyer un email à</span> <span id="adminEmailTarget"></span></div>
+        <input type="text" id="adminEmailSujet" class="search-input" style="width:100%;margin-bottom:8px;" placeholder="Sujet...">
+        <textarea id="adminEmailMessage" style="width:100%;padding:12px 14px;background:var(--dark3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;resize:vertical;min-height:80px;" placeholder="Message..."></textarea>
         <div style="display:flex;gap:10px;margin-top:10px;">
-          <button class="bo-save-btn" onclick="sendAdminEmail()">Envoyer</button>
-          <button class="refresh-btn" onclick="document.getElementById('adminEmailPanel').style.display='none'">Annuler</button>
+          <button class="bo-save-btn" onclick="sendAdminEmail()" data-i18n="send">Envoyer</button>
+          <button class="refresh-btn" onclick="document.getElementById('adminEmailPanel').style.display='none'" data-i18n="cancel">Annuler</button>
         </div>
-        <div id="adminEmailSent" style="display:none;margin-top:8px;padding:8px;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.2);border-radius:8px;color:var(--green);font-size:12px;">✓ Email envoyé !</div>
+        <div id="adminEmailSent" style="display:none;margin-top:8px;padding:8px;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.2);border-radius:8px;color:var(--green);font-size:12px;" data-i18n="emailSent">✓ Email envoyé !</div>
       </div>
     </div>
   </div>
 
-</div>
+</div><!-- end app -->
 
 <script>
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbya0ZJK3aX4DeXTI3f6mytdqNfsS9ZkoGxHpvu2Y722bdig8_Kn1ynj5KmUg71tq-wxRA/exec';
 var COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
-console.log('COMMERCIAL_ID:', COMMERCIAL_ID);
 var allProspects = [];
+var adminEmailTargetEmail = '';
 var allScans = [];
-var prospectsLoaded = false;
-var scansLoaded = false;
+var activityChart = null;
 
-// Check session
-// Init language
-setDashLang(dashLang);
+// ========== TRANSLATIONS ==========
+var dashLang = localStorage.getItem('protap_lang') || 'fr';
+var dashTranslations = {
+  fr: {
+    dashboard:'Dashboard', backoffice:'Back Office', admin:'👑 Admin',
+    myProfile:'Mon profil', logout:'Déconnexion',
+    scansTitle:'SCANS DE LA CARTE', totalScans:'TOTAL SCANS',
+    today:"AUJOURD'HUI", thisWeek:'CETTE SEMAINE', thisMonth:'CE MOIS',
+    sinceBeginning:'depuis le début', scansToday:"scans aujourd'hui",
+    last7days:'7 derniers jours', last30days:'30 derniers jours',
+    prospectsTitle:'PROSPECTS', totalProspects:'TOTAL PROSPECTS',
+    conversionRate:'TAUX DE CONVERSION', scansToProspects:'Scans → Prospects',
+    monthlyActivity:'ACTIVITE MENSUELLE', loading:'Chargement...',
+    lastProspect:'DERNIER PROSPECT', lastScan:'DERNIER SCAN',
+    emailRate:'TAUX EMAIL', phoneRate:'TAUX TELEPHONE',
+    dateLastContact:'date du dernier contact', dateLastScan:'date du dernier scan',
+    prospectsWithEmail:'prospects avec email', prospectsWithPhone:'prospects avec telephone',
+    search:'Rechercher un prospect...', refresh:'Actualiser',
+    sendEmail:'Email', sendEmailTo:'Envoyer un email aux prospects sélectionnés',
+    variables:'Variables :', send:'Envoyer', cancel:'Annuler', emailSent:'✓ Emails envoyés !',
+    myProfil:'Mon profil', fullName:'NOM COMPLET', titlePost:'TITRE / POSTE',
+    telephone:'TELEPHONE', profilePhoto:'Photo de profil', coverPhoto:'Photo de couverture',
+    coverPosition:'Position verticale', top:'Haut', bottom:'Bas',
+    calendly:'Lien Calendly', catalogLink:'Lien Catalogue', catalogLabel:'Label Catalogue',
+    description:'Description', visualIdentity:'🎨 Identité visuelle',
+    companyName:"Nom de l'entreprise", logoUrl:'Logo entreprise',
+    mainColor:'Couleur principale', secondaryColor:'Couleur secondaire', accentColor:'Couleur accent',
+    background:'Fond', dark:'Sombre', light:'Clair',
+    logoBackground:'Logo fond',
+    logoBackgroundDark:'Mon logo est sombre → pastille blanche',
+    logoBackgroundLight:'Mon logo est clair → pas de pastille',
+    dashboardLang:'Langue du back office', saveProfile:'Enregistrer le profil',
+    socialNetworks:'🌐 Réseaux sociaux', emailAuto:'📧 Email automatique',
+    editEmailAuto:"Modifier l'email automatique", emailAutoDesc:"S'ouvre dans un nouvel onglet.",
+    newsletter:'📨 Newsletter', newsletterSubject:'Sujet', newsletterMessage:'Message',
+    sendNewsletter:'Envoyer la newsletter', upload:'Uploader',
+    globalView:'Vue globale', addCommercial:'+ Ajouter un commercial',
+    ranking:'CLASSEMENT DES COMMERCIAUX', scansLabel:'Scans', prospectsLabel:'Prospects',
+    activeCommercials:'Commerciaux', totalScansAdmin:'Total scans', totalProspectsAdmin:'Total prospects'
+  },
+  en: {
+    dashboard:'Dashboard', backoffice:'Back Office', admin:'👑 Admin',
+    myProfile:'My profile', logout:'Logout',
+    scansTitle:'CARD SCANS', totalScans:'TOTAL SCANS',
+    today:'TODAY', thisWeek:'THIS WEEK', thisMonth:'THIS MONTH',
+    sinceBeginning:'since the beginning', scansToday:'scans today',
+    last7days:'last 7 days', last30days:'last 30 days',
+    prospectsTitle:'PROSPECTS', totalProspects:'TOTAL PROSPECTS',
+    conversionRate:'CONVERSION RATE', scansToProspects:'Scans → Prospects',
+    monthlyActivity:'MONTHLY ACTIVITY', loading:'Loading...',
+    lastProspect:'LAST PROSPECT', lastScan:'LAST SCAN',
+    emailRate:'EMAIL RATE', phoneRate:'PHONE RATE',
+    dateLastContact:'date of last contact', dateLastScan:'date of last scan',
+    prospectsWithEmail:'prospects with email', prospectsWithPhone:'prospects with phone',
+    search:'Search a prospect...', refresh:'Refresh',
+    sendEmail:'Email', sendEmailTo:'Send an email to selected prospects',
+    variables:'Variables:', send:'Send', cancel:'Cancel', emailSent:'✓ Emails sent!',
+    myProfil:'My profile', fullName:'FULL NAME', titlePost:'TITLE / POSITION',
+    telephone:'PHONE', profilePhoto:'Profile photo', coverPhoto:'Cover photo',
+    coverPosition:'Vertical position', top:'Top', bottom:'Bottom',
+    calendly:'Calendly link', catalogLink:'Catalogue link', catalogLabel:'Catalogue label',
+    description:'Description', visualIdentity:'🎨 Visual identity',
+    companyName:'Company name', logoUrl:'Company logo',
+    mainColor:'Main color', secondaryColor:'Secondary color', accentColor:'Accent color',
+    background:'Background', dark:'Dark', light:'Light',
+    logoBackground:'Logo background',
+    logoBackgroundDark:'My logo is dark → white badge',
+    logoBackgroundLight:'My logo is light → no badge',
+    dashboardLang:'Dashboard language', saveProfile:'Save profile',
+    socialNetworks:'🌐 Social networks', emailAuto:'📧 Automatic email',
+    editEmailAuto:'Edit automatic email', emailAutoDesc:'Opens in a new tab.',
+    newsletter:'📨 Newsletter', newsletterSubject:'Subject', newsletterMessage:'Message',
+    sendNewsletter:'Send newsletter', upload:'Upload',
+    globalView:'Global view', addCommercial:'+ Add commercial',
+    ranking:'COMMERCIAL RANKING', scansLabel:'Scans', prospectsLabel:'Prospects',
+    activeCommercials:'Commercials', totalScansAdmin:'Total scans', totalProspectsAdmin:'Total prospects'
+  }
+};
 
+function dt(key) {
+  return (dashTranslations[dashLang] && dashTranslations[dashLang][key]) || dashTranslations['fr'][key] || key;
+}
+
+function setDashLang(lang) {
+  dashLang = lang;
+  localStorage.setItem('protap_lang', lang);
+  var frBtn = document.getElementById('langFr');
+  var enBtn = document.getElementById('langEn');
+  if (frBtn) { frBtn.style.background = lang==='fr'?'rgba(201,168,76,0.15)':'transparent'; frBtn.style.borderColor = lang==='fr'?'var(--gold)':'var(--border)'; frBtn.style.color = lang==='fr'?'var(--gold)':'var(--text-muted)'; }
+  if (enBtn) { enBtn.style.background = lang==='en'?'rgba(201,168,76,0.15)':'transparent'; enBtn.style.borderColor = lang==='en'?'var(--gold)':'var(--border)'; enBtn.style.color = lang==='en'?'var(--gold)':'var(--text-muted)'; }
+  document.querySelectorAll('[data-i18n]').forEach(function(el) { el.textContent = dt(el.getAttribute('data-i18n')); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) { el.placeholder = dt(el.getAttribute('data-i18n-placeholder')); });
+}
+
+// ========== SESSION ==========
 if (sessionStorage.getItem('protap_auth') === 'true') {
   COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
   var savedNom = sessionStorage.getItem('protap_nom') || 'Commercial';
+  var savedRole = sessionStorage.getItem('protap_role') || 'commercial';
   document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
+  document.getElementById('app').style.display = 'flex';
   document.getElementById('headerName').textContent = savedNom;
   var profileLink = document.getElementById('profileLink');
   if (profileLink) profileLink.href = 'https://liliang03-lil.github.io/Protap?id=' + COMMERCIAL_ID;
   var emailBtn = document.getElementById('emailEditorBtn');
   if (emailBtn) emailBtn.href = SCRIPT_URL + '?action=emailEditor&id=' + COMMERCIAL_ID;
-  var savedRole = sessionStorage.getItem('protap_role') || 'commercial';
   if (savedRole === 'admin') {
     document.getElementById('adminTab').style.display = 'block';
     loadAdminStats();
   }
-  setTimeout(function() {
-    loadAll();
-    loadProfil();
-    loadConfig();
-  }, 100);
+  setTimeout(function() { loadAll(); loadProfil(); loadConfig(); }, 100);
 }
 
+setDashLang(dashLang);
+
+// ========== LOGIN ==========
 function doLogin() {
   var email = document.getElementById('loginEmail').value.trim().toLowerCase();
   var password = document.getElementById('loginPassword').value;
-  
   var cbName = 'loginCb_' + Date.now();
   window[cbName] = function(data) {
     delete window[cbName];
-    var s = document.getElementById(cbName);
-    if (s) s.remove();
+    var s = document.getElementById(cbName); if (s) s.remove();
     if (data.status === 'success') {
       sessionStorage.setItem('protap_auth', 'true');
       sessionStorage.setItem('protap_id', data.id);
       sessionStorage.setItem('protap_nom', data.nom);
+      sessionStorage.setItem('protap_role', data.role || 'commercial');
       COMMERCIAL_ID = data.id;
       document.getElementById('loginPage').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
+      document.getElementById('app').style.display = 'flex';
       document.getElementById('loginError').classList.remove('show');
       document.getElementById('headerName').textContent = data.nom;
       var profileLink = document.getElementById('profileLink');
       if (profileLink) profileLink.href = 'https://liliang03-lil.github.io/Protap?id=' + data.id;
       var emailBtn = document.getElementById('emailEditorBtn');
       if (emailBtn) emailBtn.href = SCRIPT_URL + '?action=emailEditor&id=' + data.id;
-      sessionStorage.setItem('protap_role', data.role || 'commercial');
       if (data.role === 'admin') {
         document.getElementById('adminTab').style.display = 'block';
         loadAdminStats();
       }
-      loadAll();
-      loadProfil();
-      loadConfig();
+      loadAll(); loadProfil(); loadConfig();
     } else {
       document.getElementById('loginError').classList.add('show');
       document.getElementById('loginPassword').value = '';
@@ -490,95 +533,361 @@ function doLogin() {
 }
 
 function doLogout() {
-  sessionStorage.removeItem('protap_auth');
+  sessionStorage.clear();
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginPage').style.display = 'flex';
-  document.getElementById('loginEmail').value = '';
   document.getElementById('loginPassword').value = '';
 }
 
-function showTab(tab) {
-  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+// ========== TABS ==========
+function showTab(el, tab) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  el.classList.add('active');
   document.getElementById('page-' + tab).classList.add('active');
-  event.target.classList.add('active');
 }
 
-var adminEmailTargetEmail = '';
-var adminEmailTargetNom = '';
+// ========== LOAD ALL (PROSPECTS + SCANS) ==========
+function loadAll() {
+  var cbName = 'getAllCb_' + Date.now();
+  window[cbName] = function(data) {
+    delete window[cbName];
+    var s = document.getElementById(cbName); if (s) s.remove();
+    if (data.status !== 'success') return;
+    allProspects = data.data;
+    renderProspects(allProspects);
+    updateProspectStats(allProspects);
+  };
+  var script = document.createElement('script');
+  script.id = cbName;
+  script.src = SCRIPT_URL + '?action=get&id=' + COMMERCIAL_ID + '&callback=' + cbName + '&t=' + Date.now();
+  document.body.appendChild(script);
 
+  var cbScans = 'getScansCb_' + Date.now();
+  window[cbScans] = function(data) {
+    delete window[cbScans];
+    var s = document.getElementById(cbScans); if (s) s.remove();
+    if (data.status !== 'success') return;
+    allScans = data.data;
+    updateScanStats(allScans);
+    renderChart(allScans, allProspects);
+  };
+  var scriptScans = document.createElement('script');
+  scriptScans.id = cbScans;
+  scriptScans.src = SCRIPT_URL + '?action=getScans&id=' + COMMERCIAL_ID + '&callback=' + cbScans + '&t=' + Date.now();
+  document.body.appendChild(scriptScans);
+}
+
+function parseDate(str) {
+  if (!str) return null;
+  var parts = str.toString().split('/');
+  if (parts.length === 3) return new Date(parts[2], parts[1]-1, parts[0]);
+  return new Date(str);
+}
+
+function updateScanStats(scans) {
+  var now = new Date();
+  var today = 0, week = 0, month = 0, last = '';
+  scans.forEach(function(s) {
+    var d = parseDate(s.date);
+    if (!d) return;
+    var diff = (now - d) / (1000*60*60*24);
+    if (diff < 1) today++;
+    if (diff <= 7) week++;
+    if (diff <= 30) month++;
+    last = s.date;
+  });
+  document.getElementById('statTotalScans').textContent = scans.length;
+  document.getElementById('statTodayScans').textContent = today;
+  document.getElementById('statWeekScans').textContent = week;
+  document.getElementById('statMonthScans').textContent = month;
+  document.getElementById('statLastScan').textContent = last || '—';
+}
+
+function updateProspectStats(prospects) {
+  var now = new Date();
+  var week = 0, month = 0, emailCount = 0, phoneCount = 0, last = '';
+  prospects.forEach(function(p) {
+    var d = parseDate(p.date);
+    if (d) {
+      var diff = (now - d) / (1000*60*60*24);
+      if (diff <= 7) week++;
+      if (diff <= 30) month++;
+    }
+    if (p.email && p.email.indexOf('@') !== -1) emailCount++;
+    if (p.telephone && p.telephone.replace(/\D/g,'').length > 5) phoneCount++;
+    last = p.date;
+  });
+  document.getElementById('statTotalProspects').textContent = prospects.length;
+  document.getElementById('statWeekProspects').textContent = week;
+  document.getElementById('statMonthProspects').textContent = month;
+  document.getElementById('statLastProspect').textContent = last || '—';
+  var totalScans = allScans.length;
+  var taux = totalScans > 0 ? Math.round(prospects.length/totalScans*100) : 0;
+  document.getElementById('convRate').textContent = taux + '%';
+  document.getElementById('convBar').style.width = Math.min(taux, 100) + '%';
+  document.getElementById('convLoading').style.display = 'none';
+  document.getElementById('statEmailRate').textContent = prospects.length > 0 ? Math.round(emailCount/prospects.length*100) + '%' : '0%';
+  document.getElementById('statPhoneRate').textContent = prospects.length > 0 ? Math.round(phoneCount/prospects.length*100) + '%' : '0%';
+}
+
+function renderChart(scans, prospects) {
+  var months = [];
+  var now = new Date();
+  for (var i = 5; i >= 0; i--) {
+    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ label: d.toLocaleDateString('fr-FR', {month:'short', year:'2-digit'}), month: d.getMonth(), year: d.getFullYear(), scans: 0, prospects: 0 });
+  }
+  scans.forEach(function(s) {
+    var d = parseDate(s.date);
+    if (!d) return;
+    months.forEach(function(m) { if (d.getMonth()===m.month && d.getFullYear()===m.year) m.scans++; });
+  });
+  prospects.forEach(function(p) {
+    var d = parseDate(p.date);
+    if (!d) return;
+    months.forEach(function(m) { if (d.getMonth()===m.month && d.getFullYear()===m.year) m.prospects++; });
+  });
+  var ctx = document.getElementById('activityChart').getContext('2d');
+  if (activityChart) activityChart.destroy();
+  activityChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: months.map(function(m){return m.label;}),
+      datasets: [
+        { label: 'Scans', data: months.map(function(m){return m.scans;}), backgroundColor: 'rgba(74,158,202,0.6)', borderRadius: 4 },
+        { label: 'Prospects', data: months.map(function(m){return m.prospects;}), backgroundColor: 'rgba(201,168,76,0.6)', borderRadius: 4 }
+      ]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#8A8478', font: { size: 10 } } }, y: { grid: { color: 'rgba(201,168,76,0.06)' }, ticks: { color: '#8A8478', font: { size: 10 } } } } }
+  });
+}
+
+// ========== PROSPECTS TABLE ==========
+function renderProspects(prospects) {
+  var rows = prospects.map(function(p) {
+    var now = new Date();
+    var d = parseDate(p.date);
+    var isNew = d && (now - d) / (1000*60*60*24) <= 7;
+    var dateStr = p.date ? p.date.toString().split('T')[0] : '—';
+    return '<tr><td><input type="checkbox" class="prospect-check" data-nom="'+(p.nom||'')+'" data-email="'+(p.email||'')+'" onchange="updateEmailBtn()" style="accent-color:var(--gold)"></td><td>'+(p.nom||'—')+(isNew?'<span class="badge-new">Nouveau</span>':'')+'</td><td>'+(p.telephone||'—')+'</td><td>'+(p.email||'—')+'</td><td>'+dateStr+'</td></tr>';
+  }).join('');
+  document.getElementById('tableWrap').innerHTML = '<table class="table"><thead><tr><th style="width:32px"><input type="checkbox" onchange="toggleSelectAll(this)" style="accent-color:var(--gold)"></th><th>Nom</th><th>Téléphone</th><th>Email</th><th>Date</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+
+function filterProspects() {
+  var q = document.getElementById('searchInput').value.toLowerCase();
+  var filtered = allProspects.filter(function(p) {
+    return (p.nom||'').toLowerCase().includes(q) || (p.email||'').toLowerCase().includes(q) || (p.telephone||'').includes(q);
+  });
+  renderProspects(filtered);
+}
+
+function toggleSelectAll(cb) {
+  document.querySelectorAll('.prospect-check').forEach(function(c){ c.checked = cb.checked; });
+  updateEmailBtn();
+}
+
+function updateEmailBtn() {
+  var checked = document.querySelectorAll('.prospect-check:checked');
+  var btn = document.getElementById('sendEmailBtn');
+  var count = document.getElementById('selectedCount');
+  if (checked.length > 0) { btn.style.display = 'block'; count.textContent = checked.length; }
+  else { btn.style.display = 'none'; document.getElementById('emailPanel').style.display = 'none'; }
+}
+
+function toggleEmailPanel() {
+  var panel = document.getElementById('emailPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function sendSelectedEmails() {
+  var checked = document.querySelectorAll('.prospect-check:checked');
+  var sujet = document.getElementById('selEmailSujet').value.trim();
+  var message = document.getElementById('selEmailMessage').value.trim();
+  if (!sujet || !message) { alert('Remplissez le sujet et le message.'); return; }
+  var lienProfil = 'https://liliang03-lil.github.io/Protap?id=' + COMMERCIAL_ID;
+  var calendlyVal = document.getElementById('bo-calendly') ? document.getElementById('bo-calendly').value || '' : '';
+  var siteVal = document.getElementById('bo-catalogue_lien') ? document.getElementById('bo-catalogue_lien').value || '' : '';
+  var linkedinVal = document.getElementById('bo-linkedin') ? document.getElementById('bo-linkedin').value || '' : '';
+  var instagramVal = document.getElementById('bo-instagram') ? document.getElementById('bo-instagram').value || '' : '';
+  var whatsappVal = document.getElementById('bo-whatsapp') ? document.getElementById('bo-whatsapp').value || '' : '';
+  checked.forEach(function(c) {
+    var email = c.getAttribute('data-email');
+    var nom = c.getAttribute('data-nom');
+    if (email && email.indexOf('@') !== -1) {
+      var msg = message.replace(/{nom}/g,nom).replace(/{lien_profil}/g,lienProfil).replace(/{calendly}/g,calendlyVal).replace(/{site}/g,siteVal).replace(/{linkedin}/g,linkedinVal).replace(/{instagram}/g,instagramVal).replace(/{whatsapp}/g,whatsappVal);
+      fetch(SCRIPT_URL + '?action=sendEmail&email=' + encodeURIComponent(email) + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(msg) + '&id=' + COMMERCIAL_ID);
+    }
+  });
+  document.getElementById('emailSentMsg').style.display = 'block';
+  setTimeout(function(){ document.getElementById('emailSentMsg').style.display='none'; document.getElementById('emailPanel').style.display='none'; }, 3000);
+}
+
+// ========== LOAD PROFIL ==========
+function loadProfil() {
+  var cbName = 'profilCb_' + Date.now();
+  window[cbName] = function(data) {
+    delete window[cbName];
+    var s = document.getElementById(cbName); if (s) s.remove();
+    if (data.status !== 'success') return;
+    var p = data.data;
+    var fields = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+    fields.forEach(function(f) {
+      var el = document.getElementById('bo-'+f);
+      if (el && p[f] !== undefined) el.value = p[f];
+    });
+    var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+    toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) el.checked=(p[f+'_actif']==='oui'); });
+    if (p['fond']) { var fondEl = document.getElementById('bo-fond'); if(fondEl) fondEl.value = p['fond']; }
+    if (p['logo_fond']) { var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) logoFondEl.value = p['logo_fond']; }
+    if (p['langue']) { var langueEl = document.getElementById('bo-langue'); if(langueEl) langueEl.value = p['langue']; }
+    if (p['cover_position'] !== undefined) { var coverSlider = document.getElementById('bo-cover_position'); if(coverSlider) coverSlider.value = p['cover_position']; }
+    ['couleur_principale','couleur_secondaire','couleur_accent'].forEach(function(c){
+      var input = document.getElementById('bo-'+c);
+      var picker = document.getElementById('bo-'+c+'_picker');
+      if(input && picker && input.value && input.value.startsWith('#')) picker.value = input.value;
+    });
+    setTimeout(updateCoverPreview, 100);
+  };
+  var script = document.createElement('script');
+  script.id = cbName;
+  script.src = SCRIPT_URL + '?action=getProfil&id=' + COMMERCIAL_ID + '&callback=' + cbName + '&t=' + Date.now();
+  document.body.appendChild(script);
+}
+
+// ========== SAVE PROFIL ==========
+function saveProfil() {
+  var params = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent'];
+  var url = SCRIPT_URL + '?action=saveProfil&id=' + COMMERCIAL_ID;
+  params.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value); });
+  var fondEl = document.getElementById('bo-fond'); if(fondEl) url+='&fond='+encodeURIComponent(fondEl.value);
+  var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) url+='&logo_fond='+encodeURIComponent(logoFondEl.value);
+  var langueEl = document.getElementById('bo-langue'); if(langueEl) url+='&langue='+encodeURIComponent(langueEl.value);
+  var img = new Image(); img.src = url;
+  var s = document.getElementById('successProfil');
+  s.classList.add('show');
+  setTimeout(function(){ s.classList.remove('show'); }, 3000);
+}
+
+// ========== SAVE RESEAUX ==========
+function saveReseaux() {
+  var url = SCRIPT_URL + '?action=saveProfil&id=' + COMMERCIAL_ID;
+  ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'].forEach(function(f){
+    var el = document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value);
+    var toggle = document.getElementById('bo-'+f+'_actif'); if(toggle) url+='&'+f+'_actif='+(toggle.checked?'oui':'non');
+  });
+  var img = new Image(); img.src = url;
+  var s = document.getElementById('successReseaux');
+  s.classList.add('show');
+  setTimeout(function(){ s.classList.remove('show'); }, 3000);
+}
+
+// ========== LOAD CONFIG ==========
+function loadConfig() {
+  var cbName = 'configCb_' + Date.now();
+  window[cbName] = function(data) {
+    delete window[cbName];
+    var s = document.getElementById(cbName); if (s) s.remove();
+  };
+  var script = document.createElement('script');
+  script.id = cbName;
+  script.src = SCRIPT_URL + '?action=getConfig&id=' + COMMERCIAL_ID + '&callback=' + cbName + '&t=' + Date.now();
+  document.body.appendChild(script);
+}
+
+// ========== NEWSLETTER ==========
+function sendNewsletter() {
+  var sujet = document.getElementById('newsletterSujet').value.trim();
+  var message = document.getElementById('newsletterMessage').value.trim();
+  if (!sujet || !message) { alert('Remplissez le sujet et le message.'); return; }
+  var img = new Image();
+  img.src = SCRIPT_URL + '?action=newsletter&id=' + COMMERCIAL_ID + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(message);
+  var s = document.getElementById('successNewsletter');
+  s.classList.add('show');
+  setTimeout(function(){ s.classList.remove('show'); }, 3000);
+}
+
+// ========== COVER PREVIEW ==========
+function updateCoverPreview() {
+  var url = document.getElementById('bo-photo_couverture') ? document.getElementById('bo-photo_couverture').value : '';
+  var wrap = document.getElementById('coverPreviewWrap');
+  var img = document.getElementById('coverPreviewImg');
+  if (url && url.trim() && wrap && img) {
+    wrap.style.display = 'block';
+    img.src = url;
+    var pos = document.getElementById('bo-cover_position') ? document.getElementById('bo-cover_position').value : 50;
+    img.style.objectPosition = 'center ' + pos + '%';
+  } else if (wrap) { wrap.style.display = 'none'; }
+}
+
+function updateCoverPosition(val) {
+  var img = document.getElementById('coverPreviewImg');
+  if (img) img.style.objectPosition = 'center ' + val + '%';
+}
+
+// ========== UPLOAD CLOUDINARY ==========
+function uploadPhoto(input, targetId) {
+  var file = input.files[0];
+  if (!file) return;
+  var progressId = 'upload-progress-' + targetId;
+  var progressEl = document.getElementById(progressId) || document.getElementById('upload-progress-bo-photo_couverture');
+  if (progressEl) { progressEl.style.display = 'block'; progressEl.textContent = 'Envoi en cours...'; progressEl.style.color = 'var(--text-muted)'; }
+  var formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'protap_upload');
+  fetch('https://api.cloudinary.com/v1_1/dm1tevzqt/image/upload', { method: 'POST', body: formData })
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      if (data.secure_url) {
+        var el = document.getElementById(targetId);
+        if (el) el.value = data.secure_url;
+        if (progressEl) { progressEl.textContent = '✓ Photo uploadée !'; progressEl.style.color = 'var(--green)'; }
+        setTimeout(function(){ if(progressEl) progressEl.style.display='none'; updateCoverPreview(); }, 2000);
+      } else {
+        if (progressEl) { progressEl.textContent = '✗ Erreur upload'; progressEl.style.color = 'var(--red)'; }
+      }
+    })
+    .catch(function() { if (progressEl) { progressEl.textContent = '✗ Erreur réseau'; progressEl.style.color = 'var(--red)'; } });
+}
+
+// ========== ADMIN ==========
 function loadAdminStats() {
   var cbName = 'adminCb_' + Date.now();
   window[cbName] = function(data) {
     delete window[cbName];
-    var s = document.getElementById(cbName);
-    if (s) s.remove();
+    var s = document.getElementById(cbName); if (s) s.remove();
     if (data.status !== 'success') return;
     var commerciaux = data.data;
-
-    var totalScans = commerciaux.reduce(function(a,c){ return a+c.scans; }, 0);
-    var totalProspects = commerciaux.reduce(function(a,c){ return a+c.prospects; }, 0);
-    var actifs = commerciaux.filter(function(c){ return c.scans > 0; }).length;
-    var tauxGlobal = totalScans > 0 ? Math.round(totalProspects/totalScans*100) : 0;
-    // Stats globales
+    var totalScans = commerciaux.reduce(function(a,c){return a+c.scans;},0);
+    var totalProspects = commerciaux.reduce(function(a,c){return a+c.prospects;},0);
+    var actifs = commerciaux.filter(function(c){return c.scans>0;}).length;
     document.getElementById('adminStatsCards').innerHTML =
-      '<div class="stat-card"><div class="stat-label">Commerciaux</div><div class="stat-value" style="color:var(--blue)">' + commerciaux.length + '</div><div class="stat-sublabel">' + actifs + ' actifs</div></div>' +
-      '<div class="stat-card"><div class="stat-label">Total scans</div><div class="stat-value">' + totalScans + '</div></div>' +
-      '<div class="stat-card"><div class="stat-label">Total prospects</div><div class="stat-value">' + totalProspects + '</div></div>' +
-      '';
-
-    // Classement
-    var sorted = commerciaux.slice().sort(function(a,b){ return b.scans - a.scans; });
-    var rankHtml = sorted.map(function(c, i) {
-      var pct = totalScans > 0 ? Math.round(c.scans/totalScans*100) : 0;
-      var medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i+1) + '.';
-      return '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">' +
-        '<span style="font-size:14px;width:24px;text-align:center;">' + medal + '</span>' +
-        '<span style="font-size:13px;color:var(--text);min-width:140px;">' + c.nom + '</span>' +
-        '<div style="flex:1;height:6px;background:var(--dark3);border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + pct + '%;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:3px;"></div></div>' +
-        '<span style="font-size:12px;color:var(--text-muted);min-width:60px;text-align:right;">' + c.scans + ' scans</span>' +
-        '</div>';
+      '<div class="stat-card"><div class="stat-label" data-i18n="activeCommercials">Commerciaux</div><div class="stat-value" style="color:var(--blue)">'+commerciaux.length+'</div><div class="stat-sublabel">'+actifs+' actifs</div></div>'+
+      '<div class="stat-card"><div class="stat-label" data-i18n="totalScansAdmin">Total scans</div><div class="stat-value">'+totalScans+'</div></div>'+
+      '<div class="stat-card"><div class="stat-label" data-i18n="totalProspectsAdmin">Total prospects</div><div class="stat-value">'+totalProspects+'</div></div>';
+    var sorted = commerciaux.slice().sort(function(a,b){return b.scans-a.scans;});
+    var rankHtml = sorted.map(function(c,i){
+      var pct = totalScans>0?Math.round(c.scans/totalScans*100):0;
+      var medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+      return '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;"><span style="font-size:14px;width:24px;text-align:center;">'+medal+'</span><span style="font-size:13px;color:var(--text);min-width:140px;">'+c.nom+'</span><div style="flex:1;height:6px;background:var(--dark3);border-radius:3px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:3px;"></div></div><span style="font-size:12px;color:var(--text-muted);min-width:60px;text-align:right;">'+c.scans+' scans</span></div>';
     }).join('');
     document.getElementById('adminRanking').innerHTML = rankHtml || '<div style="color:var(--text-muted);font-size:13px;">Aucune donnée</div>';
-
-    // Table
     var now = new Date();
-    var rows = commerciaux.map(function(c) {
-      var taux = c.scans > 0 ? Math.round(c.prospects/c.scans*100) : 0;
-
-      // Badge activité basé sur le dernier scan
+    var rows = commerciaux.map(function(c){
+      var taux = c.scans>0?Math.round(c.prospects/c.scans*100):0;
       var activityBadge = '';
       if (c.dernierScan) {
         var lastDate = new Date(c.dernierScan);
-        var diffDays = Math.floor((now - lastDate) / (1000*60*60*24));
-        if (diffDays <= 7) {
-          activityBadge = '<span style="font-size:9px;color:#4CAF7D;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">🟢 Actif</span>';
-        } else if (diffDays <= 30) {
-          activityBadge = '<span style="font-size:9px;color:#E8C97A;background:rgba(232,201,122,0.1);border:1px solid rgba(232,201,122,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">🟡 Peu actif</span>';
-        } else {
-          activityBadge = '<span style="font-size:9px;color:#C0392B;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">🔴 Inactif</span>';
-        }
-      } else {
-        activityBadge = '<span style="font-size:9px;color:var(--text-muted);background:rgba(138,132,120,0.1);border:1px solid rgba(138,132,120,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">⚪ Aucun scan</span>';
-      }
-
-      return '<tr>' +
-        '<td>' + c.nom + activityBadge + '</td>' +
-        '<td>' + c.email + '</td>' +
-        '<td>' + c.scans + '</td>' +
-        '<td>' + c.prospects + '</td>' +
-        '<td>' + taux + '%</td>' +
-        '<td>' + (c.dernierScan ? new Date(c.dernierScan).toLocaleDateString('fr-FR') : '—') + '</td>' +
-        '<td style="display:flex;gap:6px;flex-wrap:wrap;">' +
-          '<a href="https://liliang03-lil.github.io/Protap?id=' + c.id + '" target="_blank" style="color:var(--gold);font-size:11px;white-space:nowrap;">👁 Profil</a>' +
-          '<button onclick="openAdminEmail(this)" data-email="' + c.email.replace(/"/g,'&quot;') + '" data-nom="' + c.nom.replace(/"/g,'&quot;') + '" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;padding:0;">✉️ Email</button>' +
-          '<button onclick="toggleCommercial(this)" data-id="' + c.id + '" data-statut="' + (c.statut || 'actif') + '" style="background:none;border:none;color:' + (c.statut === 'inactif' ? 'var(--green)' : '#C0392B') + ';font-size:11px;cursor:pointer;padding:0;">' + (c.statut === 'inactif' ? '✓ Réactiver' : '⊘ Désactiver') + '</button>' +
-        '</td>' +
-        '</tr>';
+        var diffDays = Math.floor((now-lastDate)/(1000*60*60*24));
+        if (diffDays<=7) activityBadge='<span style="font-size:9px;color:#4CAF7D;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">🟢 Actif</span>';
+        else if (diffDays<=30) activityBadge='<span style="font-size:9px;color:#E8C97A;background:rgba(232,201,122,0.1);border:1px solid rgba(232,201,122,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">🟡 Peu actif</span>';
+        else activityBadge='<span style="font-size:9px;color:#C0392B;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">🔴 Inactif</span>';
+      } else { activityBadge='<span style="font-size:9px;color:var(--text-muted);background:rgba(138,132,120,0.1);border:1px solid rgba(138,132,120,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">⚪ Aucun scan</span>'; }
+      return '<tr><td>'+c.nom+activityBadge+'</td><td>'+c.email+'</td><td>'+c.scans+'</td><td>'+c.prospects+'</td><td>'+taux+'%</td><td>'+(c.dernierScan?new Date(c.dernierScan).toLocaleDateString('fr-FR'):'—')+'</td><td style="display:flex;gap:6px;flex-wrap:wrap;"><a href="https://liliang03-lil.github.io/Protap?id='+c.id+'" target="_blank" style="color:var(--gold);font-size:11px;white-space:nowrap;">👁 Profil</a><button onclick="openAdminEmail(this)" data-email="'+c.email.replace(/"/g,"&quot;")+'" data-nom="'+c.nom.replace(/"/g,"&quot;")+'" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;padding:0;">✉️ Email</button><button onclick="toggleCommercial(this)" data-id="'+c.id+'" data-statut="'+(c.statut||'actif')+'" style="background:none;border:none;color:'+(c.statut==='inactif'?'var(--green)':'var(--red)')+';font-size:11px;cursor:pointer;padding:0;">'+(c.statut==='inactif'?'✓ Réactiver':'⊘ Désactiver')+'</button></td></tr>';
     }).join('');
-
-    document.getElementById('adminTable').innerHTML =
-      '<table class="table"><thead><tr><th>Nom</th><th>Email</th><th>Scans</th><th>Prospects</th><th>Conversion</th><th>Dernier scan</th><th>Actions</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    document.getElementById('adminTable').innerHTML='<table class="table"><thead><tr><th>Nom</th><th>Email</th><th>Scans</th><th>Prospects</th><th>Conversion</th><th>Dernier scan</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    setDashLang(dashLang);
   };
   var script = document.createElement('script');
   script.id = cbName;
@@ -587,10 +896,9 @@ function loadAdminStats() {
 }
 
 function openAdminEmail(btn) {
-  var email = btn.dataset ? btn.dataset.email : btn.getAttribute('data-email');
-  var nom = btn.dataset ? btn.dataset.nom : btn.getAttribute('data-nom');
+  var email = btn.getAttribute('data-email');
+  var nom = btn.getAttribute('data-nom');
   adminEmailTargetEmail = email;
-  adminEmailTargetNom = nom;
   document.getElementById('adminEmailTarget').textContent = nom;
   document.getElementById('adminEmailPanel').style.display = 'block';
   document.getElementById('adminEmailSujet').value = '';
@@ -604,9 +912,7 @@ function sendAdminEmail() {
   if (!sujet || !message) { alert('Remplissez le sujet et le message.'); return; }
   fetch(SCRIPT_URL + '?action=sendEmail&email=' + encodeURIComponent(adminEmailTargetEmail) + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(message) + '&id=' + COMMERCIAL_ID);
   document.getElementById('adminEmailSent').style.display = 'block';
-  setTimeout(function(){
-    document.getElementById('adminEmailPanel').style.display = 'none';
-  }, 2000);
+  setTimeout(function(){ document.getElementById('adminEmailPanel').style.display='none'; }, 2000);
 }
 
 function toggleCommercial(btn) {
@@ -618,451 +924,6 @@ function toggleCommercial(btn) {
   var img = new Image();
   img.src = SCRIPT_URL + '?action=toggleCommercial&id=' + id + '&statut=' + newStatut;
   setTimeout(function(){ loadAdminStats(); }, 1000);
-}
-
-function parseDate(raw) {
-  if (!raw) return null;
-  raw = String(raw).trim();
-  var m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-  if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
-  var d = new Date(raw);
-  return isNaN(d.getTime()) ? null : d;
-}
-
-function formatDate(raw) {
-  var d = parseDate(raw);
-  if (!d) return '—';
-  return d.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'});
-}
-
-function jsonp(url, cbName, callback) {
-  window[cbName] = function(data) { callback(data); delete window[cbName]; var s=document.getElementById(cbName); if(s)s.remove(); };
-  var script = document.createElement('script');
-  script.id = cbName;
-  script.src = url + '&callback=' + cbName + '&t=' + Date.now();
-  document.body.appendChild(script);
-}
-
-function imgCall(url) {
-  var img = new Image();
-  img.src = url + '&t=' + Date.now();
-}
-
-function toggleSelectAll(cb) {
-  var checks = document.querySelectorAll('.prospect-check');
-  checks.forEach(function(c){ c.checked = cb.checked; });
-  updateEmailBtn();
-}
-
-function updateEmailBtn() {
-  var checked = document.querySelectorAll('.prospect-check:checked');
-  var btn = document.getElementById('sendEmailBtn');
-  var count = document.getElementById('selectedCount');
-  if (checked.length > 0) {
-    btn.style.display = 'block';
-    count.textContent = checked.length;
-  } else {
-    btn.style.display = 'none';
-    document.getElementById('emailPanel').style.display = 'none';
-  }
-}
-
-function toggleEmailPanel() {
-  var panel = document.getElementById('emailPanel');
-  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-}
-
-function sendSelectedEmails() {
-  var checked = document.querySelectorAll('.prospect-check:checked');
-  var sujet = document.getElementById('selEmailSujet').value.trim();
-  var message = document.getElementById('selEmailMessage').value.trim();
-  if (!sujet || !message) { alert('Remplissez le sujet et le message.'); return; }
-  
-  var sent = 0;
-  checked.forEach(function(c) {
-    var email = c.getAttribute('data-email');
-    var nom = c.getAttribute('data-nom');
-    if (email && email.indexOf('@') !== -1) {
-      // Get profil data from already loaded back office fields
-      var lienProfil = 'https://liliang03-lil.github.io/Protap?id=' + COMMERCIAL_ID;
-      var calendlyVal = document.getElementById('bo-calendly') ? document.getElementById('bo-calendly').value || '' : '';
-      var siteVal = document.getElementById('bo-catalogue_lien') ? document.getElementById('bo-catalogue_lien').value || '' : '';
-      var linkedinVal = document.getElementById('bo-linkedin') ? document.getElementById('bo-linkedin').value || '' : '';
-      var instagramVal = document.getElementById('bo-instagram') ? document.getElementById('bo-instagram').value || '' : '';
-      var whatsappVal = document.getElementById('bo-whatsapp') ? document.getElementById('bo-whatsapp').value || '' : '';
-      var msg = message
-        .replace(/{nom}/g, nom)
-        .replace(/{lien_profil}/g, lienProfil)
-        .replace(/{calendly}/g, calendlyVal)
-        .replace(/{site}/g, siteVal)
-        .replace(/{linkedin}/g, linkedinVal)
-        .replace(/{instagram}/g, instagramVal)
-        .replace(/{whatsapp}/g, whatsappVal);
-      
-      fetch(SCRIPT_URL + '?action=sendEmail&email=' + encodeURIComponent(email) + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(msg) + '&id=' + COMMERCIAL_ID);
-      sent++;
-    }
-  });
-  
-  document.getElementById('emailSentMsg').style.display = 'block';
-  document.getElementById('emailSentMsg').textContent = '✓ ' + sent + ' email(s) envoyé(s) !';
-  setTimeout(function(){
-    document.getElementById('emailSentMsg').style.display = 'none';
-    document.getElementById('emailPanel').style.display = 'none';
-  }, 3000);
-}
-
-function updateCoverPreview() {
-  var url = document.getElementById('bo-photo_couverture') ? document.getElementById('bo-photo_couverture').value : '';
-  var wrap = document.getElementById('coverPreviewWrap');
-  var img = document.getElementById('coverPreviewImg');
-  if (url && url.trim() && wrap && img) {
-    wrap.style.display = 'block';
-    img.src = url;
-    var pos = document.getElementById('bo-cover_position') ? document.getElementById('bo-cover_position').value : 50;
-    img.style.objectPosition = 'center ' + pos + '%';
-  } else if (wrap) {
-    wrap.style.display = 'none';
-  }
-}
-
-function updateCoverPosition(val) {
-  var img = document.getElementById('coverPreviewImg');
-  if (img) img.style.objectPosition = 'center ' + val + '%';
-}
-
-function uploadPhoto(input, targetId) {
-  var file = input.files[0];
-  if (!file) return;
-  var progressEl = document.getElementById('upload-progress-' + targetId);
-  if (progressEl) { progressEl.style.display = 'block'; progressEl.textContent = 'Envoi en cours...'; }
-
-  var formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', 'protap_upload');
-
-  fetch('https://api.cloudinary.com/v1_1/dm1tevzqt/image/upload', {
-    method: 'POST',
-    body: formData
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
-    if (data.secure_url) {
-      document.getElementById(targetId).value = data.secure_url;
-      if (progressEl) { progressEl.textContent = '✓ Photo uploadée !'; progressEl.style.color = 'var(--green)'; }
-      setTimeout(function(){ if (progressEl) progressEl.style.display = 'none'; }, 3000);
-    } else {
-      if (progressEl) { progressEl.textContent = '✗ Erreur upload'; progressEl.style.color = '#C0392B'; }
-    }
-  })
-  .catch(function() {
-    if (progressEl) { progressEl.textContent = '✗ Erreur réseau'; progressEl.style.color = '#C0392B'; }
-  });
-}
-
-var dashLang = localStorage.getItem('protap_lang') || 'fr';
-
-var dashTranslations = {
-  fr: {
-    dashboard: 'Dashboard', backoffice: 'Back Office', admin: 'Admin',
-    myProfile: 'Mon profil', logout: 'Déconnexion',
-    scansTitle: '<span data-i18n="scansTitle">SCANS DE LA CARTE</span>', totalScans: '<span data-i18n="totalScans">TOTAL SCANS</span>',
-    today: "<span data-i18n="today">AUJOURD'HUI</span>", thisWeek: '<span data-i18n="thisWeek">CETTE SEMAINE</span>', thisMonth: '<span data-i18n="thisMonth">CE MOIS</span>',
-    sinceBeginning: 'depuis le début', scansToday: "scans aujourd'hui",
-    last7days: '7 derniers jours', last30days: '30 derniers jours',
-    prospectsTitle: '<span data-i18n="prospectsTitle">PROSPECTS</span>', totalProspects: 'TOTAL PROSPECTS',
-    conversionRate: '<span data-i18n="conversionRate">TAUX DE CONVERSION</span>', scansToProspects: 'Scans → Prospects',
-    monthlyActivity: '<span data-i18n="monthlyActivity">ACTIVITE MENSUELLE</span>', loading: 'Chargement...',
-    lastProspect: 'DERNIER PROSPECT', lastScan: 'DERNIER SCAN',
-    emailRate: 'TAUX EMAIL', phoneRate: 'TAUX TELEPHONE',
-    dateLastContact: 'date du dernier contact', dateLastScan: 'date du dernier scan',
-    prospectsWithEmail: 'prospects avec email', prospectsWithPhone: 'prospects avec telephone',
-    search: 'Rechercher un prospect...', refresh: 'Actualiser',
-    name: 'Nom', phone: 'Telephone', email: 'Email', date: 'Date',
-    sendEmail: 'Email', conversion: 'Conversion', lastScanCol: 'Dernier scan', actions: 'Actions',
-    myProfil: 'Mon profil', fullName: 'NOM COMPLET', titlePost: 'TITRE / POSTE',
-    telephone: 'TELEPHONE', profilePhoto: 'URL Photo de profil',
-    coverPhoto: 'Photo de couverture', coverPosition: 'Position verticale de la photo',
-    top: 'Haut', bottom: 'Bas', calendly: 'Lien Calendly (Rendez-vous)',
-    catalogLink: 'Lien Catalogue', catalogLabel: 'Label Catalogue',
-    description: 'Description', visualIdentity: '🎨 Identité visuelle',
-    companyName: 'Nom de l'entreprise', logoUrl: 'Logo entreprise',
-    mainColor: 'Couleur principale', secondaryColor: 'Couleur secondaire',
-    accentColor: 'Couleur accent', background: 'Fond', dark: 'Sombre', light: 'Clair',
-    logoBackground: 'Logo fond', logoBackgroundDark: 'Mon logo est sombre → pastille blanche',
-    logoBackgroundLight: 'Mon logo est clair → pas de pastille',
-    dashboardLang: 'Langue du back office', saveProfile: 'Enregistrer le profil',
-    socialNetworks: '🌐 Réseaux sociaux', emailAuto: '📧 Email automatique',
-    editEmailAuto: 'Modifier l'email automatique',
-    emailAutoDesc: 'S'ouvre dans un nouvel onglet — modifiez le sujet et le message directement.',
-    emailSubject: 'SUJET EMAIL', emailMessage: 'MESSAGE EMAIL',
-    saveEmail: 'Enregistrer la config email', newsletter: '📨 Newsletter',
-    newsletterSubject: 'Sujet', newsletterMessage: 'Message',
-    sendNewsletter: 'Envoyer la newsletter', selectEmail: '✉️ Envoyer email',
-    cancel: 'Annuler', send: 'Envoyer', variables: 'Variables :',
-    globalView: 'Vue globale', addCommercial: '+ Ajouter un commercial',
-    ranking: 'CLASSEMENT DES COMMERCIAUX', scans: 'Scans', prospects: 'Prospects',
-    active: 'Actif', inactive: 'Inactif', noScan: 'Aucun scan',
-    viewProfile: '👁 Profil', disable: '⊘ Désactiver', reactivate: '✓ Réactiver',
-    confirmDisable: 'Désactiver ce commercial ?', confirmReactivate: 'Réactiver ce commercial ?',
-    emailSent: 'Email envoyé !', connected: 'Connecté en tant que',
-    emailAddress: 'Adresse email', password: 'Mot de passe', connect: 'Se connecter',
-    wrongCredentials: 'Identifiants incorrects', scansLabel: 'Scans', prospectsLabel: 'Prospects',
-    activeCommercials: 'Commerciaux', totalScansAdmin: 'Total scans', totalProspectsAdmin: 'Total prospects'
-  },
-  en: {
-    dashboard: 'Dashboard', backoffice: 'Back Office', admin: 'Admin',
-    myProfile: 'My profile', logout: 'Logout',
-    scansTitle: 'CARD SCANS', totalScans: 'TOTAL SCANS',
-    today: 'TODAY', thisWeek: 'THIS WEEK', thisMonth: 'THIS MONTH',
-    sinceBeginning: 'since the beginning', scansToday: 'scans today',
-    last7days: 'last 7 days', last30days: 'last 30 days',
-    prospectsTitle: 'PROSPECTS', totalProspects: 'TOTAL PROSPECTS',
-    conversionRate: 'CONVERSION RATE', scansToProspects: 'Scans → Prospects',
-    monthlyActivity: 'MONTHLY ACTIVITY', loading: 'Loading...',
-    lastProspect: 'LAST PROSPECT', lastScan: 'LAST SCAN',
-    emailRate: 'EMAIL RATE', phoneRate: 'PHONE RATE',
-    dateLastContact: 'date of last contact', dateLastScan: 'date of last scan',
-    prospectsWithEmail: 'prospects with email', prospectsWithPhone: 'prospects with phone',
-    search: 'Search a prospect...', refresh: 'Refresh',
-    name: 'Name', phone: 'Phone', email: 'Email', date: 'Date',
-    sendEmail: 'Email', conversion: 'Conversion', lastScanCol: 'Last scan', actions: 'Actions',
-    myProfil: 'My profile', fullName: 'FULL NAME', titlePost: 'TITLE / POSITION',
-    telephone: 'PHONE', profilePhoto: 'Profile photo URL',
-    coverPhoto: 'Cover photo', coverPosition: 'Vertical position of the photo',
-    top: 'Top', bottom: 'Bottom', calendly: 'Calendly link (Appointment)',
-    catalogLink: 'Catalogue link', catalogLabel: 'Catalogue label',
-    description: 'Description', visualIdentity: '🎨 Visual identity',
-    companyName: 'Company name', logoUrl: 'Company logo',
-    mainColor: 'Main color', secondaryColor: 'Secondary color',
-    accentColor: 'Accent color', background: 'Background', dark: 'Dark', light: 'Light',
-    logoBackground: 'Logo background', logoBackgroundDark: 'My logo is dark → white badge',
-    logoBackgroundLight: 'My logo is light → no badge',
-    dashboardLang: 'Dashboard language', saveProfile: 'Save profile',
-    socialNetworks: '🌐 Social networks', emailAuto: '📧 Automatic email',
-    editEmailAuto: 'Edit automatic email',
-    emailAutoDesc: 'Opens in a new tab — edit the subject and message directly.',
-    emailSubject: 'EMAIL SUBJECT', emailMessage: 'EMAIL MESSAGE',
-    saveEmail: 'Save email config', newsletter: '📨 Newsletter',
-    newsletterSubject: 'Subject', newsletterMessage: 'Message',
-    sendNewsletter: 'Send newsletter', selectEmail: '✉️ Send email',
-    cancel: 'Cancel', send: 'Send', variables: 'Variables:',
-    globalView: 'Global view', addCommercial: '+ Add commercial',
-    ranking: 'COMMERCIAL RANKING', scans: 'Scans', prospects: 'Prospects',
-    active: 'Active', inactive: 'Inactive', noScan: 'No scan',
-    viewProfile: '👁 Profile', disable: '⊘ Disable', reactivate: '✓ Reactivate',
-    confirmDisable: 'Disable this commercial?', confirmReactivate: 'Reactivate this commercial?',
-    emailSent: 'Email sent!', connected: 'Connected as',
-    emailAddress: 'Email address', password: 'Password', connect: 'Connect',
-    wrongCredentials: 'Wrong credentials', scansLabel: 'Scans', prospectsLabel: 'Prospects',
-    activeCommercials: 'Commercials', totalScansAdmin: 'Total scans', totalProspectsAdmin: 'Total prospects'
-  }
-};
-
-function dt(key) {
-  return (dashTranslations[dashLang] && dashTranslations[dashLang][key]) || dashTranslations['fr'][key] || key;
-}
-
-function setDashLang(lang) {
-  dashLang = lang;
-  localStorage.setItem('protap_lang', lang);
-  // Update buttons
-  var frBtn = document.getElementById('langFr');
-  var enBtn = document.getElementById('langEn');
-  if (frBtn) { frBtn.style.background = lang === 'fr' ? 'rgba(201,168,76,0.15)' : 'transparent'; frBtn.style.borderColor = lang === 'fr' ? 'var(--gold)' : 'var(--border)'; frBtn.style.color = lang === 'fr' ? 'var(--gold)' : 'var(--text-muted)'; }
-  if (enBtn) { enBtn.style.background = lang === 'en' ? 'rgba(201,168,76,0.15)' : 'transparent'; enBtn.style.borderColor = lang === 'en' ? 'var(--gold)' : 'var(--border)'; enBtn.style.color = lang === 'en' ? 'var(--gold)' : 'var(--text-muted)'; }
-  // Apply translations to all elements with data-i18n
-  document.querySelectorAll('[data-i18n]').forEach(function(el) {
-    var key = el.getAttribute('data-i18n');
-    el.textContent = dt(key);
-  });
-  // Apply to placeholders
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
-    var key = el.getAttribute('data-i18n-placeholder');
-    el.placeholder = dt(key);
-  });
-}
-
-function loadAll() {
-  prospectsLoaded = false; scansLoaded = false;
-  allProspects = []; allScans = [];
-  document.getElementById('tableWrap').innerHTML = '<div class="loading">Chargement...</div>';
-  document.getElementById('chartWrap').innerHTML = '<div class="loading">Chargement...</div>';
-
-  jsonp(SCRIPT_URL + '?action=get&id=' + COMMERCIAL_ID, 'prospectCb', function(data) {
-    if (data.status === 'success') {
-      allProspects = (data.data || []).reverse().map(function(p){
-        return { dateRaw: p.date?String(p.date):'', nom: p.nom||'', telephone: p.telephone||'', email: p.email||'', commercial: p.commercial||'' };
-      }).filter(function(p){ return p.nom||p.email||p.telephone; });
-    }
-    prospectsLoaded = true;
-    updateProspectStats(allProspects);
-    renderTable(allProspects);
-    updateNlStats(allProspects);
-    if (scansLoaded) { renderChart(allScans, allProspects); updateConversion(allScans, allProspects); }
-  });
-
-  jsonp(SCRIPT_URL + '?action=getScans&id=' + COMMERCIAL_ID, 'scansCb', function(data) {
-    if (data.status === 'success') allScans = data.data || [];
-    scansLoaded = true;
-    updateScanStats(allScans);
-    if (prospectsLoaded) { renderChart(allScans, allProspects); updateConversion(allScans, allProspects); }
-  });
-}
-
-function loadProfil() {
-  jsonp(SCRIPT_URL + '?action=getProfil&id=' + COMMERCIAL_ID, 'profilCb', function(data) {
-    if (data.status !== 'success') return;
-    var p = data.data;
-    var fields = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
-    fields.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el&&p[f]) el.value=p[f]; });
-    var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
-    toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) el.checked=(p[f+'_actif']==='oui'); });
-    // Load select fields
-    if (p['fond']) { var fondEl = document.getElementById('bo-fond'); if(fondEl) fondEl.value = p['fond']; }
-    if (p['logo_fond']) { var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) logoFondEl.value = p['logo_fond']; }
-    if (p['langue']) { var langueEl = document.getElementById('bo-langue'); if(langueEl) langueEl.value = p['langue']; }
-    // Load cover position
-    if (p['cover_position'] !== undefined) {
-      var coverSlider = document.getElementById('bo-cover_position');
-      if (coverSlider) coverSlider.value = p['cover_position'];
-    }
-    // Show cover preview if URL exists
-    setTimeout(updateCoverPreview, 100);
-    // Sync color pickers
-    ['couleur_principale','couleur_secondaire','couleur_accent'].forEach(function(c){
-      var input = document.getElementById('bo-'+c);
-      var picker = document.getElementById('bo-'+c+'_picker');
-      if(input && picker && input.value && input.value.startsWith('#')) picker.value = input.value;
-    });
-    if (p['nom']) document.getElementById('headerName').textContent = p['nom'];
-  });
-}
-
-function loadConfig() {
-  jsonp(SCRIPT_URL + '?action=getConfig&id=' + COMMERCIAL_ID, 'configCb', function(data) {
-    if (data.status !== 'success') return;
-    var c = data.data;
-    if (c['email_sujet']) document.getElementById('bo-email_sujet').value = c['email_sujet'];
-    if (c['email_message']) document.getElementById('bo-email_message').value = c['email_message'];
-  });
-}
-
-function saveProfil() {
-  var params = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
-  var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
-  var url = SCRIPT_URL + '?action=saveProfil&id=' + COMMERCIAL_ID;
-  params.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value); });
-  toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) url+='&'+f+'_actif='+(el.checked?'oui':'non'); });
-  var fondEl = document.getElementById('bo-fond'); if(fondEl) url+='&fond='+encodeURIComponent(fondEl.value);
-  var langueEl = document.getElementById('bo-langue'); if(langueEl) url+='&langue='+encodeURIComponent(langueEl.value);
-  var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) url+='&logo_fond='+encodeURIComponent(logoFondEl.value);
-  imgCall(url);
-  document.getElementById('successProfil').classList.add('show');
-  document.getElementById('successReseaux').classList.add('show');
-  setTimeout(function(){ document.getElementById('successProfil').classList.remove('show'); document.getElementById('successReseaux').classList.remove('show'); }, 3000);
-}
-
-function saveConfig() {
-  var sujet = document.getElementById('bo-email_sujet').value;
-  var message = document.getElementById('bo-email_message').value;
-  // Encode en base64 pour contourner les problemes de caracteres speciaux
-  var sujetB64 = btoa(unescape(encodeURIComponent(sujet)));
-  var messageB64 = btoa(unescape(encodeURIComponent(message)));
-  var url = SCRIPT_URL + '?action=saveConfig&id=' + COMMERCIAL_ID + '&email_sujet_b64=' + sujetB64 + '&email_message_b64=' + messageB64;
-  var img = new Image();
-  img.src = url;
-  document.getElementById('successEmail').classList.add('show');
-  setTimeout(function(){ document.getElementById('successEmail').classList.remove('show'); }, 3000);
-}
-
-function sendNewsletter() {
-  var sujet = document.getElementById('nl-sujet').value.trim();
-  var message = document.getElementById('nl-message').value.trim();
-  if (!sujet || !message) { alert('Remplissez le sujet et le message.'); return; }
-  if (!confirm('Envoyer cet email à tous vos prospects avec une adresse email ?')) return;
-  var url = SCRIPT_URL + '?action=newsletter&id=' + COMMERCIAL_ID + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(message);
-  fetch(url).then(function(r){ return r.json(); }).then(function(data){
-    if (data.status === 'success') {
-      document.getElementById('nlSent').textContent = data.sent;
-      document.getElementById('successNl').classList.add('show');
-      setTimeout(function(){ document.getElementById('successNl').classList.remove('show'); }, 4000);
-    }
-  }).catch(function(){
-    document.getElementById('successNl').classList.add('show');
-    setTimeout(function(){ document.getElementById('successNl').classList.remove('show'); }, 4000);
-  });
-}
-
-function updateNlStats(prospects) {
-  var withEmail = prospects.filter(function(p){ return p.email&&p.email.indexOf('@')!==-1; }).length;
-  document.getElementById('nlTotal').textContent = withEmail;
-}
-
-function updateScanStats(scans) {
-  var now = new Date();
-  var todayStart = new Date(now); todayStart.setHours(0,0,0,0);
-  var weekAgo = new Date(now - 7*24*60*60*1000);
-  var monthAgo = new Date(now - 30*24*60*60*1000);
-  var today = scans.filter(function(s){ var d=parseDate(s.date); return d&&d>=todayStart; }).length;
-  var week = scans.filter(function(s){ var d=parseDate(s.date); return d&&d>weekAgo; }).length;
-  var month = scans.filter(function(s){ var d=parseDate(s.date); return d&&d>monthAgo; }).length;
-  document.getElementById('scanTotal').textContent = scans.length;
-  document.getElementById('scanToday').textContent = today;
-  document.getElementById('scanWeek').textContent = week;
-  document.getElementById('scanMonth').textContent = month;
-  document.getElementById('scanLast').textContent = scans.length>0 ? formatDate(scans[scans.length-1].date) : '—';
-}
-
-function updateProspectStats(prospects) {
-  var now = new Date();
-  var weekAgo = new Date(now - 7*24*60*60*1000);
-  var monthAgo = new Date(now - 30*24*60*60*1000);
-  var thisWeek = prospects.filter(function(p){ var d=parseDate(p.dateRaw); return d&&d>weekAgo; }).length;
-  var thisMonth = prospects.filter(function(p){ var d=parseDate(p.dateRaw); return d&&d>monthAgo; }).length;
-  var withEmail = prospects.filter(function(p){ return p.email&&p.email!==''; }).length;
-  var withPhone = prospects.filter(function(p){ return p.telephone&&p.telephone!==''; }).length;
-  document.getElementById('statTotal').textContent = prospects.length;
-  document.getElementById('statWeek').textContent = thisWeek;
-  document.getElementById('statMonth').textContent = thisMonth;
-  document.getElementById('statEmail').textContent = prospects.length>0?Math.round((withEmail/prospects.length)*100)+'%':'0%';
-  document.getElementById('statPhone').textContent = prospects.length>0?Math.round((withPhone/prospects.length)*100)+'%':'0%';
-  document.getElementById('statLast').textContent = prospects.length>0 ? formatDate(prospects[0].dateRaw) : '—';
-}
-
-function updateConversion(scans, prospects) {
-  var rate = scans.length > 0 ? Math.round((prospects.length / scans.length) * 100) : 0;
-  document.getElementById('convPct').textContent = rate + '%';
-  document.getElementById('convFill').style.width = Math.min(rate, 100) + '%';
-  document.getElementById('convDetail').textContent = prospects.length + ' prospect(s) sur ' + scans.length + ' scan(s)';
-}
-
-function renderChart(scans, prospects) {
-  var now = new Date();
-  var months = [];
-  for (var i=5;i>=0;i--) { var d=new Date(now.getFullYear(),now.getMonth()-i,1); months.push({label:d.toLocaleDateString('fr-FR',{month:'short'}),year:d.getFullYear(),month:d.getMonth(),scans:0,prospects:0}); }
-  scans.forEach(function(s){ var d=parseDate(s.date); if(d) months.forEach(function(m){ if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.scans++; }); });
-  prospects.forEach(function(p){ var d=parseDate(p.dateRaw); if(d) months.forEach(function(m){ if(d.getFullYear()===m.year&&d.getMonth()===m.month)m.prospects++; }); });
-  var maxVal = Math.max.apply(null, months.map(function(m){ return Math.max(m.scans,m.prospects); })) || 1;
-  var currentMonth = now.getMonth();
-  var html = months.map(function(m){
-    var hS=Math.max(3,Math.round((m.scans/maxVal)*70)); var hP=m.prospects>0?Math.max(2,Math.round((m.prospects/maxVal)*70)):2; var isActive=m.month===currentMonth;
-    return '<div class="chart-bar-wrap">'+(m.scans>0?'<div style="font-size:9px;color:var(--text-muted)">'+m.scans+'</div>':'<div style="font-size:9px">&nbsp;</div>')+'<div style="display:flex;gap:2px;align-items:flex-end;width:100%"><div class="chart-bar scans'+(isActive?' active':'')+'" style="height:'+hS+'px;flex:1"></div><div class="chart-bar prospects'+(isActive?' active':'')+'" style="height:'+hP+'px;flex:1"></div></div><div class="chart-bar-label">'+m.label+'</div></div>';
-  }).join('');
-  document.getElementById('chartWrap').innerHTML = html;
-}
-
-function renderTable(prospects) {
-  if (prospects.length===0) { document.getElementById('tableWrap').innerHTML='<div class="empty"><p>Aucun prospect pour l\'instant.</p></div>'; return; }
-  var now=new Date(); var weekAgo=new Date(now-7*24*60*60*1000);
-  var rows=prospects.map(function(p){ var d=parseDate(p.dateRaw); var dateStr=formatDate(p.dateRaw); var isNew=d&&d>weekAgo; return '<tr><td><input type="checkbox" class="prospect-check" data-nom="'+(p.nom||'')+'" data-email="'+(p.email||'')+'" onchange="updateEmailBtn()" style="accent-color:var(--gold)"></td><td>'+(p.nom||'—')+(isNew?'<span class="badge-new">Nouveau</span>':'')+'</td><td>'+(p.telephone||'—')+'</td><td>'+(p.email||'—')+'</td><td>'+dateStr+'</td></tr>'; }).join('');
-  document.getElementById('tableWrap').innerHTML='<table class="table"><thead><tr><th style="width:32px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" style="accent-color:var(--gold)"></th><th>Nom</th><th>Telephone</th><th>Email</th><th>Date</th></tr></thead><tbody>'+rows+'</tbody></table>'; document.getElementById('selectAll') && (document.getElementById('selectAll').onchange = function(){ toggleSelectAll(this); });
-}
-
-function filterProspects() {
-  var search=document.getElementById('searchInput').value.toLowerCase();
-  var filtered=allProspects.filter(function(p){ return (p.nom||'').toLowerCase().includes(search)||(p.email||'').toLowerCase().includes(search)||(p.telephone||'').includes(search); });
-  renderTable(filtered);
 }
 </script>
 </body>
