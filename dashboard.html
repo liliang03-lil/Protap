@@ -581,8 +581,11 @@ function loadAll() {
 
 function parseDate(str) {
   if (!str) return null;
-  var parts = str.toString().split('/');
+  var s = str.toString().split('T')[0]; // Remove time part if ISO
+  var parts = s.split('/');
   if (parts.length === 3) return new Date(parts[2], parts[1]-1, parts[0]);
+  var parts2 = s.split('-');
+  if (parts2.length === 3) return new Date(parts2[0], parts2[1]-1, parts2[2]);
   return new Date(str);
 }
 
