@@ -631,7 +631,8 @@ function updateProspectStats(prospects) {
     if (p.telephone && p.telephone.replace(/\D/g,'').length > 5) phoneCount++;
     last = p.date;
   });
-  document.getElementById('statTotalProspects').textContent = prospects.length;
+  var realProspects = prospects.filter(function(p){ return p.nom && p.nom.toString().trim() !== ''; });
+  document.getElementById('statTotalProspects').textContent = realProspects.length;
   document.getElementById('statWeekProspects').textContent = week;
   document.getElementById('statMonthProspects').textContent = month;
   document.getElementById('statLastProspect').textContent = last || '—';
