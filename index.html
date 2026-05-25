@@ -305,7 +305,8 @@ function applyTheme(profil) {
   // Cover photo
   var coverWrap = document.getElementById('coverWrap');
   if (coverWrap && profil.photo_couverture && profil.photo_couverture.trim()) {
-    coverWrap.innerHTML = '<img class="cover-photo" src="' + profil.photo_couverture + '" alt="Couverture">';
+    var coverPos = profil.cover_position !== undefined ? profil.cover_position : 50;
+    coverWrap.innerHTML = '<img class="cover-photo" src="' + profil.photo_couverture + '" alt="Couverture" style="object-position:center ' + coverPos + '%;">';
   } else {
     coverWrap.innerHTML = '<div class="cover-placeholder" style="background:linear-gradient(160deg,' + couleurSecondaire + ' 0%,' + couleurPrincipale + ' 100%);"></div>';
   }
