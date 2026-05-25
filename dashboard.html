@@ -168,15 +168,19 @@
     </div>
     <div class="header-right">
       <span class="header-name" id="headerName">Lilian Giteau</span>
-      <a id="profileLink" href="https://liliang03-lil.github.io/Protap?id=lilian" target="_blank" style="padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--gold);font-family:'DM Sans',sans-serif;font-size:11px;text-decoration:none;letter-spacing:0.05em;">👁 Mon profil</a>
-      <button class="logout-btn" onclick="doLogout()">Deconnexion</button>
+      <div style="display:flex;gap:6px;">
+        <button onclick="setDashLang('fr')" id="langFr" style="padding:6px 10px;background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:8px;color:var(--gold);font-size:12px;cursor:pointer;">🇫🇷</button>
+        <button onclick="setDashLang('en')" id="langEn" style="padding:6px 10px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-size:12px;cursor:pointer;">🇬🇧</button>
+      </div>
+      <a id="profileLink" href="https://liliang03-lil.github.io/Protap?id=lilian" target="_blank" style="padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--gold);font-family:'DM Sans',sans-serif;font-size:11px;text-decoration:none;letter-spacing:0.05em;">👁 <span data-i18n="myProfile">Mon profil</span></a>
+      <button class="logout-btn" onclick="doLogout()"><span data-i18n="logout">Déconnexion</span></button>
     </div>
   </div>
 
   <div class="tabs">
-    <div class="tab active" onclick="showTab('dashboard')">📊 Dashboard</div>
-    <div class="tab" onclick="showTab('backoffice')">⚙️ Back Office</div>
-    <div class="tab" id="adminTab" style="display:none" onclick="showTab('admin')">👑 Admin</div>
+    <div class="tab active" onclick="showTab('dashboard')">📊 <span data-i18n="dashboard">Dashboard</span></div>
+    <div class="tab" onclick="showTab('backoffice')">⚙️ <span data-i18n="backoffice">Back Office</span></div>
+    <div class="tab" id="adminTab" style="display:none" onclick="showTab('admin')"><span data-i18n="admin">👑 Admin</span></div>
   </div>
 
   <!-- DASHBOARD PAGE -->
@@ -219,9 +223,9 @@
       </div>
       <div class="section-title">Liste des prospects</div>
       <div class="table-actions">
-        <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un prospect..." oninput="filterProspects()">
+        <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un prospect..." data-i18n-placeholder="search" oninput="filterProspects()">
         <button class="refresh-btn" id="sendEmailBtn" onclick="toggleEmailPanel()" style="display:none;background:rgba(201,168,76,0.1);border-color:var(--gold);color:var(--gold)">✉️ Email (<span id="selectedCount">0</span>)</button>
-        <button class="refresh-btn" onclick="loadAll()">Actualiser</button>
+        <button class="refresh-btn" onclick="loadAll()"><span data-i18n="refresh">Actualiser</span></button>
       </div>
 
       <div id="emailPanel" style="display:none;background:var(--dark2);border:1px solid rgba(201,168,76,0.3);border-radius:14px;padding:20px;margin-bottom:16px;">
@@ -419,6 +423,9 @@ var prospectsLoaded = false;
 var scansLoaded = false;
 
 // Check session
+// Init language
+setDashLang(dashLang);
+
 if (sessionStorage.getItem('protap_auth') === 'true') {
   COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
   var savedNom = sessionStorage.getItem('protap_nom') || 'Commercial';
@@ -750,6 +757,131 @@ function uploadPhoto(input, targetId) {
   })
   .catch(function() {
     if (progressEl) { progressEl.textContent = '✗ Erreur réseau'; progressEl.style.color = '#C0392B'; }
+  });
+}
+
+var dashLang = localStorage.getItem('protap_lang') || 'fr';
+
+var dashTranslations = {
+  fr: {
+    dashboard: 'Dashboard', backoffice: 'Back Office', admin: 'Admin',
+    myProfile: 'Mon profil', logout: 'Déconnexion',
+    scansTitle: '<span data-i18n="scansTitle">SCANS DE LA CARTE</span>', totalScans: '<span data-i18n="totalScans">TOTAL SCANS</span>',
+    today: "<span data-i18n="today">AUJOURD'HUI</span>", thisWeek: '<span data-i18n="thisWeek">CETTE SEMAINE</span>', thisMonth: '<span data-i18n="thisMonth">CE MOIS</span>',
+    sinceBeginning: 'depuis le début', scansToday: "scans aujourd'hui",
+    last7days: '7 derniers jours', last30days: '30 derniers jours',
+    prospectsTitle: '<span data-i18n="prospectsTitle">PROSPECTS</span>', totalProspects: 'TOTAL PROSPECTS',
+    conversionRate: '<span data-i18n="conversionRate">TAUX DE CONVERSION</span>', scansToProspects: 'Scans → Prospects',
+    monthlyActivity: '<span data-i18n="monthlyActivity">ACTIVITE MENSUELLE</span>', loading: 'Chargement...',
+    lastProspect: 'DERNIER PROSPECT', lastScan: 'DERNIER SCAN',
+    emailRate: 'TAUX EMAIL', phoneRate: 'TAUX TELEPHONE',
+    dateLastContact: 'date du dernier contact', dateLastScan: 'date du dernier scan',
+    prospectsWithEmail: 'prospects avec email', prospectsWithPhone: 'prospects avec telephone',
+    search: 'Rechercher un prospect...', refresh: 'Actualiser',
+    name: 'Nom', phone: 'Telephone', email: 'Email', date: 'Date',
+    sendEmail: 'Email', conversion: 'Conversion', lastScanCol: 'Dernier scan', actions: 'Actions',
+    myProfil: 'Mon profil', fullName: 'NOM COMPLET', titlePost: 'TITRE / POSTE',
+    telephone: 'TELEPHONE', profilePhoto: 'URL Photo de profil',
+    coverPhoto: 'Photo de couverture', coverPosition: 'Position verticale de la photo',
+    top: 'Haut', bottom: 'Bas', calendly: 'Lien Calendly (Rendez-vous)',
+    catalogLink: 'Lien Catalogue', catalogLabel: 'Label Catalogue',
+    description: 'Description', visualIdentity: '🎨 Identité visuelle',
+    companyName: 'Nom de l'entreprise', logoUrl: 'Logo entreprise',
+    mainColor: 'Couleur principale', secondaryColor: 'Couleur secondaire',
+    accentColor: 'Couleur accent', background: 'Fond', dark: 'Sombre', light: 'Clair',
+    logoBackground: 'Logo fond', logoBackgroundDark: 'Mon logo est sombre → pastille blanche',
+    logoBackgroundLight: 'Mon logo est clair → pas de pastille',
+    dashboardLang: 'Langue du back office', saveProfile: 'Enregistrer le profil',
+    socialNetworks: '🌐 Réseaux sociaux', emailAuto: '📧 Email automatique',
+    editEmailAuto: 'Modifier l'email automatique',
+    emailAutoDesc: 'S'ouvre dans un nouvel onglet — modifiez le sujet et le message directement.',
+    emailSubject: 'SUJET EMAIL', emailMessage: 'MESSAGE EMAIL',
+    saveEmail: 'Enregistrer la config email', newsletter: '📨 Newsletter',
+    newsletterSubject: 'Sujet', newsletterMessage: 'Message',
+    sendNewsletter: 'Envoyer la newsletter', selectEmail: '✉️ Envoyer email',
+    cancel: 'Annuler', send: 'Envoyer', variables: 'Variables :',
+    globalView: 'Vue globale', addCommercial: '+ Ajouter un commercial',
+    ranking: 'CLASSEMENT DES COMMERCIAUX', scans: 'Scans', prospects: 'Prospects',
+    active: 'Actif', inactive: 'Inactif', noScan: 'Aucun scan',
+    viewProfile: '👁 Profil', disable: '⊘ Désactiver', reactivate: '✓ Réactiver',
+    confirmDisable: 'Désactiver ce commercial ?', confirmReactivate: 'Réactiver ce commercial ?',
+    emailSent: 'Email envoyé !', connected: 'Connecté en tant que',
+    emailAddress: 'Adresse email', password: 'Mot de passe', connect: 'Se connecter',
+    wrongCredentials: 'Identifiants incorrects', scansLabel: 'Scans', prospectsLabel: 'Prospects',
+    activeCommercials: 'Commerciaux', totalScansAdmin: 'Total scans', totalProspectsAdmin: 'Total prospects'
+  },
+  en: {
+    dashboard: 'Dashboard', backoffice: 'Back Office', admin: 'Admin',
+    myProfile: 'My profile', logout: 'Logout',
+    scansTitle: 'CARD SCANS', totalScans: 'TOTAL SCANS',
+    today: 'TODAY', thisWeek: 'THIS WEEK', thisMonth: 'THIS MONTH',
+    sinceBeginning: 'since the beginning', scansToday: 'scans today',
+    last7days: 'last 7 days', last30days: 'last 30 days',
+    prospectsTitle: 'PROSPECTS', totalProspects: 'TOTAL PROSPECTS',
+    conversionRate: 'CONVERSION RATE', scansToProspects: 'Scans → Prospects',
+    monthlyActivity: 'MONTHLY ACTIVITY', loading: 'Loading...',
+    lastProspect: 'LAST PROSPECT', lastScan: 'LAST SCAN',
+    emailRate: 'EMAIL RATE', phoneRate: 'PHONE RATE',
+    dateLastContact: 'date of last contact', dateLastScan: 'date of last scan',
+    prospectsWithEmail: 'prospects with email', prospectsWithPhone: 'prospects with phone',
+    search: 'Search a prospect...', refresh: 'Refresh',
+    name: 'Name', phone: 'Phone', email: 'Email', date: 'Date',
+    sendEmail: 'Email', conversion: 'Conversion', lastScanCol: 'Last scan', actions: 'Actions',
+    myProfil: 'My profile', fullName: 'FULL NAME', titlePost: 'TITLE / POSITION',
+    telephone: 'PHONE', profilePhoto: 'Profile photo URL',
+    coverPhoto: 'Cover photo', coverPosition: 'Vertical position of the photo',
+    top: 'Top', bottom: 'Bottom', calendly: 'Calendly link (Appointment)',
+    catalogLink: 'Catalogue link', catalogLabel: 'Catalogue label',
+    description: 'Description', visualIdentity: '🎨 Visual identity',
+    companyName: 'Company name', logoUrl: 'Company logo',
+    mainColor: 'Main color', secondaryColor: 'Secondary color',
+    accentColor: 'Accent color', background: 'Background', dark: 'Dark', light: 'Light',
+    logoBackground: 'Logo background', logoBackgroundDark: 'My logo is dark → white badge',
+    logoBackgroundLight: 'My logo is light → no badge',
+    dashboardLang: 'Dashboard language', saveProfile: 'Save profile',
+    socialNetworks: '🌐 Social networks', emailAuto: '📧 Automatic email',
+    editEmailAuto: 'Edit automatic email',
+    emailAutoDesc: 'Opens in a new tab — edit the subject and message directly.',
+    emailSubject: 'EMAIL SUBJECT', emailMessage: 'EMAIL MESSAGE',
+    saveEmail: 'Save email config', newsletter: '📨 Newsletter',
+    newsletterSubject: 'Subject', newsletterMessage: 'Message',
+    sendNewsletter: 'Send newsletter', selectEmail: '✉️ Send email',
+    cancel: 'Cancel', send: 'Send', variables: 'Variables:',
+    globalView: 'Global view', addCommercial: '+ Add commercial',
+    ranking: 'COMMERCIAL RANKING', scans: 'Scans', prospects: 'Prospects',
+    active: 'Active', inactive: 'Inactive', noScan: 'No scan',
+    viewProfile: '👁 Profile', disable: '⊘ Disable', reactivate: '✓ Reactivate',
+    confirmDisable: 'Disable this commercial?', confirmReactivate: 'Reactivate this commercial?',
+    emailSent: 'Email sent!', connected: 'Connected as',
+    emailAddress: 'Email address', password: 'Password', connect: 'Connect',
+    wrongCredentials: 'Wrong credentials', scansLabel: 'Scans', prospectsLabel: 'Prospects',
+    activeCommercials: 'Commercials', totalScansAdmin: 'Total scans', totalProspectsAdmin: 'Total prospects'
+  }
+};
+
+function dt(key) {
+  return (dashTranslations[dashLang] && dashTranslations[dashLang][key]) || dashTranslations['fr'][key] || key;
+}
+
+function setDashLang(lang) {
+  dashLang = lang;
+  localStorage.setItem('protap_lang', lang);
+  // Update buttons
+  document.getElementById('langFr').style.background = lang === 'fr' ? 'rgba(201,168,76,0.15)' : 'transparent';
+  document.getElementById('langFr').style.borderColor = lang === 'fr' ? 'var(--gold)' : 'var(--border)';
+  document.getElementById('langFr').style.color = lang === 'fr' ? 'var(--gold)' : 'var(--text-muted)';
+  document.getElementById('langEn').style.background = lang === 'en' ? 'rgba(201,168,76,0.15)' : 'transparent';
+  document.getElementById('langEn').style.borderColor = lang === 'en' ? 'var(--gold)' : 'var(--border)';
+  document.getElementById('langEn').style.color = lang === 'en' ? 'var(--gold)' : 'var(--text-muted)';
+  // Apply translations to all elements with data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    el.textContent = dt(key);
+  });
+  // Apply to placeholders
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-placeholder');
+    el.placeholder = dt(key);
   });
 }
 
