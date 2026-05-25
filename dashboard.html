@@ -135,22 +135,22 @@
     <div class="main">
       <div class="section-title" data-i18n="scansTitle">SCANS DE LA CARTE</div>
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label" data-i18n="totalScans">TOTAL SCANS</div><div class="stat-value" id="statTotalScans">—</div><div class="stat-sublabel" data-i18n="sinceBeginning">depuis le début</div></div>
-        <div class="stat-card"><div class="stat-label" data-i18n="today">AUJOURD'HUI</div><div class="stat-value" id="statTodayScans">—</div><div class="stat-sublabel" data-i18n="scansToday">scans aujourd'hui</div></div>
-        <div class="stat-card"><div class="stat-label" data-i18n="thisWeek">CETTE SEMAINE</div><div class="stat-value" id="statWeekScans">—</div><div class="stat-sublabel" data-i18n="last7days">7 derniers jours</div></div>
-        <div class="stat-card"><div class="stat-label" data-i18n="thisMonth">CE MOIS</div><div class="stat-value" id="statMonthScans">—</div><div class="stat-sublabel" data-i18n="last30days">30 derniers jours</div></div>
+        <div class="stat-card"><div class="stat-label"><span data-i18n="totalScans">TOTAL SCANS</span></div><div class="stat-value" id="statTotalScans">—</div><div class="stat-sublabel"><span data-i18n="sinceBeginning">depuis le début</span></div></div>
+        <div class="stat-card"><div class="stat-label"><span data-i18n="today">AUJOURD'HUI</span></div><div class="stat-value" id="statTodayScans">—</div><div class="stat-sublabel"><span data-i18n="scansToday">scans aujourd'hui</span></div></div>
+        <div class="stat-card"><div class="stat-label"><span data-i18n="thisWeek">CETTE SEMAINE</span></div><div class="stat-value" id="statWeekScans">—</div><div class="stat-sublabel"><span data-i18n="last7days">7 derniers jours</span></div></div>
+        <div class="stat-card"><div class="stat-label"><span data-i18n="thisMonth">CE MOIS</span></div><div class="stat-value" id="statMonthScans">—</div><div class="stat-sublabel"><span data-i18n="last30days">30 derniers jours</span></div></div>
       </div>
 
       <div class="section-title" data-i18n="prospectsTitle">PROSPECTS</div>
       <div class="stats-row">
-        <div class="stat-card" style="grid-column:span 1"><div class="stat-label" data-i18n="totalProspects">TOTAL PROSPECTS</div><div class="stat-value" id="statTotalProspects">—</div><div class="stat-sublabel" data-i18n="sinceBeginning">depuis le début</div></div>
-        <div class="stat-card"><div class="stat-label" data-i18n="thisWeek">CETTE SEMAINE</div><div class="stat-value" id="statWeekProspects">—</div><div class="stat-sublabel" data-i18n="last7days">7 derniers jours</div></div>
-        <div class="stat-card"><div class="stat-label" data-i18n="thisMonth">CE MOIS</div><div class="stat-value" id="statMonthProspects">—</div><div class="stat-sublabel" data-i18n="last30days">30 derniers jours</div></div>
+        <div class="stat-card" style="grid-column:span 1"><div class="stat-label"><span data-i18n="totalProspects">TOTAL PROSPECTS</span></div><div class="stat-value" id="statTotalProspects">—</div><div class="stat-sublabel"><span data-i18n="sinceBeginning">depuis le début</span></div></div>
+        <div class="stat-card"><div class="stat-label"><span data-i18n="thisWeek">CETTE SEMAINE</span></div><div class="stat-value" id="statWeekProspects">—</div><div class="stat-sublabel"><span data-i18n="last7days">7 derniers jours</span></div></div>
+        <div class="stat-card"><div class="stat-label"><span data-i18n="thisMonth">CE MOIS</span></div><div class="stat-value" id="statMonthProspects">—</div><div class="stat-sublabel"><span data-i18n="last30days">30 derniers jours</span></div></div>
       </div>
 
       <div class="charts-row">
         <div class="chart-card">
-          <div class="stat-label" data-i18n="conversionRate">TAUX DE CONVERSION</div>
+          <div class="stat-label"><span data-i18n="conversionRate">TAUX DE CONVERSION</span></div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;" data-i18n="scansToProspects">Scans → Prospects</div>
           <div style="display:flex;align-items:center;gap:12px;">
             <div style="flex:1;height:6px;background:var(--dark3);border-radius:3px;overflow:hidden;"><div id="convBar" style="height:100%;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:3px;width:0%;transition:width 0.8s ease;"></div></div>
@@ -159,7 +159,7 @@
           <div id="convLoading" style="font-size:12px;color:var(--text-muted);margin-top:8px;" data-i18n="loading">Chargement...</div>
         </div>
         <div class="chart-card">
-          <div class="stat-label" data-i18n="monthlyActivity">ACTIVITE MENSUELLE</div>
+          <div class="stat-label"><span data-i18n="monthlyActivity">ACTIVITE MENSUELLE</span></div>
           <canvas id="activityChart" height="120"></canvas>
           <div style="display:flex;gap:16px;margin-top:10px;">
             <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);"><div style="width:10px;height:10px;border-radius:50%;background:var(--blue);"></div><span data-i18n="scansLabel">Scans</span></div>
@@ -169,10 +169,10 @@
       </div>
 
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label" data-i18n="lastProspect">DERNIER PROSPECT</div><div class="stat-value" id="statLastProspect" style="font-size:18px;margin-top:8px;">—</div><div class="stat-sublabel" data-i18n="dateLastContact">date du dernier contact</div></div>
-        <div class="stat-card"><div class="stat-label" data-i18n="lastScan">DERNIER SCAN</div><div class="stat-value" id="statLastScan" style="font-size:18px;margin-top:8px;">—</div><div class="stat-sublabel" data-i18n="dateLastScan">date du dernier scan</div></div>
-        <div class="stat-card"><div class="stat-label" data-i18n="emailRate">TAUX EMAIL</div><div class="stat-value" id="statEmailRate">—</div><div class="stat-sublabel" data-i18n="prospectsWithEmail">prospects avec email</div></div>
-        <div class="stat-card"><div class="stat-label" data-i18n="phoneRate">TAUX TELEPHONE</div><div class="stat-value" id="statPhoneRate">—</div><div class="stat-sublabel" data-i18n="prospectsWithPhone">prospects avec telephone</div></div>
+        <div class="stat-card"><div class="stat-label"><span data-i18n="lastProspect">DERNIER PROSPECT</span></div><div class="stat-value" id="statLastProspect" style="font-size:18px;margin-top:8px;">—</div><div class="stat-sublabel"><span data-i18n="dateLastContact">date du dernier contact</span></div></div>
+        <div class="stat-card"><div class="stat-label"><span data-i18n="lastScan">DERNIER SCAN</span></div><div class="stat-value" id="statLastScan" style="font-size:18px;margin-top:8px;">—</div><div class="stat-sublabel"><span data-i18n="dateLastScan">date du dernier scan</span></div></div>
+        <div class="stat-card"><div class="stat-label"><span data-i18n="emailRate">TAUX EMAIL</span></div><div class="stat-value" id="statEmailRate">—</div><div class="stat-sublabel"><span data-i18n="prospectsWithEmail">prospects avec email</span></div></div>
+        <div class="stat-card"><div class="stat-label"><span data-i18n="phoneRate">TAUX TELEPHONE</span></div><div class="stat-value" id="statPhoneRate">—</div><div class="stat-sublabel"><span data-i18n="prospectsWithPhone">prospects avec telephone</span></div></div>
       </div>
 
       <!-- PROSPECTS TABLE -->
@@ -194,7 +194,7 @@
         <div id="emailSentMsg" style="display:none;margin-top:10px;padding:10px;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.2);border-radius:8px;color:var(--green);font-size:12px;" data-i18n="emailSent">✓ Emails envoyés !</div>
       </div>
 
-      <div class="table-wrap" id="tableWrap"><div class="loading" data-i18n="loading">Chargement...</div></div>
+      <div class="table-wrap" id="tableWrap"><div class="loading"><span data-i18n="loading">Chargement...</span></div></div>
     </div>
   </div>
 
@@ -355,7 +355,7 @@
         <div class="stat-label" style="margin-bottom:12px;" data-i18n="ranking">CLASSEMENT DES COMMERCIAUX</div>
         <div id="adminRanking"></div>
       </div>
-      <div class="table-wrap" id="adminTable"><div class="loading" data-i18n="loading">Chargement...</div></div>
+      <div class="table-wrap" id="adminTable"><div class="loading"><span data-i18n="loading">Chargement...</span></div></div>
       <div id="adminEmailPanel" style="display:none;background:var(--dark2);border:1px solid rgba(201,168,76,0.3);border-radius:14px;padding:20px;margin-top:16px;">
         <div style="font-size:11px;font-weight:500;color:var(--gold);margin-bottom:10px;">✉️ <span data-i18n="sendEmailTo">Envoyer un email à</span> <span id="adminEmailTarget"></span></div>
         <input type="text" id="adminEmailSujet" class="search-input" style="width:100%;margin-bottom:8px;" placeholder="Sujet...">
