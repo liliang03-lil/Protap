@@ -631,7 +631,7 @@ function updateProspectStats(prospects) {
       if (diff <= 30) month++;
     }
     if (p.email && p.email.indexOf('@') !== -1) emailCount++;
-    if (p.telephone && p.telephone.replace(/\D/g,'').length > 5) phoneCount++;
+    if (p.telephone && p.telephone.toString().replace(/\D/g,'').length > 5) phoneCount++;
     last = p.date;
   });
   var realProspects = prospects.filter(function(p){ return p.nom && p.nom.toString().trim() !== ''; });
