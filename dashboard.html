@@ -793,8 +793,10 @@ function loadProfil() {
     // Load cover position
     if (p['cover_position'] !== undefined) {
       var coverSlider = document.getElementById('bo-cover_position');
-      if (coverSlider) { coverSlider.value = p['cover_position']; updateCoverPreview(); }
+      if (coverSlider) coverSlider.value = p['cover_position'];
     }
+    // Show cover preview if URL exists
+    setTimeout(updateCoverPreview, 100);
     // Sync color pickers
     ['couleur_principale','couleur_secondaire','couleur_accent'].forEach(function(c){
       var input = document.getElementById('bo-'+c);
