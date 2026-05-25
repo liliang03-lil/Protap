@@ -469,7 +469,8 @@ function setDashLang(lang) {
   var enBtn = document.getElementById('langEn');
   if (frBtn) { frBtn.style.background = lang==='fr'?'rgba(201,168,76,0.15)':'transparent'; frBtn.style.borderColor = lang==='fr'?'var(--gold)':'var(--border)'; frBtn.style.color = lang==='fr'?'var(--gold)':'var(--text-muted)'; }
   if (enBtn) { enBtn.style.background = lang==='en'?'rgba(201,168,76,0.15)':'transparent'; enBtn.style.borderColor = lang==='en'?'var(--gold)':'var(--border)'; enBtn.style.color = lang==='en'?'var(--gold)':'var(--text-muted)'; }
-  document.querySelectorAll('[data-i18n]').forEach(function(el) { el.textContent = dt(el.getAttribute('data-i18n')); });
+  var statIds = ['statTotalProspects','statWeekProspects','statMonthProspects','statTotalScans','statTodayScans','statWeekScans','statMonthScans','statLastProspect','statLastScan','statEmailRate','statPhoneRate','convRate'];
+  document.querySelectorAll('[data-i18n]').forEach(function(el) { if (statIds.indexOf(el.id) === -1) el.textContent = dt(el.getAttribute('data-i18n')); });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) { el.placeholder = dt(el.getAttribute('data-i18n-placeholder')); });
 }
 
