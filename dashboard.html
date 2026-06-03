@@ -283,6 +283,13 @@
             </select>
           </div>
           <div class="bo-field">
+            <div class="bo-label">Watermark (logo en arrière-plan)</div>
+            <select class="bo-input" id="bo-watermark_actif">
+              <option value="oui">✅ Afficher le watermark</option>
+              <option value="non">❌ Masquer le watermark</option>
+            </select>
+          </div>
+          <div class="bo-field">
             <div class="bo-label" data-i18n="dashboardLang">Langue du back office</div>
             <select class="bo-input" id="bo-langue">
               <option value="fr">🇫🇷 Français</option>
@@ -750,7 +757,7 @@ function loadProfil() {
     var s = document.getElementById(cbName); if (s) s.remove();
     if (data.status !== 'success') return;
     var p = data.data;
-    var fields = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+    var fields = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','watermark_actif','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
     fields.forEach(function(f) {
       var el = document.getElementById('bo-'+f);
       if (el && p[f] !== undefined) el.value = p[f];
@@ -760,6 +767,7 @@ function loadProfil() {
     if (p['fond']) { var fondEl = document.getElementById('bo-fond'); if(fondEl) fondEl.value = p['fond']; }
     if (p['logo_fond']) { var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) logoFondEl.value = p['logo_fond']; }
     if (p['langue']) { var langueEl = document.getElementById('bo-langue'); if(langueEl) langueEl.value = p['langue']; }
+    if (p['watermark_actif']) { var wmEl = document.getElementById('bo-watermark_actif'); if(wmEl) wmEl.value = p['watermark_actif']; }
     if (p['cover_position'] !== undefined) { var coverSlider = document.getElementById('bo-cover_position'); if(coverSlider) coverSlider.value = p['cover_position']; }
     ['couleur_principale','couleur_secondaire','couleur_accent'].forEach(function(c){
       var input = document.getElementById('bo-'+c);
@@ -776,12 +784,13 @@ function loadProfil() {
 
 // ========== SAVE PROFIL ==========
 function saveProfil() {
-  var params = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent'];
+  var params = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','watermark_actif','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent'];
   var url = SCRIPT_URL + '?action=saveProfil&id=' + COMMERCIAL_ID;
   params.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value); });
   var fondEl = document.getElementById('bo-fond'); if(fondEl) url+='&fond='+encodeURIComponent(fondEl.value);
   var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) url+='&logo_fond='+encodeURIComponent(logoFondEl.value);
   var langueEl = document.getElementById('bo-langue'); if(langueEl) url+='&langue='+encodeURIComponent(langueEl.value);
+  var wmEl = document.getElementById('bo-watermark_actif'); if(wmEl) url+='&watermark_actif='+encodeURIComponent(wmEl.value);
   var img = new Image(); img.src = url;
   var s = document.getElementById('successProfil');
   s.classList.add('show');
