@@ -255,7 +255,7 @@ window[cbName] = function(data) {
   if (descEl) descEl.textContent = profil.description || '';
   // Watermark
   var watermarkWrap = document.getElementById('watermarkWrap');
-  if (watermarkWrap && profil.logo_url) {
+  if (watermarkWrap && profil.logo_url && profil.watermark_actif !== 'non') {
     watermarkWrap.innerHTML = '<img class="watermark" src="' + profil.logo_url + '" alt="">';
   }
   // Set photo
