@@ -599,12 +599,15 @@ function parseDate(str) {
 
 function updateScanStats(scans) {
   var now = new Date();
+  var todayStr = now.toLocaleDateString('fr-FR'); // format DD/MM/YYYY
   var today = 0, week = 0, month = 0, last = '';
   scans.forEach(function(s) {
     var d = parseDate(s.date);
     if (!d) return;
     var diff = (now - d) / (1000*60*60*24);
-    if (diff < 1) today++;
+    // Today — compare date strings directly
+    if (s.date && s.date.toString().split('T')[0].split('/').reverse().join('-') === now.toISOString().split('T')[0]) today++;
+    else if (s.date && s.date.toString() === todayStr) today++;
     if (diff <= 7) week++;
     if (diff <= 30) month++;
     last = s.date;
