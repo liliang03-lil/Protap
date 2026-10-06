@@ -227,7 +227,7 @@ var profil = {};
 // Enregistrer scan
 var scanImg = new Image();
 var urlParams = new URLSearchParams(window.location.search);
-var commercialId = urlParams.get('id') || 'lilian';
+var commercialId = encodeURIComponent(urlParams.get('id') || 'lilian');
 scanImg.src = SCRIPT_URL + '?action=scan&page=profil&id=' + commercialId + '&t=' + Date.now();
 
 // Icones réseaux sociaux
@@ -245,7 +245,11 @@ var socialLabels = { linkedin:'LinkedIn', instagram:'Instagram', whatsapp:'Whats
 // Charger le profil
 var cbName = 'profilLoad_' + Date.now();
 window[cbName] = function(data) {
-  if (data.status !== 'success') return;
+  if (data.status !== 'success') {
+    document.getElementById('profileNom').textContent = 'Profil introuvable';
+    var fw = document.querySelector('.form-wrap'); if (fw) fw.style.display = 'none';
+    return;
+  }
   profil = data.data;
 
   // Mettre à jour le contenu
