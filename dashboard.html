@@ -381,6 +381,27 @@
 <script>
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzSSdtJe_n0mzj9eQhVh9BZJDdxl3Xm6oBhLnwFNGeeoXkdQ53V9PUMilvSGik08WqBDQ/exec';
 var COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
+var TOKEN = sessionStorage.getItem('protap_token') || '';
+
+// Ajoute le jeton de session à un appel au serveur
+function api(action, extra) {
+  return SCRIPT_URL + '?action=' + action + '&token=' + encodeURIComponent(TOKEN) + (extra || '');
+}
+// Si le serveur répond "session expirée", on renvoie vers la connexion
+function sessionExpiree(data) {
+  if (data && data.code === 'auth') {
+    doLogout();
+    var err = document.getElementById('loginError');
+    if (err) { err.textContent = 'Session expirée, reconnecte-toi.'; err.classList.add('show'); }
+    return true;
+  }
+  return false;
+}
+// Évite qu'un texte saisi par un prospect soit interprété comme du code
+function esc(v) {
+  return String(v === undefined || v === null ? '' : v)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 var allProspects = [];
 var adminEmailTargetEmail = '';
 var allScans = [];
@@ -482,7 +503,8 @@ function setDashLang(lang) {
 }
 
 // ========== SESSION ==========
-if (sessionStorage.getItem('protap_auth') === 'true') {
+if (sessionStorage.getItem('protap_auth') === 'true' && !TOKEN) { sessionStorage.clear(); }
+if (sessionStorage.getItem('protap_auth') === 'true' && TOKEN) {
   COMMERCIAL_ID = sessionStorage.getItem('protap_id') || 'lilian';
   var savedNom = sessionStorage.getItem('protap_nom') || 'Commercial';
   var savedRole = sessionStorage.getItem('protap_role') || 'commercial';
@@ -492,7 +514,7 @@ if (sessionStorage.getItem('protap_auth') === 'true') {
   var profileLink = document.getElementById('profileLink');
   if (profileLink) profileLink.href = 'https://liliang03-lil.github.io/Protap?id=' + COMMERCIAL_ID;
   var emailBtn = document.getElementById('emailEditorBtn');
-  if (emailBtn) emailBtn.href = SCRIPT_URL + '?action=emailEditor&id=' + COMMERCIAL_ID;
+  if (emailBtn) emailBtn.href = api('emailEditor');
   if (savedRole === 'admin') {
     document.getElementById('adminTab').style.display = 'block';
     loadAdminStats();
@@ -515,6 +537,8 @@ function doLogin() {
       sessionStorage.setItem('protap_id', data.id);
       sessionStorage.setItem('protap_nom', data.nom);
       sessionStorage.setItem('protap_role', data.role || 'commercial');
+      sessionStorage.setItem('protap_token', data.token);
+      TOKEN = data.token;
       COMMERCIAL_ID = data.id;
       document.getElementById('loginPage').style.display = 'none';
       document.getElementById('app').style.display = 'flex';
@@ -523,14 +547,16 @@ function doLogin() {
       var profileLink = document.getElementById('profileLink');
       if (profileLink) profileLink.href = 'https://liliang03-lil.github.io/Protap?id=' + data.id;
       var emailBtn = document.getElementById('emailEditorBtn');
-      if (emailBtn) emailBtn.href = SCRIPT_URL + '?action=emailEditor&id=' + data.id;
+      if (emailBtn) emailBtn.href = api('emailEditor');
       if (data.role === 'admin') {
         document.getElementById('adminTab').style.display = 'block';
         loadAdminStats();
       }
       loadAll(); loadProfil(); loadConfig();
     } else {
-      document.getElementById('loginError').classList.add('show');
+      var errEl = document.getElementById('loginError');
+      if (data.message) errEl.textContent = data.message;
+      errEl.classList.add('show');
       document.getElementById('loginPassword').value = '';
     }
   };
@@ -542,6 +568,7 @@ function doLogin() {
 
 function doLogout() {
   sessionStorage.clear();
+  TOKEN = '';
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginPage').style.display = 'flex';
   document.getElementById('loginPassword').value = '';
@@ -561,7 +588,7 @@ function loadAll() {
   window[cbName] = function(data) {
     delete window[cbName];
     var s = document.getElementById(cbName); if (s) s.remove();
-    if (data.status !== 'success') return;
+    if (sessionExpiree(data) || data.status !== 'success') return;
     allProspects = data.data.filter(function(p){ return p.nom && p.nom.toString().trim() !== ''; });
     renderProspects(allProspects);
     updateProspectStats(allProspects);
@@ -569,21 +596,21 @@ function loadAll() {
   };
   var script = document.createElement('script');
   script.id = cbName;
-  script.src = SCRIPT_URL + '?action=get&id=' + COMMERCIAL_ID + '&callback=' + cbName + '&t=' + Date.now();
+  script.src = api('get', '&callback=' + cbName) + '&t=' + Date.now();
   document.body.appendChild(script);
 
   var cbScans = 'getScansCb_' + Date.now();
   window[cbScans] = function(data) {
     delete window[cbScans];
     var s = document.getElementById(cbScans); if (s) s.remove();
-    if (data.status !== 'success') return;
+    if (sessionExpiree(data) || data.status !== 'success') return;
     allScans = data.data;
     updateScanStats(allScans);
     renderChart(allScans, allProspects);
   };
   var scriptScans = document.createElement('script');
   scriptScans.id = cbScans;
-  scriptScans.src = SCRIPT_URL + '?action=getScans&id=' + COMMERCIAL_ID + '&callback=' + cbScans + '&t=' + Date.now();
+  scriptScans.src = api('getScans', '&callback=' + cbScans) + '&t=' + Date.now();
   document.body.appendChild(scriptScans);
 }
 
@@ -698,7 +725,7 @@ function renderProspects(prospects) {
     var d = parseDate(p.date);
     var isNew = d && (now - d) / (1000*60*60*24) <= 7;
     var dateStr = p.date ? p.date.toString().split('T')[0] : '—';
-    return '<tr><td><input type="checkbox" class="prospect-check" data-nom="'+(p.nom||'')+'" data-email="'+(p.email||'')+'" onchange="updateEmailBtn()" style="accent-color:var(--gold)"></td><td>'+(p.nom||'—')+(isNew?'<span class="badge-new">Nouveau</span>':'')+'</td><td>'+(p.telephone||'—')+'</td><td>'+(p.email||'—')+'</td><td>'+dateStr+'</td></tr>';
+    return '<tr><td><input type="checkbox" class="prospect-check" data-nom="'+esc(p.nom)+'" data-email="'+esc(p.email)+'" onchange="updateEmailBtn()" style="accent-color:var(--gold)"></td><td>'+(esc(p.nom)||'—')+(isNew?'<span class="badge-new">Nouveau</span>':'')+'</td><td>'+(esc(p.telephone)||'—')+'</td><td>'+(esc(p.email)||'—')+'</td><td>'+esc(dateStr)+'</td></tr>';
   }).join('');
   document.getElementById('tableWrap').innerHTML = '<table class="table"><thead><tr><th style="width:32px"><input type="checkbox" onchange="toggleSelectAll(this)" style="accent-color:var(--gold)"></th><th>Nom</th><th>Téléphone</th><th>Email</th><th>Date</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
@@ -706,7 +733,7 @@ function renderProspects(prospects) {
 function filterProspects() {
   var q = document.getElementById('searchInput').value.toLowerCase();
   var filtered = allProspects.filter(function(p) {
-    return (p.nom||'').toLowerCase().includes(q) || (p.email||'').toLowerCase().includes(q) || (p.telephone||'').includes(q);
+    return (p.nom||'').toLowerCase().includes(q) || (p.email||'').toLowerCase().includes(q) || String(p.telephone||'').includes(q);
   });
   renderProspects(filtered);
 }
@@ -745,7 +772,7 @@ function sendSelectedEmails() {
     var nom = c.getAttribute('data-nom');
     if (email && email.indexOf('@') !== -1) {
       var msg = message.replace(/{nom}/g,nom).replace(/{lien_profil}/g,lienProfil).replace(/{calendly}/g,calendlyVal).replace(/{site}/g,siteVal).replace(/{linkedin}/g,linkedinVal).replace(/{instagram}/g,instagramVal).replace(/{whatsapp}/g,whatsappVal);
-      fetch(SCRIPT_URL + '?action=sendEmail&email=' + encodeURIComponent(email) + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(msg) + '&id=' + COMMERCIAL_ID);
+      fetch(api('sendEmail', '&email=' + encodeURIComponent(email) + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(msg)));
     }
   });
   document.getElementById('emailSentMsg').style.display = 'block';
@@ -758,7 +785,7 @@ function loadProfil() {
   window[cbName] = function(data) {
     delete window[cbName];
     var s = document.getElementById(cbName); if (s) s.remove();
-    if (data.status !== 'success') return;
+    if (sessionExpiree(data) || data.status !== 'success') return;
     var p = data.data;
     var fields = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','watermark_actif','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
     fields.forEach(function(f) {
@@ -788,7 +815,7 @@ function loadProfil() {
 // ========== SAVE PROFIL ==========
 function saveProfil() {
   var params = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','watermark_actif','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent'];
-  var url = SCRIPT_URL + '?action=saveProfil&id=' + COMMERCIAL_ID;
+  var url = api('saveProfil');
   params.forEach(function(f){ var el=document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value); });
   var fondEl = document.getElementById('bo-fond'); if(fondEl) url+='&fond='+encodeURIComponent(fondEl.value);
   var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) url+='&logo_fond='+encodeURIComponent(logoFondEl.value);
@@ -802,7 +829,7 @@ function saveProfil() {
 
 // ========== SAVE RESEAUX ==========
 function saveReseaux() {
-  var url = SCRIPT_URL + '?action=saveProfil&id=' + COMMERCIAL_ID;
+  var url = api('saveProfil');
   ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'].forEach(function(f){
     var el = document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value);
     var toggle = document.getElementById('bo-'+f+'_actif'); if(toggle) url+='&'+f+'_actif='+(toggle.checked?'oui':'non');
@@ -822,7 +849,7 @@ function loadConfig() {
   };
   var script = document.createElement('script');
   script.id = cbName;
-  script.src = SCRIPT_URL + '?action=getConfig&id=' + COMMERCIAL_ID + '&callback=' + cbName + '&t=' + Date.now();
+  script.src = api('getConfig', '&callback=' + cbName) + '&t=' + Date.now();
   document.body.appendChild(script);
 }
 
@@ -832,7 +859,7 @@ function sendNewsletter() {
   var message = document.getElementById('newsletterMessage').value.trim();
   if (!sujet || !message) { alert('Remplissez le sujet et le message.'); return; }
   var img = new Image();
-  img.src = SCRIPT_URL + '?action=newsletter&id=' + COMMERCIAL_ID + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(message);
+  img.src = api('newsletter', '&sujet=') + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(message);
   var s = document.getElementById('successNewsletter');
   s.classList.add('show');
   setTimeout(function(){ s.classList.remove('show'); }, 3000);
@@ -887,7 +914,7 @@ function loadAdminStats() {
   window[cbName] = function(data) {
     delete window[cbName];
     var s = document.getElementById(cbName); if (s) s.remove();
-    if (data.status !== 'success') return;
+    if (sessionExpiree(data) || data.status !== 'success') return;
     var commerciaux = data.data;
     var totalScans = commerciaux.reduce(function(a,c){return a+c.scans;},0);
     var totalProspects = commerciaux.reduce(function(a,c){return a+c.prospects;},0);
@@ -900,7 +927,7 @@ function loadAdminStats() {
     var rankHtml = sorted.map(function(c,i){
       var pct = totalScans>0?Math.round(c.scans/totalScans*100):0;
       var medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
-      return '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;"><span style="font-size:14px;width:24px;text-align:center;">'+medal+'</span><span style="font-size:13px;color:var(--text);min-width:140px;">'+c.nom+'</span><div style="flex:1;height:6px;background:var(--dark3);border-radius:3px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:3px;"></div></div><span style="font-size:12px;color:var(--text-muted);min-width:60px;text-align:right;">'+c.scans+' scans</span></div>';
+      return '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;"><span style="font-size:14px;width:24px;text-align:center;">'+medal+'</span><span style="font-size:13px;color:var(--text);min-width:140px;">'+esc(c.nom)+'</span><div style="flex:1;height:6px;background:var(--dark3);border-radius:3px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:3px;"></div></div><span style="font-size:12px;color:var(--text-muted);min-width:60px;text-align:right;">'+c.scans+' scans</span></div>';
     }).join('');
     document.getElementById('adminRanking').innerHTML = rankHtml || '<div style="color:var(--text-muted);font-size:13px;">Aucune donnée</div>';
     var now = new Date();
@@ -914,13 +941,13 @@ function loadAdminStats() {
         else if (diffDays<=30) activityBadge='<span style="font-size:9px;color:#E8C97A;background:rgba(232,201,122,0.1);border:1px solid rgba(232,201,122,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">🟡 Peu actif</span>';
         else activityBadge='<span style="font-size:9px;color:#C0392B;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">🔴 Inactif</span>';
       } else { activityBadge='<span style="font-size:9px;color:var(--text-muted);background:rgba(138,132,120,0.1);border:1px solid rgba(138,132,120,0.2);padding:2px 8px;border-radius:100px;margin-left:6px;">⚪ Aucun scan</span>'; }
-      return '<tr><td>'+c.nom+activityBadge+'</td><td>'+c.email+'</td><td>'+c.scans+'</td><td>'+c.prospects+'</td><td>'+taux+'%</td><td>'+(c.dernierScan?new Date(c.dernierScan).toLocaleDateString('fr-FR'):'—')+'</td><td style="display:flex;gap:6px;flex-wrap:wrap;"><a href="https://liliang03-lil.github.io/Protap?id='+c.id+'" target="_blank" style="color:var(--gold);font-size:11px;white-space:nowrap;">👁 Profil</a><button onclick="openAdminEmail(this)" data-email="'+c.email.replace(/"/g,"&quot;")+'" data-nom="'+c.nom.replace(/"/g,"&quot;")+'" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;padding:0;">✉️ Email</button><button onclick="toggleCommercial(this)" data-id="'+c.id+'" data-statut="'+(c.statut||'actif')+'" style="background:none;border:none;color:'+(c.statut==='inactif'?'var(--green)':'var(--red)')+';font-size:11px;cursor:pointer;padding:0;">'+(c.statut==='inactif'?'✓ Réactiver':'⊘ Désactiver')+'</button></td></tr>';
+      return '<tr><td>'+esc(c.nom)+activityBadge+'</td><td>'+esc(c.email)+'</td><td>'+c.scans+'</td><td>'+c.prospects+'</td><td>'+taux+'%</td><td>'+(c.dernierScan?new Date(c.dernierScan).toLocaleDateString('fr-FR'):'—')+'</td><td style="display:flex;gap:6px;flex-wrap:wrap;"><a href="https://liliang03-lil.github.io/Protap?id='+encodeURIComponent(c.id)+'" target="_blank" style="color:var(--gold);font-size:11px;white-space:nowrap;">👁 Profil</a><button onclick="openAdminEmail(this)" data-email="'+esc(c.email)+'" data-nom="'+esc(c.nom)+'" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;padding:0;">✉️ Email</button><button onclick="toggleCommercial(this)" data-id="'+esc(c.id)+'" data-statut="'+(c.statut||'actif')+'" style="background:none;border:none;color:'+(c.statut==='inactif'?'var(--green)':'var(--red)')+';font-size:11px;cursor:pointer;padding:0;">'+(c.statut==='inactif'?'✓ Réactiver':'⊘ Désactiver')+'</button></td></tr>';
     }).join('');
     document.getElementById('adminTable').innerHTML='<table class="table"><thead><tr><th>Nom</th><th>Email</th><th>Scans</th><th>Prospects</th><th>Conversion</th><th>Dernier scan</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>';
   };
   var script = document.createElement('script');
   script.id = cbName;
-  script.src = SCRIPT_URL + '?action=getAdminStats&callback=' + cbName + '&t=' + Date.now();
+  script.src = api('getAdminStats', '&callback=' + cbName) + '&t=' + Date.now();
   document.body.appendChild(script);
 }
 
@@ -939,7 +966,7 @@ function sendAdminEmail() {
   var sujet = document.getElementById('adminEmailSujet').value.trim();
   var message = document.getElementById('adminEmailMessage').value.trim();
   if (!sujet || !message) { alert('Remplissez le sujet et le message.'); return; }
-  fetch(SCRIPT_URL + '?action=sendEmail&email=' + encodeURIComponent(adminEmailTargetEmail) + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(message) + '&id=' + COMMERCIAL_ID);
+  fetch(api('sendEmail', '&email=' + encodeURIComponent(adminEmailTargetEmail) + '&sujet=' + encodeURIComponent(sujet) + '&message=' + encodeURIComponent(message)));
   document.getElementById('adminEmailSent').style.display = 'block';
   setTimeout(function(){ document.getElementById('adminEmailPanel').style.display='none'; }, 2000);
 }
@@ -951,7 +978,7 @@ function toggleCommercial(btn) {
   var msg = newStatut === 'inactif' ? 'Désactiver ce commercial ?' : 'Réactiver ce commercial ?';
   if (!confirm(msg)) return;
   var img = new Image();
-  img.src = SCRIPT_URL + '?action=toggleCommercial&id=' + id + '&statut=' + newStatut;
+  img.src = api('toggleCommercial', '&id=' + encodeURIComponent(id) + '&statut=' + newStatut);
   setTimeout(function(){ loadAdminStats(); }, 1000);
 }
 </script>
