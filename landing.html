@@ -1,658 +1,609 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ProTap — La carte NFC qui transforme vos contacts en clients</title>
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --gold: #C9A84C; --gold-light: #E8C97A; --dark: #0d1621; --dark2: #15202e;
-      --dark3: #1c2b3a; --text: #F0EDE6; --text-muted: #8A8478; --border: rgba(201,168,76,0.18);
-      --green: #4CAF7D; --red: #C0392B;
-    }
-    html { scroll-behavior: smooth; }
-    body { background: var(--dark); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProTap — La carte NFC qui transforme chaque contact en prospect</title>
+<meta name="description" content="ProTap : la carte NFC premium pour commerciaux à Monaco et sur la Côte d'Azur. Profil aux couleurs de votre entreprise, capture automatique des prospects, email automatique et tableau de bord en temps réel.">
+<meta property="og:title" content="ProTap — Un tap. Un prospect.">
+<meta property="og:description" content="La carte NFC qui transforme chaque contact en prospect qualifié. Monaco · Côte d'Azur.">
+<meta property="og:image" content="https://protap.fr/videos/protap-motion-poster.jpg">
+<meta property="og:url" content="https://protap.fr/">
+<meta name="theme-color" content="#0b1019">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b1019; --bg2:#111826; --card:#131b29; --card2:#172133;
+    --line:rgba(255,255,255,.07); --line-gold:rgba(212,175,85,.28);
+    --gold:#D4AF55; --gold2:#E8C97A; --text:#ECEAE4; --muted:#9097A3; --muted2:#6B7280;
+    --green:#4CAF7D; --red:#E06C6C;
+    --radius:22px; --max:1180px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:84px}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img,video{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+  .display{font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.02em;line-height:1.05}
+  .gold{color:var(--gold)}
+  .eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:500}
+  .section{padding:120px 0;position:relative}
+  .section-head{max-width:720px;margin-bottom:56px}
+  .section-head.center{margin-left:auto;margin-right:auto;text-align:center}
+  .section-head h2{font-size:clamp(34px,4.6vw,56px);margin-top:18px}
+  .section-head p{color:var(--muted);font-size:18px;margin-top:18px}
 
-    /* ANIMATIONS SCROLL */
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-    .reveal-left { opacity: 0; transform: translateX(-30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal-left.visible { opacity: 1; transform: translateX(0); }
-    .reveal-right { opacity: 0; transform: translateX(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+  /* Boutons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 28px;border-radius:999px;font-weight:600;font-size:16px;transition:transform .15s,background .2s,border-color .2s;cursor:pointer;border:0;font-family:inherit}
+  .btn:active{transform:scale(.97)}
+  .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#141008}
+  .btn-gold:hover{filter:brightness(1.06)}
+  .btn-ghost{border:1px solid rgba(255,255,255,.16);color:var(--text);background:transparent}
+  .btn-ghost:hover{border-color:var(--gold)}
+  .btn svg{width:18px;height:18px}
 
-    /* NAV */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; background: rgba(13,22,33,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
-    .nav-logo { font-family: 'Raleway', sans-serif; font-size: 22px; font-weight: 400; color: var(--text); text-decoration: none; letter-spacing: 0.05em; }
-    .nav-logo span { color: var(--gold); }
-    .nav-links { display: flex; gap: 32px; align-items: center; }
-    .nav-links a { font-size: 13px; color: var(--text-muted); text-decoration: none; letter-spacing: 0.05em; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--gold); }
-    .nav-cta { padding: 10px 22px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border-radius: 8px; color: var(--dark); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; transition: opacity 0.2s; }
-    .nav-cta:hover { opacity: 0.85; color: var(--dark); }
+  /* Nav */
+  .nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(11,16,25,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:76px}
+  .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;letter-spacing:-.02em}
+  .logo span{color:var(--gold)}
+  .nav-links{display:flex;gap:34px;font-size:15px;color:#C7CAD1}
+  .nav-links a:hover{color:var(--gold2)}
+  .nav .btn{padding:12px 22px;font-size:15px}
+  .burger{display:none;background:none;border:0;color:var(--text);width:44px;height:44px;cursor:pointer}
+  .mobile-menu{display:none}
 
-    /* HERO */
-    .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 40px 80px; position: relative; overflow: hidden; }
-    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.1) 0%, transparent 70%); pointer-events: none; }
-    .hero-inner { max-width: 1100px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(201,168,76,0.08); border: 1px solid var(--border); border-radius: 100px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 28px; }
-    .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-    .hero h1 { font-family: 'Raleway', sans-serif; font-size: clamp(36px, 4vw, 52px); font-weight: 300; line-height: 1.15; color: var(--text); margin-bottom: 20px; letter-spacing: 0.02em; }
-    .hero h1 strong { font-weight: 500; color: var(--gold); }
-    .hero p { font-size: 16px; color: var(--text-muted); line-height: 1.7; margin-bottom: 36px; }
-    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
-    .btn-primary { padding: 15px 30px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border-radius: 10px; color: var(--dark); font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; transition: opacity 0.2s, transform 0.15s; }
-    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-    .btn-secondary { padding: 15px 30px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 13px; letter-spacing: 0.05em; text-decoration: none; transition: border-color 0.2s; }
-    .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+  /* Hero */
+  .hero{padding:150px 0 100px;position:relative;overflow:hidden}
+  .hero:before{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 75%);opacity:.6;pointer-events:none}
+  .hero:after{content:'';position:absolute;width:900px;height:900px;right:-260px;top:-180px;background:radial-gradient(circle,rgba(212,175,85,.16),transparent 62%);pointer-events:none}
+  .hero .wrap{display:grid;grid-template-columns:1.3fr .7fr;gap:56px;align-items:center;position:relative;z-index:1}
+  .hero h1{font-size:clamp(42px,4.8vw,66px);margin:22px 0 26px}
+  .hero .lead{font-size:19px;color:var(--muted);max-width:560px}
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-top:38px}
+  .trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:34px;color:var(--muted);font-size:14px}
+  .trust span{display:inline-flex;align-items:center;gap:8px}
+  .trust svg{width:16px;height:16px;color:var(--gold)}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-right:12px;vertical-align:middle;box-shadow:0 0 0 4px rgba(212,175,85,.16)}
 
-    /* PHONE MOCKUP */
-    .phone-mockup { position: relative; display: flex; justify-content: center; }
-    .phone { width: 240px; background: var(--dark2); border-radius: 36px; border: 2px solid rgba(201,168,76,0.3); padding: 20px 16px; box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.1); position: relative; }
-    .phone::before { content: ''; position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background: var(--dark3); border-radius: 2px; }
-    .phone-header { text-align: center; padding: 20px 0 16px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
-    .phone-logo { font-family: 'Raleway', sans-serif; font-size: 13px; color: var(--text-muted); letter-spacing: 0.15em; margin-bottom: 14px; }
-    .phone-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05)); border: 1.5px solid rgba(201,168,76,0.4); display: flex; align-items: center; justify-content: center; font-family: 'Raleway', sans-serif; font-size: 16px; font-weight: 400; color: var(--gold); margin: 0 auto 10px; }
-    .phone-name { font-family: 'Raleway', sans-serif; font-size: 16px; font-weight: 400; color: var(--text); }
-    .phone-title { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-top: 3px; }
-    .phone-row { display: flex; align-items: center; gap: 10px; padding: 10px 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(201,168,76,0.08); border-radius: 8px; margin-bottom: 6px; }
-    .phone-row-icon { width: 28px; height: 28px; border-radius: 7px; background: rgba(201,168,76,0.08); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
-    .phone-row-text { font-size: 11px; color: var(--text-muted); }
-    .phone-row-text strong { display: block; font-size: 10px; color: var(--text); font-weight: 400; }
-    .phone-save { width: 100%; padding: 11px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border-radius: 8px; text-align: center; font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dark); margin-top: 10px; }
-    .phone-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%); pointer-events: none; z-index: -1; }
+  /* Téléphone */
+  .phone-stage{position:relative;display:flex;justify-content:center}
+  .phone{position:relative;width:min(340px,80vw);aspect-ratio:9/16;border-radius:30px;overflow:hidden;border:1px solid var(--line-gold);background:#0d1621;box-shadow:0 50px 120px rgba(0,0,0,.6),0 0 90px rgba(212,175,85,.14)}
+  .phone video{width:100%;height:100%;object-fit:cover}
+  .float-card{position:absolute;background:rgba(19,27,41,.92);border:1px solid var(--line-gold);border-radius:16px;padding:14px 18px;font-size:13px;box-shadow:0 20px 50px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
+  .float-card b{display:block;font-size:15px;color:var(--text)}
+  .float-card small{color:var(--muted)}
+  .fc1{left:-40px;top:16%;animation:bob 6s ease-in-out infinite}
+  .fc2{right:-40px;bottom:14%;animation:bob 6s ease-in-out infinite 3s}
+  .fc2 b{color:var(--green)}
+  @keyframes bob{50%{transform:translateY(-10px)}}
 
-    /* COUNTER */
-    .counter-strip { background: var(--dark2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 32px 40px; }
-    .counter-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align: center; }
-    .counter-num { font-family: 'Raleway', sans-serif; font-size: 40px; font-weight: 300; color: var(--gold); }
-    .counter-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; letter-spacing: 0.05em; }
+  /* Problème */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .compare-col{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:38px}
+  .compare-col.win{border-color:var(--line-gold);background:linear-gradient(180deg,rgba(212,175,85,.07),var(--card) 55%)}
+  .compare-col h3{font-family:'Syne';font-size:24px;margin-bottom:6px}
+  .compare-col .sub{color:var(--muted);font-size:15px;margin-bottom:26px}
+  .compare-col ul{list-style:none;display:grid;gap:16px}
+  .compare-col li{display:flex;gap:14px;align-items:flex-start}
+  .ico{flex:none;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+  .ico svg{width:16px;height:16px}
+  .ico.no{background:rgba(224,108,108,.12);color:var(--red)}
+  .ico.yes{background:rgba(76,175,125,.12);color:var(--green)}
+  .compare-col li b{display:block;font-weight:600}
+  .compare-col li span{color:var(--muted);font-size:15px}
 
-    /* SECTIONS */
-    section { padding: 100px 40px; }
-    .container { max-width: 1100px; margin: 0 auto; }
-    .section-label { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; opacity: 0.8; }
-    .section-title { font-family: 'Raleway', sans-serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.15; color: var(--text); margin-bottom: 18px; letter-spacing: 0.02em; }
-    .section-title strong { font-weight: 500; color: var(--gold); }
-    .section-desc { font-size: 16px; color: var(--text-muted); line-height: 1.7; max-width: 560px; }
+  /* Étapes */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;counter-reset:s}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:30px;position:relative;overflow:hidden;transition:border-color .25s,transform .25s}
+  .step:hover{border-color:var(--line-gold);transform:translateY(-4px)}
+  .step:after{counter-increment:s;content:'0' counter(s);position:absolute;right:22px;top:14px;font-family:'Syne';font-weight:800;font-size:56px;color:rgba(255,255,255,.05)}
+  .step .ic{width:46px;height:46px;border-radius:13px;background:rgba(212,175,85,.1);color:var(--gold);display:flex;align-items:center;justify-content:center;margin-bottom:28px}
+  .step .ic svg{width:22px;height:22px}
+  .step h3{font-family:'Syne';font-size:20px;margin-bottom:10px}
+  .step p{color:var(--muted);font-size:15px}
 
-    /* POURQUOI */
-    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 60px; }
-    .why-card { padding: 32px 28px; background: var(--dark2); border: 1px solid var(--border); border-radius: 16px; position: relative; overflow: hidden; transition: border-color 0.2s; }
-    .why-card:hover { border-color: rgba(201,168,76,0.4); }
-    .why-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(135deg, var(--gold), transparent); }
-    .why-num { font-family: 'Raleway', sans-serif; font-size: 56px; font-weight: 200; color: rgba(201,168,76,0.12); line-height: 1; margin-bottom: 16px; }
-    .why-title { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
-    .why-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+  /* Film */
+  .film{display:grid;grid-template-columns:1.25fr .75fr;gap:56px;align-items:center}
+  .film-frame{border-radius:26px;overflow:hidden;border:1px solid var(--line-gold);box-shadow:0 40px 100px rgba(0,0,0,.5);background:#000;aspect-ratio:16/9}
+  .film-frame video{width:100%;height:100%;object-fit:cover}
+  .film-list{display:grid;gap:26px}
+  .film-item{display:flex;gap:18px}
+  .film-item .ic{flex:none;width:48px;height:48px;border-radius:14px;background:var(--card2);border:1px solid var(--line);color:var(--gold);display:flex;align-items:center;justify-content:center}
+  .film-item .ic svg{width:22px;height:22px}
+  .film-item h3{font-family:'Syne';font-size:19px;margin-bottom:4px}
+  .film-item p{color:var(--muted);font-size:15px}
 
-    /* PROBLÈME */
-    .problem-bg { background: var(--dark2); }
-    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-    .problem-items { display: flex; flex-direction: column; gap: 14px; margin-top: 36px; }
-    .problem-item { display: flex; align-items: flex-start; gap: 14px; padding: 18px; background: var(--dark); border: 1px solid var(--border); border-radius: 12px; }
-    .problem-x { width: 32px; height: 32px; border-radius: 8px; background: rgba(192,57,43,0.1); border: 1px solid rgba(192,57,43,0.2); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; color: var(--red); font-weight: 500; }
-    .problem-text strong { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
-    .problem-text span { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-    .stat-big { background: var(--dark); border: 1px solid var(--border); border-radius: 20px; padding: 48px 40px; text-align: center; }
-    .stat-big-num { font-family: 'Raleway', sans-serif; font-size: 96px; font-weight: 200; color: var(--gold); line-height: 1; }
-    .stat-big-text { font-size: 16px; color: var(--text-muted); margin-top: 12px; line-height: 1.5; }
-    .stat-big-sub { font-size: 13px; color: var(--text-muted); margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
-    .stat-big-sub strong { color: var(--green); font-weight: 400; }
+  /* Fonctionnalités */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .feature{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:32px;transition:border-color .25s}
+  .feature:hover{border-color:var(--line-gold)}
+  .feature .ic{width:50px;height:50px;border-radius:14px;background:rgba(212,175,85,.1);color:var(--gold);display:flex;align-items:center;justify-content:center;margin-bottom:24px}
+  .feature .ic svg{width:23px;height:23px}
+  .feature h3{font-family:'Syne';font-size:20px;margin-bottom:10px}
+  .feature p{color:var(--muted);font-size:15px}
+  .tag{display:inline-block;margin-top:16px;font-size:12px;color:var(--green);border:1px solid rgba(76,175,125,.35);padding:4px 12px;border-radius:999px}
 
-    /* SOLUTION */
-    .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 60px; }
-    .step { padding: 28px 22px; background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; position: relative; }
-    .step-connector { position: absolute; top: 40px; right: -10px; width: 20px; height: 1px; background: var(--border); z-index: 1; }
-    .step-num { font-family: 'Raleway', sans-serif; font-size: 44px; font-weight: 200; color: rgba(201,168,76,0.15); line-height: 1; margin-bottom: 16px; }
-    .step-title { font-size: 14px; font-weight: 500; color: var(--gold); margin-bottom: 8px; }
-    .step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+  /* Essai / fondateur */
+  .pilot{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .pilot-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:44px}
+  .pilot-card.highlight{background:linear-gradient(135deg,rgba(212,175,85,.14),rgba(212,175,85,.03));border-color:var(--line-gold)}
+  .pilot-card h3{font-family:'Syne';font-size:30px;line-height:1.15;margin:16px 0 16px}
+  .pilot-card p{color:var(--muted)}
+  .pilot-card ul{list-style:none;margin:24px 0 32px;display:grid;gap:12px}
+  .pilot-card li{display:flex;gap:12px;align-items:center}
+  .pilot-card li svg{width:18px;height:18px;color:var(--gold);flex:none}
+  .founder{display:flex;align-items:center;gap:16px;margin-top:30px;padding-top:26px;border-top:1px solid var(--line)}
+  .avatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#141008;font-family:'Syne';font-weight:800;display:flex;align-items:center;justify-content:center;font-size:18px}
+  .founder b{display:block}
+  .founder span{color:var(--muted);font-size:14px}
+  blockquote{font-size:19px;line-height:1.55;color:var(--text);font-style:normal;margin-top:20px}
 
-    /* FEATURES */
-    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 60px; }
-    .feature { padding: 26px; background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; transition: border-color 0.2s, transform 0.2s; }
-    .feature:hover { border-color: rgba(201,168,76,0.35); transform: translateY(-2px); }
-    .feature-icon { font-size: 26px; margin-bottom: 14px; }
-    .feature-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 8px; }
-    .feature-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
-    .feature-badge { display: inline-block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.2); padding: 2px 8px; border-radius: 100px; margin-top: 10px; }
+  /* Tarifs */
+  .prices{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+  .price{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:36px;display:flex;flex-direction:column;position:relative}
+  .price.reco{border-color:var(--gold);box-shadow:0 30px 80px rgba(212,175,85,.1)}
+  .badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--gold);color:#141008;font-size:13px;font-weight:600;padding:5px 16px;border-radius:999px}
+  .price h3{font-family:'Syne';font-size:26px}
+  .price .who{color:var(--muted);font-size:15px;margin-top:4px}
+  .amount{margin:26px 0 8px;display:flex;flex-direction:column;gap:2px}
+  .amount b{font-family:'Syne';font-size:44px;color:var(--gold);letter-spacing:-.02em}
+  .amount span{color:var(--muted);font-size:15px}
+  .card-fee{font-size:14px;color:var(--muted);padding-bottom:22px;border-bottom:1px solid var(--line);margin-bottom:22px}
+  .price ul{list-style:none;display:grid;gap:13px;margin-bottom:32px;flex:1}
+  .price li{display:flex;gap:12px;font-size:15px}
+  .price li svg{flex:none;width:18px;height:18px;color:var(--green);margin-top:3px}
+  .price .btn{width:100%}
+  .price-note{text-align:center;color:var(--muted);font-size:14px;margin-top:28px}
 
-    /* TÉMOIGNAGES */
-    .testimonials-bg { background: var(--dark2); }
-    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 60px; }
-    .testimonial { padding: 28px; background: var(--dark); border: 1px solid var(--border); border-radius: 16px; position: relative; }
-    .testimonial::before { content: '"'; font-family: 'Raleway', sans-serif; font-size: 60px; font-weight: 200; color: rgba(201,168,76,0.15); position: absolute; top: 10px; left: 20px; line-height: 1; }
-    .testimonial-text { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; padding-top: 20px; font-style: italic; }
-    .testimonial-author { display: flex; align-items: center; gap: 12px; }
-    .testimonial-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05)); border: 1px solid rgba(201,168,76,0.3); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: var(--gold); flex-shrink: 0; }
-    .testimonial-name { font-size: 13px; font-weight: 500; color: var(--text); }
-    .testimonial-role { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-    .testimonial-stars { color: var(--gold); font-size: 12px; margin-bottom: 6px; }
+  /* FAQ */
+  .faq{max-width:820px;margin:0 auto;display:grid;gap:14px}
+  .faq details{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:0 28px;transition:border-color .2s}
+  .faq details[open]{border-color:var(--line-gold)}
+  .faq summary{list-style:none;cursor:pointer;padding:24px 0;font-weight:600;font-size:17px;display:flex;justify-content:space-between;gap:20px;align-items:center}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary:after{content:'+';color:var(--gold);font-size:26px;font-weight:400;line-height:1;transition:transform .2s}
+  .faq details[open] summary:after{transform:rotate(45deg)}
+  .faq details p{color:var(--muted);padding:0 0 24px;margin-top:-6px}
 
-    /* TARIFS */
-    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 60px; }
-    .pricing-card { padding: 36px 28px; background: var(--dark2); border: 1px solid var(--border); border-radius: 16px; position: relative; transition: border-color 0.2s; }
-    .pricing-card:hover { border-color: rgba(201,168,76,0.3); }
-    .pricing-card.featured { background: var(--dark3); border-color: rgba(201,168,76,0.35); }
-    .pricing-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dark); background: linear-gradient(135deg, var(--gold), var(--gold-light)); padding: 4px 14px; border-radius: 100px; white-space: nowrap; }
-    .pricing-name { font-family: 'Raleway', sans-serif; font-size: 22px; font-weight: 400; color: var(--text); margin-bottom: 6px; }
-    .pricing-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
-    .pricing-price { display: flex; align-items: flex-end; gap: 4px; margin-bottom: 4px; }
-    .pricing-amount { font-family: 'Raleway', sans-serif; font-size: 52px; font-weight: 200; color: var(--gold); line-height: 1; }
-    .pricing-unit { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
-    .pricing-sub { font-size: 14px; color: var(--gold-light); font-weight: 400; margin-bottom: 28px; }
-    .pricing-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
-    .pricing-feature { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-muted); }
-    .pricing-feature::before { content: '✓'; color: var(--green); font-size: 12px; flex-shrink: 0; }
-    .pricing-btn { display: block; width: 100%; padding: 14px; text-align: center; border-radius: 10px; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; transition: opacity 0.2s; cursor: pointer; }
-    .pricing-btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--dark); border: none; }
-    .pricing-btn-outline { background: transparent; border: 1px solid var(--border); color: var(--gold); }
-    .pricing-btn:hover { opacity: 0.85; }
+  /* Contact */
+  .contact{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:start}
+  .contact h2{font-size:clamp(36px,4.6vw,58px);margin:18px 0 22px}
+  .contact .lead{color:var(--muted);font-size:18px}
+  .coords{display:grid;gap:20px;margin-top:40px}
+  .coord{display:flex;gap:16px;align-items:center}
+  .coord .ic{width:50px;height:50px;border-radius:14px;background:var(--card2);border:1px solid var(--line);color:var(--gold);display:flex;align-items:center;justify-content:center}
+  .coord .ic svg{width:21px;height:21px}
+  .coord small{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .coord b{font-weight:500;font-size:17px}
+  form{background:var(--card);border:1px solid var(--line-gold);border-radius:26px;padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .field{display:flex;flex-direction:column;gap:9px}
+  .field.full{grid-column:1/-1}
+  label{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
+  input,textarea{width:100%;background:#0e1521;border:1px solid rgba(255,255,255,.09);border-radius:13px;padding:15px 17px;color:var(--text);font:inherit;font-size:16px;outline:none;transition:border-color .2s}
+  input:focus,textarea:focus{border-color:var(--gold)}
+  input::placeholder,textarea::placeholder{color:#5c6472}
+  textarea{min-height:120px;resize:vertical}
+  form .btn{grid-column:1/-1;border-radius:14px;padding:18px}
+  .form-msg{grid-column:1/-1;font-size:14px;text-align:center;color:var(--muted)}
+  .form-done{display:none;grid-column:1/-1;text-align:center;padding:30px 0}
+  .form-done .ring{width:72px;height:72px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:var(--gold)}
+  .form-done h3{font-family:'Syne';font-size:26px;margin-bottom:8px}
+  .form-done p{color:var(--muted)}
+  form.sent .field, form.sent .btn, form.sent .form-msg{display:none}
+  form.sent .form-done{display:block}
 
-    /* FAQ */
-    .faq-list { margin-top: 60px; display: flex; flex-direction: column; gap: 12px; max-width: 760px; margin-left: auto; margin-right: auto; }
-    .faq-item { background: var(--dark2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-    .faq-question { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 14px; font-weight: 400; color: var(--text); transition: color 0.2s; }
-    .faq-question:hover { color: var(--gold); }
-    .faq-icon { font-size: 18px; color: var(--gold); transition: transform 0.3s; flex-shrink: 0; }
-    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-    .faq-answer p { padding: 0 24px 20px; font-size: 13px; color: var(--text-muted); line-height: 1.7; }
-    .faq-item.open .faq-icon { transform: rotate(45deg); }
-    .faq-item.open .faq-answer { max-height: 200px; }
+  /* Footer */
+  footer{border-top:1px solid var(--line);padding:40px 0;color:var(--muted);font-size:14px}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
 
-    /* CONTACT */
-    .contact-bg { background: var(--dark2); }
-    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
-    .contact-detail { display: flex; align-items: center; gap: 14px; margin-top: 20px; }
-    .contact-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(201,168,76,0.08); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-    .contact-text strong { display: block; font-size: 13px; color: var(--text); font-weight: 400; margin-bottom: 2px; }
-    .contact-text span { font-size: 13px; color: var(--text-muted); }
-    .contact-form { display: flex; flex-direction: column; gap: 14px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
-    .form-input { padding: 13px 16px; background: var(--dark); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300; outline: none; transition: border-color 0.2s; }
-    .form-input::placeholder { color: var(--text-muted); opacity: 0.5; }
-    .form-input:focus { border-color: rgba(201,168,76,0.5); }
-    .form-textarea { padding: 13px 16px; background: var(--dark); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300; outline: none; resize: vertical; min-height: 110px; transition: border-color 0.2s; }
-    .form-textarea:focus { border-color: rgba(201,168,76,0.5); }
-    .form-submit { padding: 14px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 10px; color: var(--dark); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; }
-    .form-submit:hover { opacity: 0.9; }
-    .form-success { display: none; padding: 14px; background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.2); border-radius: 10px; color: var(--green); font-size: 13px; text-align: center; }
-    .form-success.show { display: block; }
+  /* Apparition au défilement */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.fc1,.fc2{animation:none}html{scroll-behavior:auto}}
 
-    /* FOOTER */
-    footer { padding: 48px 40px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
-    .footer-logo { font-family: 'Raleway', sans-serif; font-size: 20px; font-weight: 400; color: var(--text); letter-spacing: 0.05em; }
-    .footer-logo span { color: var(--gold); }
-    .footer-text { font-size: 12px; color: var(--text-muted); }
+  /* Barre CTA mobile */
+  .mobile-cta{display:none}
 
-    @media (max-width: 768px) {
-      nav { padding: 16px 20px; }
-      .nav-links { display: none; }
-      section { padding: 70px 20px; }
-      .hero-inner, .problem-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
-      .steps-grid, .why-grid, .features-grid, .testimonials-grid, .pricing-grid { grid-template-columns: 1fr; }
-      .counter-inner { grid-template-columns: repeat(2, 1fr); }
-      .form-row { grid-template-columns: 1fr; }
-      .phone-mockup { display: none; }
-      .counter-strip { padding: 32px 20px; }
-    }
-  </style>
+  @media (max-width:1020px){
+    .hero .wrap,.film,.contact,.pilot,.compare{grid-template-columns:1fr}
+    .hero{padding-top:120px}
+    .hero .wrap{gap:56px;text-align:center}
+    .hero .lead{margin:0 auto}
+    .hero-ctas,.trust{justify-content:center}
+    .steps{grid-template-columns:1fr 1fr}
+    .features,.prices{grid-template-columns:1fr 1fr}
+    .nav-links,.nav .btn{display:none}
+    .burger{display:flex;align-items:center;justify-content:center}
+    .mobile-menu{position:fixed;inset:76px 0 auto 0;background:rgba(11,16,25,.97);border-bottom:1px solid var(--line);padding:16px 24px 28px;z-index:49;flex-direction:column;gap:4px}
+    .mobile-menu.open{display:flex}
+    .mobile-menu a{padding:14px 0;font-size:18px;border-bottom:1px solid var(--line)}
+    .mobile-menu .btn{margin-top:18px;border:0}
+  }
+  @media (max-width:640px){
+    .section{padding:84px 0}
+    .wrap{padding:0 20px}
+    .steps,.features,.prices{grid-template-columns:1fr}
+    .hero h1{font-size:40px}
+    .hero .lead{font-size:17px}
+    .hero-ctas .btn{width:100%}
+    .fc1{left:-6px;top:10%}
+    .fc2{right:-6px}
+    .compare-col,.pilot-card,form{padding:28px 22px}
+    form{grid-template-columns:1fr}
+    .price{padding:30px 24px}
+    .mobile-cta{display:block;position:fixed;left:16px;right:16px;bottom:16px;z-index:40;transition:transform .3s,opacity .3s}
+    .mobile-cta.hide{transform:translateY(120%);opacity:0;pointer-events:none}
+    .mobile-cta .btn{width:100%;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+    footer{padding-bottom:100px}
+  }
+</style>
 </head>
 <body>
 
-<nav>
-  <a href="#" class="nav-logo"><span>Pro</span>Tap</a>
-  <div class="nav-links">
-    <a href="#pourquoi">Pourquoi ProTap</a>
-    <a href="#fonctionnalites">Fonctionnalités</a>
-    <a href="#tarifs">Tarifs</a>
-    <a href="#faq">FAQ</a>
-    <a href="#contact">Contact</a>
-  </div>
-  <a href="#contact" class="nav-cta">Demander une démo</a>
-</nav>
+<!-- Icônes -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-nfc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 8.5a5 5 0 0 1 0 7"/><path d="M9.5 6a8.5 8.5 0 0 1 0 12"/><path d="M13 3.5a12 12 0 0 1 0 17"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><polyline points="16 11 18 13 22 9"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="12" y2="18"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 15 11 11 14 14 20 8"/></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.4A4.6 4.6 0 0 0 22 9.8C22 6 17.5 3 12 3Z"/><circle cx="7.5" cy="11.5" r="1.2"/><circle cx="10.5" cy="7.5" r="1.2"/><circle cx="15.5" cy="7.5" r="1.2"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4 4 5-7 5 7 4-4-2 11H5Z"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.1 7-12a7 7 0 0 0-14 0c0 5.9 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2Z"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9M12 8S10.5 3 8 3a2.5 2.5 0 0 0 0 5M12 8s1.5-5 4-5a2.5 2.5 0 0 1 0 5"/></symbol>
+  </defs>
+</svg>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-inner">
-    <div>
-      <div class="hero-badge">Monaco · Côte d'Azur</div>
-      <h1>La carte NFC qui transforme chaque contact en <strong>prospect qualifié</strong></h1>
-      <p>Offrez à vos commerciaux un outil de prospection premium — une carte NFC aux couleurs de votre entreprise, connectée à un dashboard de suivi en temps réel.</p>
-      <div class="hero-btns">
-        <a href="#contact" class="btn-primary">Demander une démo gratuite</a>
-        <a href="#pourquoi" class="btn-secondary">En savoir plus</a>
-      </div>
-    </div>
-    <div class="phone-mockup">
-      <div class="phone-glow"></div>
-      <div class="phone">
-        <div class="phone-header">
-          <div class="phone-logo">PROTAP · NFC</div>
-          <div class="phone-avatar">LG</div>
-          <div class="phone-name">Lilian Giteau</div>
-          <div class="phone-title">Fondateur · Monaco</div>
-        </div>
-        <div class="phone-row">
-          <div class="phone-row-icon">📞</div>
-          <div class="phone-row-text"><strong>Téléphone</strong>06 76 25 78 58</div>
-        </div>
-        <div class="phone-row">
-          <div class="phone-row-icon">✉️</div>
-          <div class="phone-row-text"><strong>Email</strong>contact@protap.fr</div>
-        </div>
-        <div class="phone-row">
-          <div class="phone-row-icon">📅</div>
-          <div class="phone-row-text"><strong>Rendez-vous</strong>Réserver un créneau</div>
-        </div>
-        <div class="phone-save">Enregistrer le contact</div>
-      </div>
-    </div>
+<header class="nav">
+  <div class="wrap">
+    <a href="#top" class="logo" aria-label="ProTap, accueil">Pro<span>Tap</span></a>
+    <nav class="nav-links" aria-label="Navigation principale">
+      <a href="#pourquoi">Pourquoi ProTap</a>
+      <a href="#fonctionnalites">Fonctionnalités</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="#contact" class="btn btn-gold">Demander une démo</a>
+    <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+    </button>
   </div>
-</section>
-
-<!-- COMPTEURS -->
-<div class="counter-strip reveal">
-  <div class="counter-inner">
-    <div>
-      <div class="counter-num">+47</div>
-      <div class="counter-label">Commerciaux équipés</div>
-    </div>
-    <div>
-      <div class="counter-num">+1200</div>
-      <div class="counter-label">Prospects capturés</div>
-    </div>
-    <div>
-      <div class="counter-num">38%</div>
-      <div class="counter-label">Taux de conversion moyen</div>
-    </div>
-    <div>
-      <div class="counter-num">Monaco</div>
-      <div class="counter-label">Côte d'Azur</div>
-    </div>
-  </div>
+</header>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#pourquoi">Pourquoi ProTap</a>
+  <a href="#fonctionnalites">Fonctionnalités</a>
+  <a href="#tarifs">Tarifs</a>
+  <a href="#faq">FAQ</a>
+  <a href="#contact">Contact</a>
+  <a href="#contact" class="btn btn-gold">Demander une démo</a>
 </div>
 
-<!-- POURQUOI -->
-<section id="pourquoi">
-  <div class="container">
-    <div class="reveal">
-      <div class="section-label">Pourquoi ProTap</div>
-      <h2 class="section-title">3 raisons pour lesquelles les commerciaux<br>choisissent <strong>ProTap</strong></h2>
-    </div>
-    <div class="why-grid">
-      <div class="why-card reveal">
-        <div class="why-num">01</div>
-        <div class="why-title">Suivi en temps réel</div>
-        <div class="why-desc">Chaque tap est enregistré. Vous savez exactement combien de personnes ont vu votre profil, combien ont laissé leurs coordonnées et quel est votre taux de conversion.</div>
-      </div>
-      <div class="why-card reveal" style="transition-delay:0.1s">
-        <div class="why-num">02</div>
-        <div class="why-title">Design aux couleurs de votre entreprise</div>
-        <div class="why-desc">Chaque profil est personnalisé avec les couleurs, le logo et l'identité visuelle de votre entreprise. Un rendu premium qui renforce votre image de marque.</div>
-      </div>
-      <div class="why-card reveal" style="transition-delay:0.2s">
-        <div class="why-num">03</div>
-        <div class="why-title">Autonomie complète</div>
-        <div class="why-desc">Le commercial modifie son profil, son email automatique et ses réseaux sociaux en totale autonomie depuis son back office dédié. Aucune intervention technique nécessaire.</div>
-      </div>
-    </div>
-  </div>
-</section>
+<main id="top">
 
-<!-- PROBLÈME -->
-<section id="probleme" class="problem-bg">
-  <div class="container">
-    <div class="problem-grid">
-      <div class="reveal-left">
-        <div class="section-label">Le problème</div>
-        <h2 class="section-title">La carte papier<br>ne suffit <strong>plus</strong></h2>
-        <p class="section-desc">Chaque rencontre commerciale représente une opportunité. Mais sans outil de suivi, la plupart de ces contacts sont perdus.</p>
-        <div class="problem-items">
-          <div class="problem-item">
-            <div class="problem-x">✗</div>
-            <div class="problem-text"><strong>Aucun suivi possible</strong><span>Vous ne savez pas si votre carte a été vue, gardée ou jetée.</span></div>
-          </div>
-          <div class="problem-item">
-            <div class="problem-x">✗</div>
-            <div class="problem-text"><strong>Contacts perdus</strong><span>Sans système, les coordonnées des prospects s'évanouissent.</span></div>
-          </div>
-          <div class="problem-item">
-            <div class="problem-x">✗</div>
-            <div class="problem-text"><strong>Manager sans visibilité</strong><span>Impossible de savoir si vos commerciaux prospectent vraiment.</span></div>
-          </div>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <div class="eyebrow"><span class="dot"></span>Monaco · Côte d'Azur</div>
+        <h1 class="display">La carte NFC qui transforme chaque contact en <span class="gold">prospect qualifié</span></h1>
+        <p class="lead">Offrez à vos commerciaux une carte premium aux couleurs de votre entreprise. Un tap, et votre interlocuteur repart avec vos coordonnées, vous avec les siennes.</p>
+        <div class="hero-ctas">
+          <a href="#contact" class="btn btn-gold">Demander une démo gratuite</a>
+          <a href="https://protap.fr/?id=lilian" target="_blank" rel="noopener" class="btn btn-ghost">Tester une carte en direct <svg><use href="#i-arrow"/></svg></a>
+        </div>
+        <div class="trust">
+          <span><svg><use href="#i-check"/></svg>Aucune application à installer</span>
+          <span><svg><use href="#i-check"/></svg>iPhone et Android</span>
+          <span><svg><use href="#i-check"/></svg>1 mois d'essai gratuit</span>
         </div>
       </div>
-      <div class="reveal-right">
-        <div class="stat-big">
-          <div class="stat-big-num">88%</div>
-          <div class="stat-big-text">des cartes de visite papier sont jetées en moins d'une semaine</div>
-          <div class="stat-big-sub">Avec ProTap, <strong>chaque tap est enregistré</strong> et chaque prospect capturé automatiquement.</div>
+      <div class="phone-stage">
+        <div class="phone">
+          <video src="videos/protap-motion.mp4" poster="videos/protap-motion-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Animation : un prospect scanne la carte ProTap, laisse ses coordonnées et reçoit un email automatique"></video>
         </div>
+        <div class="float-card fc1"><b>Nouveau prospect</b><small>capturé à l'instant</small></div>
+        <div class="float-card fc2"><b>Email envoyé ✓</b><small>à votre nom, automatiquement</small></div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- SOLUTION -->
-<section id="solution">
-  <div class="container">
-    <div class="reveal" style="text-align:center">
-      <div class="section-label">Comment ça marche</div>
-      <h2 class="section-title">Un tap suffit pour<br><strong>tout déclencher</strong></h2>
-    </div>
-    <div class="steps-grid">
-      <div class="step reveal" style="transition-delay:0s">
-        <div class="step-num">01</div>
-        <div class="step-title">Tap NFC</div>
-        <div class="step-desc">Le prospect approche son téléphone. La page profil s'ouvre instantanément. Aucune app requise.</div>
-        <div class="step-connector"></div>
+  <!-- PROBLÈME -->
+  <section class="section" id="pourquoi">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Le problème</div>
+        <h2 class="display">La carte papier ne suffit <span class="gold">plus</span></h2>
+        <p>Chaque rencontre est une opportunité. Mais une carte de visite finit souvent dans une poche, puis à la poubelle, et vous ne saurez jamais si elle a servi.</p>
       </div>
-      <div class="step reveal" style="transition-delay:0.1s">
-        <div class="step-num">02</div>
-        <div class="step-title">Profil premium</div>
-        <div class="step-desc">Page aux couleurs de votre entreprise avec photo, coordonnées, agenda et catalogue.</div>
-        <div class="step-connector"></div>
-      </div>
-      <div class="step reveal" style="transition-delay:0.2s">
-        <div class="step-num">03</div>
-        <div class="step-title">Contact capturé</div>
-        <div class="step-desc">Le prospect laisse ses informations. Enregistrement automatique dans votre base de données.</div>
-        <div class="step-connector"></div>
-      </div>
-      <div class="step reveal" style="transition-delay:0.3s">
-        <div class="step-num">04</div>
-        <div class="step-title">Suivi en temps réel</div>
-        <div class="step-desc">Dashboard avec scans, prospects, taux de conversion et activité mensuelle.</div>
+      <div class="compare">
+        <div class="compare-col reveal">
+          <h3>Carte papier</h3>
+          <p class="sub">Le contact repart. Vous, vous n'avez rien.</p>
+          <ul>
+            <li><span class="ico no"><svg><use href="#i-x"/></svg></span><div><b>Aucun suivi</b><span>Impossible de savoir si votre carte a été lue, gardée ou jetée.</span></div></li>
+            <li><span class="ico no"><svg><use href="#i-x"/></svg></span><div><b>Contacts perdus</b><span>Vous n'avez pas les coordonnées de votre interlocuteur.</span></div></li>
+            <li><span class="ico no"><svg><use href="#i-x"/></svg></span><div><b>Aucune visibilité pour le manager</b><span>Difficile de savoir qui prospecte, et avec quels résultats.</span></div></li>
+          </ul>
+        </div>
+        <div class="compare-col win reveal">
+          <h3>Carte <span class="gold">ProTap</span></h3>
+          <p class="sub">Chaque tap devient un prospect suivi.</p>
+          <ul>
+            <li><span class="ico yes"><svg><use href="#i-check"/></svg></span><div><b>Chaque scan est compté</b><span>Vous voyez combien de personnes ont ouvert votre profil.</span></div></li>
+            <li><span class="ico yes"><svg><use href="#i-check"/></svg></span><div><b>Le prospect laisse ses coordonnées</b><span>Enregistrées automatiquement, et relancées par un email à votre nom.</span></div></li>
+            <li><span class="ico yes"><svg><use href="#i-check"/></svg></span><div><b>Un tableau de bord pour l'équipe</b><span>Scans, prospects et conversion de chaque commercial, en temps réel.</span></div></li>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FONCTIONNALITÉS -->
-<section id="fonctionnalites" style="background:var(--dark2)">
-  <div class="container">
-    <div class="reveal">
-      <div class="section-label">Fonctionnalités</div>
-      <h2 class="section-title">Tout ce dont vos commerciaux<br><strong>ont besoin</strong></h2>
+  <!-- COMMENT ÇA MARCHE -->
+  <section class="section" style="padding-top:20px">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <div class="eyebrow">Comment ça marche</div>
+        <h2 class="display">Un tap suffit pour <span class="gold">tout déclencher</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step reveal"><div class="ic"><svg><use href="#i-nfc"/></svg></div><h3>Un tap sur la carte</h3><p>Le prospect approche son téléphone, ou scanne le QR code. Votre profil s'ouvre instantanément.</p></div>
+        <div class="step reveal"><div class="ic"><svg><use href="#i-user"/></svg></div><h3>Un profil premium</h3><p>Page aux couleurs de votre entreprise : photo, coordonnées, réseaux, agenda et catalogue.</p></div>
+        <div class="step reveal"><div class="ic"><svg><use href="#i-clip"/></svg></div><h3>Contact capturé</h3><p>Le prospect laisse ses coordonnées. Elles arrivent directement dans votre tableau de bord.</p></div>
+        <div class="step reveal"><div class="ic"><svg><use href="#i-mail"/></svg></div><h3>Relance automatique</h3><p>Il reçoit aussitôt un email à votre nom. S'il répond, la réponse arrive dans votre boîte.</p></div>
+      </div>
     </div>
-    <div class="features-grid">
-      <div class="feature reveal"><div class="feature-icon">🎨</div><div class="feature-title">Design sur mesure</div><div class="feature-desc">Page profil aux couleurs et au logo de votre entreprise. Photo de couverture personnalisable avec ajustement de position.</div><span class="feature-badge">Exclusif ProTap</span></div>
-      <div class="feature reveal" style="transition-delay:0.05s"><div class="feature-icon">📊</div><div class="feature-title">Dashboard de performance</div><div class="feature-desc">Scans, prospects, taux de conversion, graphique d'activité mensuelle. Tout en temps réel.</div></div>
-      <div class="feature reveal" style="transition-delay:0.1s"><div class="feature-icon">📧</div><div class="feature-title">Email automatique</div><div class="feature-desc">Message personnalisé envoyé au prospect immédiatement après chaque échange. Entièrement modifiable.</div></div>
-      <div class="feature reveal" style="transition-delay:0.15s"><div class="feature-icon">🌐</div><div class="feature-title">Multilingue automatique</div><div class="feature-desc">La page profil détecte automatiquement la langue du téléphone du prospect — Français, Anglais et plus.</div><span class="feature-badge">Exclusif ProTap</span></div>
-      <div class="feature reveal" style="transition-delay:0.2s"><div class="feature-icon">👑</div><div class="feature-title">Dashboard manager</div><div class="feature-desc">Vue globale sur tous vos commerciaux — activité, scans, prospects, badges d'activité 🟢🟡🔴 et dernier scan.</div></div>
-      <div class="feature reveal" style="transition-delay:0.25s"><div class="feature-icon">⚙️</div><div class="feature-title">Back office complet</div><div class="feature-desc">Modification du profil, upload photos direct, réseaux sociaux et email automatique. Disponible en 🇫🇷 🇬🇧.</div></div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- TÉMOIGNAGES -->
-<section id="temoignages" class="testimonials-bg">
-  <div class="container">
-    <div class="reveal" style="text-align:center">
-      <div class="section-label">Témoignages</div>
-      <h2 class="section-title">Ce que disent<br>nos <strong>clients</strong></h2>
+  <!-- FILM -->
+  <section class="section" id="demo">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">Démonstration</div>
+        <h2 class="display">Voyez ProTap <span class="gold">en action</span></h2>
+      </div>
+      <div class="film">
+        <div class="film-frame reveal">
+          <video src="videos/protap-film.mp4" poster="videos/protap-film-poster.jpg" controls playsinline preload="none" aria-label="Vidéo de présentation ProTap"></video>
+        </div>
+        <div class="film-list reveal">
+          <div class="film-item"><div class="ic"><svg><use href="#i-nfc"/></svg></div><div><h3>Approchez le téléphone</h3><p>Un simple contact suffit. Aucune application à installer.</p></div></div>
+          <div class="film-item"><div class="ic"><svg><use href="#i-spark"/></svg></div><div><h3>Découvrez le profil</h3><p>Exactement ce que verra votre prospect quand il touchera votre carte.</p></div></div>
+          <div class="film-item"><div class="ic"><svg><use href="#i-target"/></svg></div><div><h3>Laissez vos coordonnées</h3><p>Testez le formulaire : vous recevrez l'email automatique dans la foulée.</p></div></div>
+          <div><a href="https://protap.fr/?id=lilian" target="_blank" rel="noopener" class="btn btn-gold">Tester le profil en ligne <svg><use href="#i-arrow"/></svg></a></div>
+        </div>
+      </div>
     </div>
-    <div class="testimonials-grid">
-      <div class="testimonial reveal">
-        <div class="testimonial-stars">★★★★★</div>
-        <div class="testimonial-text">ProTap a complètement changé notre façon de prospecter. Mes commerciaux savent exactement combien de personnes ont scanné leur carte et peuvent relancer au bon moment.</div>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">ML</div>
-          <div>
-            <div class="testimonial-name">Marc L.</div>
-            <div class="testimonial-role">Directeur commercial · Agence immobilière · Monaco</div>
+  </section>
+
+  <!-- FONCTIONNALITÉS -->
+  <section class="section" id="fonctionnalites">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <div class="eyebrow">Fonctionnalités</div>
+        <h2 class="display">Tout ce dont vos commerciaux <span class="gold">ont besoin</span></h2>
+      </div>
+      <div class="features">
+        <div class="feature reveal"><div class="ic"><svg><use href="#i-palette"/></svg></div><h3>Design sur mesure</h3><p>Profil aux couleurs et au logo de votre entreprise, avec photo de couverture ajustable.</p><span class="tag">Exclusif ProTap</span></div>
+        <div class="feature reveal"><div class="ic"><svg><use href="#i-chart"/></svg></div><h3>Tableau de bord</h3><p>Scans, prospects, taux de conversion et activité mensuelle, mis à jour en temps réel.</p></div>
+        <div class="feature reveal"><div class="ic"><svg><use href="#i-mail"/></svg></div><h3>Email automatique</h3><p>Un message personnalisé part à votre nom juste après l'échange. Modifiable à tout moment.</p></div>
+        <div class="feature reveal"><div class="ic"><svg><use href="#i-globe"/></svg></div><h3>Français et anglais</h3><p>Le profil s'affiche automatiquement dans la langue du téléphone de votre prospect.</p></div>
+        <div class="feature reveal"><div class="ic"><svg><use href="#i-crown"/></svg></div><h3>Vue manager</h3><p>Classement et activité de chaque commercial, en un coup d'œil. Activation ou désactivation en un clic.</p></div>
+        <div class="feature reveal"><div class="ic"><svg><use href="#i-gear"/></svg></div><h3>Autonomie complète</h3><p>Chaque commercial modifie son profil, ses photos, ses réseaux et son email depuis son espace.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESSAI + FONDATEUR -->
+  <section class="section" style="padding-top:20px">
+    <div class="wrap">
+      <div class="pilot">
+        <div class="pilot-card highlight reveal">
+          <div class="eyebrow">Essai gratuit</div>
+          <h3 class="display">Testez ProTap pendant un mois, avec votre équipe</h3>
+          <p>Nous préparons vos profils à vos couleurs. Vous les utilisez sur le terrain, et vous jugez sur vos propres chiffres.</p>
+          <ul>
+            <li><svg><use href="#i-check"/></svg>Profils configurés pour vous</li>
+            <li><svg><use href="#i-check"/></svg>Tableau de bord dès le premier jour</li>
+            <li><svg><use href="#i-check"/></svg>Accompagnement en direct à Monaco</li>
+          </ul>
+          <a href="#contact" class="btn btn-gold">Démarrer mon essai</a>
+        </div>
+        <div class="pilot-card reveal">
+          <div class="eyebrow">Conçu à Monaco</div>
+          <blockquote>« J'ai créé ProTap parce que je voyais trop de contacts se perdre après un premier échange. Je veux que chaque rencontre de vos commerciaux compte, et que vous puissiez le mesurer. »</blockquote>
+          <div class="founder">
+            <div class="avatar">LG</div>
+            <div><b>Lilian Giteau</b><span>Fondateur de ProTap</span></div>
           </div>
         </div>
       </div>
-      <div class="testimonial reveal" style="transition-delay:0.1s">
-        <div class="testimonial-stars">★★★★★</div>
-        <div class="testimonial-text">Le design aux couleurs de notre agence est vraiment impressionnant. Nos prospects sont surpris par la qualité du rendu quand ils scannent la carte.</div>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">SC</div>
-          <div>
-            <div class="testimonial-name">Sophie C.</div>
-            <div class="testimonial-role">Conseillère · Swiss Courtage · Côte d'Azur</div>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial reveal" style="transition-delay:0.2s">
-        <div class="testimonial-stars">★★★★★</div>
-        <div class="testimonial-text">L'email automatique envoyé après chaque rencontre est un vrai plus. Les prospects reçoivent mes coordonnées immédiatement sans que j'aie à faire quoi que ce soit.</div>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">JD</div>
-          <div>
-            <div class="testimonial-name">Jean D.</div>
-            <div class="testimonial-role">Commercial · Finance · Monaco</div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- TARIFS -->
-<section id="tarifs">
-  <div class="container">
-    <div class="reveal" style="text-align:center">
-      <div class="section-label">Tarification</div>
-      <h2 class="section-title">Simple.<br><strong>Transparent.</strong></h2>
-      <p class="section-desc" style="margin:0 auto 0">Sans engagement. Sans surprise.</p>
+  <!-- TARIFS -->
+  <section class="section" id="tarifs">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <div class="eyebrow">Tarifs</div>
+        <h2 class="display">Simple. <span class="gold">Transparent.</span></h2>
+        <p>Prix hors taxes, par commercial. Premier mois offert.</p>
+      </div>
+      <div class="prices">
+        <div class="price reveal">
+          <h3>Solo</h3><div class="who">Indépendant</div>
+          <div class="amount"><b>11,99 €</b><span>/ mois</span></div>
+          <div class="card-fee">+ 35 € la carte, une seule fois</div>
+          <ul>
+            <li><svg><use href="#i-check"/></svg>1 carte NFC personnalisée</li>
+            <li><svg><use href="#i-check"/></svg>Profil sur mesure</li>
+            <li><svg><use href="#i-check"/></svg>Tableau de bord</li>
+            <li><svg><use href="#i-check"/></svg>Email automatique</li>
+            <li><svg><use href="#i-check"/></svg>Espace de gestion complet</li>
+          </ul>
+          <a href="#contact" class="btn btn-ghost" data-plan="Solo">Commencer</a>
+        </div>
+        <div class="price reco reveal">
+          <span class="badge">Recommandé</span>
+          <h3>Équipe</h3><div class="who">2 à 5 commerciaux</div>
+          <div class="amount"><b>9,99 €</b><span>/ mois / commercial</span></div>
+          <div class="card-fee">+ 30 € par carte, une seule fois</div>
+          <ul>
+            <li><svg><use href="#i-check"/></svg>Tout le plan Solo</li>
+            <li><svg><use href="#i-check"/></svg>Vue manager de l'équipe</li>
+            <li><svg><use href="#i-check"/></svg>Classement et activité des commerciaux</li>
+            <li><svg><use href="#i-check"/></svg>Design commun à toute l'équipe</li>
+            <li><svg><use href="#i-check"/></svg>Support prioritaire</li>
+          </ul>
+          <a href="#contact" class="btn btn-gold" data-plan="Équipe">Commencer</a>
+        </div>
+        <div class="price reveal">
+          <h3>Entreprise</h3><div class="who">6 commerciaux et plus</div>
+          <div class="amount"><b>7,99 €</b><span>/ mois / commercial</span></div>
+          <div class="card-fee">+ 25 € par carte, une seule fois</div>
+          <ul>
+            <li><svg><use href="#i-check"/></svg>Tout le plan Équipe</li>
+            <li><svg><use href="#i-check"/></svg>Statistiques par commercial</li>
+            <li><svg><use href="#i-check"/></svg>Gestion des rôles (manager, commercial)</li>
+            <li><svg><use href="#i-check"/></svg>Identité visuelle unifiée</li>
+            <li><svg><use href="#i-check"/></svg>Accompagnement dédié</li>
+          </ul>
+          <a href="#contact" class="btn btn-ghost" data-plan="Entreprise">Commencer</a>
+        </div>
+      </div>
+      <p class="price-note reveal">Besoin d'un devis pour une grande équipe ? <a href="#contact" class="gold">Parlons-en.</a></p>
     </div>
-    <div class="pricing-grid">
-      <div class="pricing-card reveal">
-        <div class="pricing-name">Solo</div>
-        <div class="pricing-desc">Pour un commercial indépendant</div>
-        <div class="pricing-price"><span class="pricing-amount">29€</span><span class="pricing-unit">&nbsp;/ carte</span></div>
-        <div class="pricing-sub">+ 12€ / mois</div>
-        <div class="pricing-features">
-          <div class="pricing-feature">1 carte NFC personnalisée</div>
-          <div class="pricing-feature">Page profil sur mesure</div>
-          <div class="pricing-feature">Dashboard prospects</div>
-          <div class="pricing-feature">Email automatique</div>
-          <div class="pricing-feature">Back office complet</div>
-        </div>
-        <a href="#contact" class="pricing-btn pricing-btn-outline">Commencer</a>
-      </div>
-      <div class="pricing-card featured reveal" style="transition-delay:0.1s">
-        <div class="pricing-badge">Recommandé</div>
-        <div class="pricing-name">Équipe</div>
-        <div class="pricing-desc">Pour une équipe de 2 à 5 commerciaux</div>
-        <div class="pricing-price"><span class="pricing-amount">22€</span><span class="pricing-unit">&nbsp;/ carte</span></div>
-        <div class="pricing-sub">+ 39€ / mois</div>
-        <div class="pricing-features">
-          <div class="pricing-feature">2 à 5 cartes NFC</div>
-          <div class="pricing-feature">Profils individuels</div>
-          <div class="pricing-feature">Dashboard manager inclus</div>
-          <div class="pricing-feature">Vue d'ensemble équipe</div>
-          <div class="pricing-feature">Support prioritaire</div>
-        </div>
-        <a href="#contact" class="pricing-btn pricing-btn-gold">Commencer</a>
-      </div>
-      <div class="pricing-card reveal" style="transition-delay:0.2s">
-        <div class="pricing-name">Entreprise</div>
-        <div class="pricing-desc">Pour une équipe de 6 à 20 commerciaux</div>
-        <div class="pricing-price"><span class="pricing-amount">18€</span><span class="pricing-unit">&nbsp;/ carte</span></div>
-        <div class="pricing-sub">+ 69€ / mois</div>
-        <div class="pricing-features">
-          <div class="pricing-feature">6 à 20 cartes NFC</div>
-          <div class="pricing-feature">Dashboard global</div>
-          <div class="pricing-feature">Stats par commercial</div>
-          <div class="pricing-feature">Design entreprise unifié</div>
-          <div class="pricing-feature">Support dédié</div>
-        </div>
-        <a href="#contact" class="pricing-btn pricing-btn-outline">Commencer</a>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- DEMO -->
-<section id="demo">
-  <div class="container">
-    <div style="text-align:center;" class="reveal">
-      <div class="section-label">Démonstration</div>
-      <h2 class="section-title">Voyez ProTap<br><strong>en action</strong></h2>
-      <p class="section-desc" style="margin:0 auto 48px;">Scannez ce QR code avec votre téléphone pour voir un exemple de page profil ProTap — exactement ce que verra votre prospect quand il scannera votre carte NFC.</p>
-    </div>
-    <div style="display:flex;justify-content:center;align-items:center;gap:60px;flex-wrap:wrap;">
-      <!-- QR Code -->
-      <div class="reveal" style="text-align:center;">
-        <div style="background:#ffffff;border-radius:16px;padding:20px;display:inline-block;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://protap.fr/?id=lilian&bgcolor=ffffff&color=0d1621&margin=1" alt="QR Code ProTap" style="width:200px;height:200px;display:block;border-radius:8px;">
-        </div>
-        <p style="font-size:12px;color:var(--text-muted);margin-top:16px;letter-spacing:0.05em;">Scannez avec votre téléphone</p>
+  <!-- FAQ -->
+  <section class="section" id="faq" style="padding-top:40px">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <div class="eyebrow">FAQ</div>
+        <h2 class="display">Questions <span class="gold">fréquentes</span></h2>
       </div>
-      <!-- Description -->
-      <div class="reveal" style="max-width:380px;">
-        <div style="display:flex;flex-direction:column;gap:16px;">
-          <div style="display:flex;align-items:flex-start;gap:14px;">
-            <div style="width:36px;height:36px;border-radius:10px;background:rgba(201,168,76,0.1);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">📱</div>
-            <div>
-              <p style="font-size:14px;font-weight:500;color:var(--text);margin:0 0 4px;">Ouvrez l'appareil photo</p>
-              <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin:0;">Pointez votre téléphone vers le QR code — aucune application requise.</p>
-            </div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:14px;">
-            <div style="width:36px;height:36px;border-radius:10px;background:rgba(201,168,76,0.1);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">✨</div>
-            <div>
-              <p style="font-size:14px;font-weight:500;color:var(--text);margin:0 0 4px;">Découvrez la page profil</p>
-              <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin:0;">Votre profil s'ouvre instantanément — exactement ce que verra votre prospect.</p>
-            </div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:14px;">
-            <div style="width:36px;height:36px;border-radius:10px;background:rgba(201,168,76,0.1);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🎯</div>
-            <div>
-              <p style="font-size:14px;font-weight:500;color:var(--text);margin:0 0 4px;">Laissez vos coordonnées</p>
-              <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin:0;">Testez le formulaire prospect et recevez l'email automatique en temps réel.</p>
-            </div>
-          </div>
-          <a href="https://protap.fr/?id=lilian" target="_blank" class="btn-primary" style="display:inline-block;text-align:center;margin-top:8px;">Voir le profil en ligne →</a>
-        </div>
+      <div class="faq reveal">
+        <details open><summary>ProTap fonctionne-t-il sur tous les téléphones ?</summary><p>Oui. Le profil s'ouvre par NFC sur les smartphones récents, iPhone comme Android, et par QR code sur tous les autres. Aucune application à installer.</p></details>
+        <details><summary>Comment se passe la mise en place ?</summary><p>Vous nous envoyez votre logo, vos couleurs et les informations de vos commerciaux. Nous configurons les profils et vous remettons les cartes, prêtes à l'emploi.</p></details>
+        <details><summary>Peut-on modifier son profil après la création ?</summary><p>Oui, à tout moment. Chaque commercial dispose de son espace pour changer ses coordonnées, ses photos, ses réseaux et le texte de son email automatique. Les changements sont visibles immédiatement, sans changer de carte.</p></details>
+        <details><summary>Que se passe-t-il si je perds ma carte ?</summary><p>Votre profil, vos prospects et vos statistiques restent intacts : ils ne sont pas stockés dans la carte. Il suffit de nous contacter pour recevoir une nouvelle carte reliée au même profil.</p></details>
+        <details><summary>Y a-t-il un engagement de durée ?</summary><p>Non, l'abonnement est sans engagement : vous pouvez l'arrêter à tout moment. Et le premier mois est offert pour tester.</p></details>
+        <details><summary>Où vont les coordonnées de mes prospects ?</summary><p>Elles arrivent uniquement dans votre tableau de bord, visible par vous et votre manager. Elles ne sont ni revendues ni partagées.</p></details>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FAQ -->
-<section id="faq" style="background:var(--dark2)">
-  <div class="container">
-    <div class="reveal" style="text-align:center">
-      <div class="section-label">FAQ</div>
-      <h2 class="section-title">Questions<br><strong>fréquentes</strong></h2>
-    </div>
-    <div class="faq-list reveal">
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleFaq(this)">Est-ce que ProTap fonctionne sur tous les téléphones ? <span class="faq-icon">+</span></div>
-        <div class="faq-answer"><p>Oui ! ProTap fonctionne sur tous les smartphones récents avec NFC — iPhone 7 et versions ultérieures, et la grande majorité des Android depuis 2018. Aucune application à installer pour le prospect.</p></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleFaq(this)">Combien de temps faut-il pour mettre en place ProTap ? <span class="faq-icon">+</span></div>
-        <div class="faq-answer"><p>La mise en place est rapide — entre 24h et 48h après votre commande. Nous créons votre profil aux couleurs de votre entreprise, programmons votre carte NFC et vous envoyons vos identifiants de connexion.</p></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleFaq(this)">Peut-on modifier son profil après la création ? <span class="faq-icon">+</span></div>
-        <div class="faq-answer"><p>Oui, entièrement et en totale autonomie. Le commercial accède à son back office et peut modifier ses informations, sa photo, ses réseaux sociaux, son email automatique et même les couleurs de son profil à tout moment.</p></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleFaq(this)">Que se passe-t-il si je perds ma carte ? <span class="faq-icon">+</span></div>
-        <div class="faq-answer"><p>Votre profil et vos données sont sécurisés en ligne. En cas de perte, nous vous envoyons une nouvelle carte programmée avec le même profil. Vos prospects et statistiques sont conservés.</p></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleFaq(this)">Y a-t-il un engagement de durée ? <span class="faq-icon">+</span></div>
-        <div class="faq-answer"><p>Aucun engagement. L'abonnement mensuel est sans engagement et peut être résilié à tout moment. Seule la carte NFC est payée à l'achat.</p></div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact" class="contact-bg">
-  <div class="container">
-    <div class="contact-grid">
-      <div class="reveal-left">
-        <div class="section-label">Contact</div>
-        <h2 class="section-title">Demandez votre<br><strong>démo gratuite</strong></h2>
-        <p class="section-desc">Nous vous préparons une carte NFC personnalisée aux couleurs de votre entreprise et une démonstration complète.</p>
-        <div class="contact-detail">
-          <div class="contact-icon">📧</div>
-          <div class="contact-text"><strong>Email</strong><span>giteaulilian@gmail.com</span></div>
-        </div>
-        <div class="contact-detail">
-          <div class="contact-icon">📱</div>
-          <div class="contact-text"><strong>Téléphone</strong><span>06 76 25 78 58</span></div>
-        </div>
-        <div class="contact-detail">
-          <div class="contact-icon">📍</div>
-          <div class="contact-text"><strong>Zone</strong><span>Monaco · Côte d'Azur</span></div>
+  <!-- CONTACT -->
+  <section class="section" id="contact">
+    <div class="wrap contact">
+      <div class="reveal">
+        <div class="eyebrow">Contact</div>
+        <h2 class="display">Demandez votre <span class="gold">démo gratuite</span></h2>
+        <p class="lead">Nous vous préparons une carte aux couleurs de votre entreprise et une démonstration complète.</p>
+        <div class="coords">
+          <a class="coord" href="tel:+33676257858"><div class="ic"><svg><use href="#i-phone"/></svg></div><div><small>Téléphone</small><b>06 76 25 78 58</b></div></a>
+          <a class="coord" href="mailto:giteaulilian@gmail.com"><div class="ic"><svg><use href="#i-mail"/></svg></div><div><small>Email</small><b>giteaulilian@gmail.com</b></div></a>
+          <div class="coord"><div class="ic"><svg><use href="#i-pin"/></svg></div><div><small>Zone</small><b>Monaco · Côte d'Azur</b></div></div>
         </div>
       </div>
-      <div class="reveal-right">
-        <form class="contact-form" onsubmit="submitContact(event)">
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">Prénom et nom *</label><input type="text" class="form-input" id="contactNom" placeholder="Jean Dupont" required></div>
-            <div class="form-group"><label class="form-label">Entreprise</label><input type="text" class="form-input" id="contactEntreprise" placeholder="AFIM France"></div>
-          </div>
-          <div class="form-group"><label class="form-label">Email *</label><input type="email" class="form-input" id="contactEmail" placeholder="jean@entreprise.com" required></div>
-          <div class="form-group"><label class="form-label">Téléphone</label><input type="tel" class="form-input" id="contactTel" placeholder="06 XX XX XX XX"></div>
-          <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" id="contactMessage" placeholder="Parlez-nous de votre équipe commerciale..."></textarea></div>
-          <button type="submit" class="form-submit">Envoyer ma demande</button>
-          <div class="form-success" id="contactSuccess">✓ Votre demande a été envoyée ! Nous vous recontactons sous 24h.</div>
-        </form>
-      </div>
+      <form id="demoForm" class="reveal" novalidate>
+        <div class="field"><label for="f-nom">Prénom et nom *</label><input id="f-nom" name="nom" autocomplete="name" placeholder="Jean Dupont" required maxlength="60"></div>
+        <div class="field"><label for="f-ent">Entreprise</label><input id="f-ent" name="entreprise" autocomplete="organization" placeholder="Agence Riviera" maxlength="60"></div>
+        <div class="field"><label for="f-mail">Email *</label><input id="f-mail" name="email" type="email" autocomplete="email" placeholder="jean@entreprise.com" required maxlength="120"></div>
+        <div class="field"><label for="f-tel">Téléphone</label><input id="f-tel" name="telephone" type="tel" autocomplete="tel" placeholder="06 XX XX XX XX" maxlength="25"></div>
+        <div class="field full"><label for="f-msg">Message</label><textarea id="f-msg" name="message" placeholder="Parlez-nous de votre équipe commerciale : nombre de commerciaux, secteur…" maxlength="500"></textarea></div>
+        <button type="submit" class="btn btn-gold">Envoyer ma demande</button>
+        <p class="form-msg" id="formMsg">Réponse sous 24 h. Vos données servent uniquement à vous recontacter.</p>
+        <div class="form-done" role="status">
+          <div class="ring"><svg width="32" height="32"><use href="#i-check"/></svg></div>
+          <h3>Demande envoyée</h3>
+          <p>Merci ! Vous allez recevoir un email de confirmation, et nous vous recontactons très vite.</p>
+        </div>
+      </form>
     </div>
-  </div>
-</section>
+  </section>
+</main>
 
 <footer>
-  <div class="footer-logo"><span>Pro</span>Tap</div>
-  <div class="footer-text">© 2025 ProTap · Monaco · Tous droits réservés</div>
-  <div class="footer-text">Développé avec ❤️ à Monaco</div>
+  <div class="wrap">
+    <a href="#top" class="logo">Pro<span>Tap</span></a>
+    <span>© <span id="year">2026</span> ProTap · Monaco</span>
+    <span>Un tap. Un prospect.</span>
+  </div>
 </footer>
 
+<div class="mobile-cta" id="mobileCta"><a href="#contact" class="btn btn-gold">Demander une démo gratuite</a></div>
+
 <script>
-// Scroll reveal
-var observer = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry) {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
-  });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(function(el) {
-  observer.observe(el);
-});
-
-// FAQ
-function toggleFaq(el) {
-  var item = el.parentElement;
-  var isOpen = item.classList.contains('open');
-  document.querySelectorAll('.faq-item').forEach(function(i) { i.classList.remove('open'); });
-  if (!isOpen) item.classList.add('open');
-}
-
-// Contact form
-function submitContact(e) {
-  e.preventDefault();
-  var nom = document.getElementById('contactNom').value;
-  var entreprise = document.getElementById('contactEntreprise').value;
-  var email = document.getElementById('contactEmail').value;
-  var tel = document.getElementById('contactTel').value;
-  var message = document.getElementById('contactMessage').value;
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzSSdtJe_n0mzj9eQhVh9BZJDdxl3Xm6oBhLnwFNGeeoXkdQ53V9PUMilvSGik08WqBDQ/exec';
-  var url = SCRIPT_URL + '?nom=' + encodeURIComponent(nom + (entreprise ? ' (' + entreprise + ')' : '')) + '&telephone=' + encodeURIComponent(tel) + '&email=' + encodeURIComponent(email) + '&commercial=Landing+ProTap&id=lilian';
-  var img = new Image();
-  img.src = url;
-  document.getElementById('contactSuccess').classList.add('show');
-  e.target.reset();
-}
+  var LEADS_ID = 'lilian';   // les demandes de démo arrivent dans ce tableau de bord
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Menu mobile
+  var burger = document.getElementById('burger'), menu = document.getElementById('mobileMenu');
+  burger.addEventListener('click', function () {
+    var open = menu.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open);
+  });
+  menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { menu.classList.remove('open'); burger.setAttribute('aria-expanded', false); }); });
+
+  // Apparition au défilement
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach(function (el, i) { el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
+
+  // Bouton flottant mobile : caché en haut de page et sur le formulaire
+  var cta = document.getElementById('mobileCta'), contact = document.getElementById('contact');
+  function toggleCta() {
+    var r = contact.getBoundingClientRect();
+    cta.classList.toggle('hide', window.scrollY < 500 || (r.top < innerHeight && r.bottom > 0));
+  }
+  addEventListener('scroll', toggleCta, { passive: true }); toggleCta();
+
+  // Choix d'une offre : pré-remplit le message
+  document.querySelectorAll('[data-plan]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var m = document.getElementById('f-msg');
+      if (!m.value) m.value = 'Intéressé par l\'offre ' + b.getAttribute('data-plan') + '. ';
+    });
+  });
+
+  // Formulaire : la demande devient un prospect dans le tableau de bord ProTap
+  document.getElementById('demoForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var f = ev.target, msg = document.getElementById('formMsg');
+    var nom = f.nom.value.trim(), email = f.email.value.trim(), ent = f.entreprise.value.trim();
+    if (!nom || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msg.textContent = 'Merci d\'indiquer votre nom et une adresse email valide.';
+      msg.style.color = '#E06C6C';
+      (nom ? f.email : f.nom).focus();
+      return;
+    }
+    var source = ('Site web' + (f.message.value.trim() ? ' : ' + f.message.value.trim() : '')).slice(0, 80);
+    var url = SCRIPT_URL
+      + '?nom=' + encodeURIComponent(nom + (ent ? ' · ' + ent : ''))
+      + '&telephone=' + encodeURIComponent(f.telephone.value.trim())
+      + '&email=' + encodeURIComponent(email)
+      + '&commercial=' + encodeURIComponent(source)
+      + '&id=' + LEADS_ID;
+    new Image().src = url;
+    f.classList.add('sent');
+  });
 </script>
 </body>
 </html>
