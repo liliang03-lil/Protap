@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <script>
+    // protap.fr sans ?id= : on affiche la page vitrine au lieu d'un profil
+    if (!new URLSearchParams(location.search).get('id')) location.replace('/landing.html');
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carte NFC — ProTap</title>
@@ -227,7 +231,7 @@ var profil = {};
 // Enregistrer scan
 var scanImg = new Image();
 var urlParams = new URLSearchParams(window.location.search);
-var commercialId = encodeURIComponent(urlParams.get('id') || 'lilian');
+var commercialId = encodeURIComponent(urlParams.get('id') || '');
 scanImg.src = SCRIPT_URL + '?action=scan&page=profil&id=' + commercialId + '&t=' + Date.now();
 
 // Icones réseaux sociaux
