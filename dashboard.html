@@ -312,6 +312,11 @@
           <div class="bo-field"><div class="bo-label">TikTok</div><input class="bo-input" id="bo-tiktok" placeholder="https://tiktok.com/..."></div>
           <div class="bo-field"><div class="bo-label">YouTube</div><input class="bo-input" id="bo-youtube" placeholder="https://youtube.com/..."></div>
           <div class="bo-field"><div class="bo-label">Twitter / X</div><input class="bo-input" id="bo-twitter" placeholder="https://twitter.com/..."></div>
+          <div class="bo-field"><div class="bo-label">Autre : nom du bouton</div><input class="bo-input" id="bo-autre_label" placeholder="Ex. Brochure, Catalogue, Nos biens"></div>
+          <div class="bo-field"><div class="bo-label">Autre : lien ou fichier</div><input class="bo-input" id="bo-autre" placeholder="https://... ou uploade un fichier">
+            <label class="upload-btn-label">📎 <span data-i18n="upload">Uploader</span><input type="file" accept="image/*,application/pdf" onchange="uploadFichier(this,'bo-autre')" style="display:none;"></label>
+            <div id="upload-progress-bo-autre" style="display:none;font-size:11px;margin-top:4px;"></div>
+          </div>
         </div>
         <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
           <div class="bo-toggle"><input type="checkbox" id="bo-linkedin_actif"><label for="bo-linkedin_actif">LinkedIn actif</label></div>
@@ -320,6 +325,7 @@
           <div class="bo-toggle"><input type="checkbox" id="bo-tiktok_actif"><label for="bo-tiktok_actif">TikTok actif</label></div>
           <div class="bo-toggle"><input type="checkbox" id="bo-youtube_actif"><label for="bo-youtube_actif">YouTube actif</label></div>
           <div class="bo-toggle"><input type="checkbox" id="bo-twitter_actif"><label for="bo-twitter_actif">Twitter / X actif</label></div>
+          <div class="bo-toggle"><input type="checkbox" id="bo-autre_actif"><label for="bo-autre_actif">Autre actif</label></div>
         </div>
         <button class="bo-save-btn" onclick="saveReseaux()" data-i18n="saveProfile">Enregistrer</button>
         <div class="bo-success" id="successReseaux">✓ Réseaux mis à jour !</div>
@@ -788,12 +794,12 @@ function loadProfil() {
     var s = document.getElementById(cbName); if (s) s.remove();
     if (sessionExpiree(data) || data.status !== 'success') return;
     var p = data.data;
-    var fields = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','watermark_actif','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+    var fields = ['nom','titre','telephone','email','photo','photo_couverture','cover_position','langue','watermark_actif','calendly','catalogue_lien','catalogue_label','description','nom_entreprise','logo_url','couleur_principale','couleur_secondaire','couleur_accent','linkedin','instagram','whatsapp','tiktok','youtube','twitter','autre','autre_label'];
     fields.forEach(function(f) {
       var el = document.getElementById('bo-'+f);
       if (el && p[f] !== undefined) el.value = p[f];
     });
-    var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'];
+    var toggles = ['linkedin','instagram','whatsapp','tiktok','youtube','twitter','autre'];
     toggles.forEach(function(f){ var el=document.getElementById('bo-'+f+'_actif'); if(el) el.checked=(p[f+'_actif']==='oui'); });
     if (p['fond']) { var fondEl = document.getElementById('bo-fond'); if(fondEl) fondEl.value = p['fond']; }
     if (p['logo_fond']) { var logoFondEl = document.getElementById('bo-logo_fond'); if(logoFondEl) logoFondEl.value = p['logo_fond']; }
@@ -835,6 +841,9 @@ function saveReseaux() {
     var el = document.getElementById('bo-'+f); if(el) url+='&'+f+'='+encodeURIComponent(el.value);
     var toggle = document.getElementById('bo-'+f+'_actif'); if(toggle) url+='&'+f+'_actif='+(toggle.checked?'oui':'non');
   });
+  var autreEl = document.getElementById('bo-autre'); if (autreEl) url += '&autre=' + encodeURIComponent(autreEl.value);
+  var autreLabelEl = document.getElementById('bo-autre_label'); if (autreLabelEl) url += '&autre_label=' + encodeURIComponent(autreLabelEl.value);
+  var autreToggle = document.getElementById('bo-autre_actif'); if (autreToggle) url += '&autre_actif=' + (autreToggle.checked ? 'oui' : 'non');
   var img = new Image(); img.src = url;
   var s = document.getElementById('successReseaux');
   s.classList.add('show');
@@ -905,6 +914,27 @@ function uploadPhoto(input, targetId) {
       } else {
         if (progressEl) { progressEl.textContent = '✗ Erreur upload'; progressEl.style.color = 'var(--red)'; }
       }
+    })
+    .catch(function() { if (progressEl) { progressEl.textContent = '✗ Erreur réseau'; progressEl.style.color = 'var(--red)'; } });
+}
+
+// Upload d'un fichier (PDF ou image) pour le bouton « Autre »
+function uploadFichier(input, targetId) {
+  var file = input.files[0];
+  if (!file) return;
+  var progressEl = document.getElementById('upload-progress-' + targetId);
+  if (progressEl) { progressEl.style.display = 'block'; progressEl.textContent = 'Envoi en cours...'; progressEl.style.color = 'var(--text-muted)'; }
+  var formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'protap_upload');
+  fetch('https://api.cloudinary.com/v1_1/dm1tevzqt/auto/upload', { method: 'POST', body: formData })
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      if (data.secure_url) {
+        var el = document.getElementById(targetId);
+        if (el) el.value = data.secure_url;
+        if (progressEl) { progressEl.textContent = '✓ Fichier uploadé ! Pense à enregistrer.'; progressEl.style.color = 'var(--green)'; }
+      } else if (progressEl) { progressEl.textContent = '✗ Erreur upload'; progressEl.style.color = 'var(--red)'; }
     })
     .catch(function() { if (progressEl) { progressEl.textContent = '✗ Erreur réseau'; progressEl.style.color = 'var(--red)'; } });
 }
