@@ -297,7 +297,8 @@ window[cbName] = function(data) {
   var html = '';
   ['linkedin','instagram','whatsapp','tiktok','youtube','twitter'].forEach(function(r) {
     if (profil[r+'_actif'] === 'oui' && profil[r]) {
-      html += '<a href="'+profil[r]+'" target="_blank" class="social-btn">'+socialIcons[r]+'<span>'+socialLabels[r]+'</span></a>';
+      var lien = (r === 'whatsapp') ? lienWhatsapp(profil[r]) : profil[r];
+      if (lien) html += '<a href="'+lien+'" target="_blank" rel="noopener" class="social-btn">'+socialIcons[r]+'<span>'+socialLabels[r]+'</span></a>';
     }
   });
   grid.innerHTML = html;
@@ -313,6 +314,18 @@ var script = document.createElement('script');
 script.id = cbName;
 script.src = SCRIPT_URL + '?action=getProfil&id=' + commercialId + '&callback=' + cbName + '&t=' + Date.now();
 document.body.appendChild(script);
+
+// WhatsApp : accepte un lien (wa.me, whatsapp.com) ou un simple numéro (06..., +33..., +377..., 0033...)
+function lienWhatsapp(val) {
+  val = (val || '').trim();
+  if (!val || val === 'Aucun') return '';
+  if (/^https?:\/\//i.test(val)) return val;
+  if (/^(wa\.me|api\.whatsapp\.com|chat\.whatsapp\.com)/i.test(val)) return 'https://' + val;
+  var n = val.replace(/\D/g, '');
+  if (n.indexOf('00') === 0) n = n.slice(2);
+  else if (n.length === 10 && n.charAt(0) === '0') n = '33' + n.slice(1);
+  return n.length >= 8 ? 'https://wa.me/' + n : '';
+}
 
 function formatPhone(tel) {
   tel = tel.replace(/\D/g,'');
@@ -440,7 +453,7 @@ function downloadVCard(e) {
   function validLink(val) { return val && val !== 'Aucun' && val.trim() !== '' && val.indexOf('http') !== -1; }
   if (validLink(profil.linkedin)) note += 'LinkedIn: ' + profil.linkedin + '\n';
   if (validLink(profil.instagram)) note += 'Instagram: ' + profil.instagram + '\n';
-  if (validLink(profil.whatsapp)) note += 'WhatsApp: ' + profil.whatsapp + '\n';
+  if (lienWhatsapp(profil.whatsapp) && profil.whatsapp_actif === 'oui') note += 'WhatsApp: ' + lienWhatsapp(profil.whatsapp) + '\n';
   if (validLink(profil.tiktok) && profil.tiktok_actif === 'oui') note += 'TikTok: ' + profil.tiktok + '\n';
   if (validLink(profil.youtube) && profil.youtube_actif === 'oui') note += 'YouTube: ' + profil.youtube + '\n';
   if (validLink(profil.twitter) && profil.twitter_actif === 'oui') note += 'Twitter: ' + profil.twitter + '\n';
